@@ -6,45 +6,51 @@
   <title>GPU — CompilerSutra Weekly</title>
   <meta name="description" content="The compiler ecosystem, explained every week — selected, organized, and contextualized."/>
   <meta name="color-scheme" content="dark light"/>
-  <script src="../assets/theme.js"></script>
+  <script>
+  (function(){try{var t=localStorage.getItem('csw-theme');
+  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <script src="../assets/theme.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../assets/site.css"/>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
       <a class="brand" href="../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">The compiler ecosystem, explained every week.</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="../index.html">Latest</a>
-        <a href="../explore/index.html#stages">Stages</a>
-        <a href="../explore/index.html">Domains</a>
-        <a href="index.html" aria-current="page">Stories</a>
+        <a href="../explore/index.html">Explore</a>
+        <a href="index.html" aria-current="page">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
       </nav>
       <div class="header-actions">
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false">Light</button>
-        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+        <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
-    <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav" id="mobile-nav" hidden>
       <div class="wrap" aria-label="Mobile">
         <a href="../index.html">Latest</a>
-        <a href="../explore/index.html#stages">Compiler stages</a>
-        <a href="../explore/index.html">Domains</a>
-        <a href="index.html">Stories / projects</a>
+        <a href="../explore/index.html">Explore</a>
+        <a href="index.html">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
+        <a href="../changelog.html">Change log</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
     </div>
   </header>
+  <div id="main">
   
   
   <div class="subnav" aria-label="Secondary">
@@ -62,52 +68,80 @@
   </div>
 
   <main class="wrap article-narrow">
-    <p class="hero-kicker">Topic</p>
+    <p class="hero-kicker">Topic · project ecosystem</p>
     <h1 class="page-title">GPU</h1>
-    <p class="muted">AMDGPU · NVPTX · SPIR-V · offloading</p>
+    <p class="muted">GPU compiler work spans NVPTX/NVVM, AMDGPU, SPIR-V, and offload runtimes. Prefer Backend + GPU labels when the change is target lowering.</p>
+    
+    <section class="panel">
+      <h2 class="section-label" style="font-size:1.1rem">Related discovery</h2>
+      <p class="muted">Related stages</p>
+      <div class="chip-row"><a class="chip" href="../explore/stage-backend.html">Backend</a> <a class="chip" href="../explore/stage-runtime-toolchain.html">Runtime &amp; Toolchain</a> <a class="chip" href="../explore/stage-middle-end.html">Middle-end</a></div>
+      <p class="muted">Related domains</p>
+      <div class="chip-row"><a class="chip" href="../explore/domain-gpu.html">GPU</a></div>
+    </section>
+
+    <h2 class="section-label">Latest developments</h2>
     <section class="topic-issue-block">
   <h3><a href="../issues/2026/2026-11-07.html">#001 · full issue</a></h3>
-  <p class="muted">What's moving · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+  <p class="muted">Latest developments · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
   <div class="story-grid"><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer">Add nvvm.mulf Op</a></h4>
+  <div class="badge-row"><span class="badge">Middle-end</span><span class="badge">Backend</span><span class="badge">GPU</span></div>
+  <p class="secondary"><strong>What.</strong> Nvvm.mulf Op was added. (3 related commits) This groups 3 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Extends NVIDIA GPU IR / NVVM dialect support used when lowering GPU kernels.</p>
+  <div class="meta">Backend · Middle-end / optimization developers, Backend developers, GPU compiler developers, CodeGen developers, NVPTX developers</div>
+</article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer">Use runCodeGenPipeline in SPIRVTranslate</a></h4>
-  <p>Touches GPU/offloading code generation or runtime.</p>
-  <div class="meta">Code generation · Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, SPIR-V developers</div>
+  <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
+  <p class="secondary"><strong>What.</strong> Use runCodeGenPipeline in SPIRVTranslate. (3 related commits) This groups 3 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Touches SPIR-V translation or tooling used by portable GPU / offload stacks.</p>
+  <div class="meta">Code generation · Backend developers, GPU compiler developers, CodeGen developers, SPIR-V developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer">Clear NoPHIs after SIFixSGPRCopies under the new pass manager</a></h4>
-  <p>Touches GPU/offloading code generation or runtime.</p>
-  <div class="meta">Bug fix · Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, AMDGPU developers</div>
+  <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
+  <p class="secondary"><strong>What.</strong> Clear NoPHIs after SIFixSGPRCopies under the new pass manager. (2 related commits) This groups 2 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Touches AMDGPU backend behavior — instruction selection, ABI, or codegen for AMD GPUs.</p>
+  <div class="meta">Bug fix · Backend developers, GPU compiler developers, CodeGen developers, AMDGPU developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/6e37cd2cc855cd23aa30705a2cde4e3bb646624a" rel="noopener noreferrer">Fold unmasked signed byte loads into D16 high loads</a></h4>
-  <p>Changes instruction selection — how IR becomes machine instructions.</p>
-  <div class="meta">Code generation · Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, AMDGPU developers</div>
+  <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
+  <p class="secondary"><strong>What.</strong> Fold unmasked signed byte loads into D16 high loads. (2 related commits) This groups 2 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Touches AMDGPU backend behavior — instruction selection, ABI, or codegen for AMD GPUs.</p>
+  <div class="meta">Code generation · Backend developers, GPU compiler developers, CodeGen developers, AMDGPU developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/c5b99ea2731d7d1cd3a851c1fc306bacb630020b" rel="noopener noreferrer">Add documentation about ABI occupancy</a></h4>
-  <p>Touches ABI / calling-convention behavior — can affect interoperability.</p>
-  <div class="meta">Backend · Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, AMDGPU developers</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/65166e24ae3499f143ea9d8581e544c37b1977a7" rel="noopener noreferrer">Add signatures for size returning new and GPU profiling</a></h4>
-  <p>Touches GPU/offloading code generation or runtime.</p>
-  <div class="meta">IR · Middle-end / optimization developers, GPU compiler developers, Runtime and toolchain developers, CPU compiler developers</div>
+  <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
+  <p class="secondary"><strong>What.</strong> Documentation about ABI occupancy was added.</p>
+  <p><strong>Why.</strong> Touches AMDGPU backend behavior — instruction selection, ABI, or codegen for AMD GPUs.</p>
+  <div class="meta">Backend · Backend developers, GPU compiler developers, CodeGen developers, AMDGPU developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/df3e0f8afb48090bf6441c4031ab0c366972424d" rel="noopener noreferrer">Remove kill flags on virtual registers from MIR tests</a></h4>
-  <p>Touches register allocation — impacts backend quality and spill behavior.</p>
-  <div class="meta">Bug fix · Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, NVPTX developers</div>
+  <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span><span class="badge">CPU</span></div>
+  <p class="secondary"><strong>What.</strong> Matt Arsenault: CodeGen: Remove kill flags on virtual registers from MIR tests. (6 related commits) This groups 6 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Correctness fix — prevents miscompile or compiler crash (per commit subject).</p>
+  <div class="meta">Bug fix · Backend developers, GPU compiler developers, CodeGen developers, NVPTX developers, LoongArch developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/625076dcb75c435a6ac4ef8ce432ed2d219be4ba" rel="noopener noreferrer">Add WaveMultiPrefixBitOr</a></h4>
-  <p>Touches GPU/offloading code generation or runtime.</p>
-  <div class="meta">Bug fix · Frontend / Clang developers, Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen deve</div>
+  <div class="badge-row"><span class="badge">Frontend</span><span class="badge">Backend</span><span class="badge">GPU</span><span class="badge">Languages</span></div>
+  <p class="secondary"><strong>What.</strong> WaveMultiPrefixBitOr was added. (4 related commits) This groups 4 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Touches SPIR-V translation or tooling used by portable GPU / offload stacks.</p>
+  <div class="meta">Bug fix · Frontend / Clang developers, Backend developers, GPU compiler developers, CodeGen developers, SPIR-V developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/9e0f0ee64b41e1c74871b9685fdb25f16b800866" rel="noopener noreferrer">Disable sycl-system-arch.cpp on macOS</a></h4>
-  <p>Touches GPU/offloading code generation or runtime.</p>
-  <div class="meta">Frontend · Frontend / Clang developers, Runtime and toolchain developers, CPU compiler developers, GPU compiler developers, SPIR-V </div>
+  <div class="badge-row"><span class="badge">Frontend</span><span class="badge">Languages</span><span class="badge">CPU</span></div>
+  <p class="secondary"><strong>What.</strong> Disable sycl-system-arch.cpp on macOS. (4 related commits) This groups 4 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Extends language frontend coverage — verify impact in the linked source.</p>
+  <div class="meta">Frontend · Frontend / Clang developers, CPU compiler developers, GPU compiler developers, SPIR-V developers</div>
 </article></div>
 </section>
   </main>
 
+  </div>
   <footer class="site-footer">
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
       <div>
+        <a href="../changelog.html">Change log</a> ·
         <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
         <a href="https://www.compilersutra.com/">Learn</a>

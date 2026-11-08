@@ -6,45 +6,51 @@
   <title>Explore — CompilerSutra Weekly</title>
   <meta name="description" content="The compiler ecosystem, explained every week — selected, organized, and contextualized."/>
   <meta name="color-scheme" content="dark light"/>
-  <script src="../assets/theme.js"></script>
+  <script>
+  (function(){try{var t=localStorage.getItem('csw-theme');
+  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <script src="../assets/theme.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../assets/site.css"/>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
       <a class="brand" href="../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">The compiler ecosystem, explained every week.</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="../index.html">Latest</a>
-        <a href="index.html#stages" aria-current="page">Stages</a>
-        <a href="index.html">Domains</a>
-        <a href="../topics/index.html">Stories</a>
+        <a href="index.html" aria-current="page">Explore</a>
+        <a href="../topics/index.html">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
       </nav>
       <div class="header-actions">
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false">Light</button>
-        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+        <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
-    <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav" id="mobile-nav" hidden>
       <div class="wrap" aria-label="Mobile">
         <a href="../index.html">Latest</a>
-        <a href="index.html#stages">Compiler stages</a>
-        <a href="index.html">Domains</a>
-        <a href="../topics/index.html">Stories / projects</a>
+        <a href="index.html">Explore</a>
+        <a href="../topics/index.html">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
+        <a href="../changelog.html">Change log</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
     </div>
   </header>
+  <div id="main">
   
   
   <div class="subnav" aria-label="Secondary">
@@ -61,22 +67,48 @@
     </div>
   </div>
 
-  <main class="wrap article-narrow">
+  <main class="wrap">
     <p class="hero-kicker">Explore</p>
-    <h1 class="page-title">Three ways to discover</h1>
-    <p class="muted">Independent filters over the same curated stories. Combine them mentally: GPU + Backend + CodeGen.</p>
-    <h2 id="stages">By compiler stage</h2>
+    <h1 class="page-title">Discover across stages, domains and projects</h1>
+    <p class="muted">Combine filters. Example: Backend + GPU + Code generation + LLVM.
+      Shareable via the URL query string.</p>
+    <div class="filters explore-filters" id="explore-filters">
+      <input id="q" type="search" placeholder="Search titles, why, projects…" aria-label="Search"/>
+      <select id="stage" aria-label="Compiler stage"><option value="">All stages</option>
+        <option value="Frontend">Frontend</option><option value="Middle-end">Middle-end</option><option value="Backend">Backend</option><option value="Runtime &amp; Toolchain">Runtime &amp; Toolchain</option>
+      </select>
+      <select id="domain" aria-label="Domain"><option value="">All domains</option>
+        <option value="CPU">CPU</option><option value="GPU">GPU</option><option value="AI / ML">AI / ML</option><option value="Accelerators">Accelerators</option><option value="FPGA">FPGA</option><option value="DSP">DSP</option><option value="Quantum">Quantum</option><option value="Languages">Languages</option><option value="Research">Research</option>
+      </select>
+      <select id="area" aria-label="Technical area"><option value="">All areas</option>
+        <option value="Language">Language</option><option value="Parsing">Parsing</option><option value="Semantics">Semantics</option><option value="IR">IR</option><option value="Analysis">Analysis</option><option value="Optimization">Optimization</option><option value="Vectorization">Vectorization</option><option value="Code generation">Code generation</option><option value="Register allocation">Register allocation</option><option value="Scheduling">Scheduling</option><option value="Memory">Memory</option><option value="Parallelism">Parallelism</option><option value="Runtime">Runtime</option><option value="Performance">Performance</option><option value="Security">Security</option><option value="Debugging">Debugging</option><option value="Tooling">Tooling</option><option value="Research">Research</option>
+      </select>
+      <select id="project" aria-label="Project"><option value="">All projects</option></select>
+    </div>
+    <div class="chip-row" id="active-filters" aria-live="polite"></div>
+    <p id="count" class="muted"></p>
+    <div id="results" class="story-grid"></div>
+    <h2 id="stages" class="section-label" style="margin-top:2.5rem">Browse by stage</h2>
     <div class="chip-row"><a class="chip" href="stage-frontend.html">Frontend</a> <a class="chip" href="stage-middle-end.html">Middle-end</a> <a class="chip" href="stage-backend.html">Backend</a> <a class="chip" href="stage-runtime-toolchain.html">Runtime &amp; Toolchain</a></div>
-    <h2 id="domains">By domain / hardware</h2>
+    <h2 id="domains" class="section-label">Browse by domain</h2>
     <div class="chip-row"><a class="chip" href="domain-cpu.html">CPU</a> <a class="chip" href="domain-gpu.html">GPU</a> <a class="chip" href="domain-ai-ml.html">AI / ML</a> <a class="chip" href="domain-accelerators.html">Accelerators</a> <a class="chip" href="domain-fpga.html">FPGA</a> <a class="chip" href="domain-dsp.html">DSP</a> <a class="chip" href="domain-quantum.html">Quantum</a> <a class="chip" href="domain-languages.html">Languages</a> <a class="chip" href="domain-research.html">Research</a></div>
-    <h2 id="areas">By technical area</h2>
+    <h2 id="areas" class="section-label">Browse by technical area</h2>
     <div class="chip-row"><a class="chip" href="area-language.html">Language</a> <a class="chip" href="area-parsing.html">Parsing</a> <a class="chip" href="area-semantics.html">Semantics</a> <a class="chip" href="area-ir.html">IR</a> <a class="chip" href="area-analysis.html">Analysis</a> <a class="chip" href="area-optimization.html">Optimization</a> <a class="chip" href="area-vectorization.html">Vectorization</a> <a class="chip" href="area-code-generation.html">Code generation</a> <a class="chip" href="area-register-allocation.html">Register allocation</a> <a class="chip" href="area-scheduling.html">Scheduling</a> <a class="chip" href="area-memory.html">Memory</a> <a class="chip" href="area-parallelism.html">Parallelism</a> <a class="chip" href="area-runtime.html">Runtime</a> <a class="chip" href="area-performance.html">Performance</a> <a class="chip" href="area-security.html">Security</a> <a class="chip" href="area-debugging.html">Debugging</a> <a class="chip" href="area-tooling.html">Tooling</a> <a class="chip" href="area-research.html">Research</a></div>
   </main>
+  <script src="../assets/filters.js" defer></script>
+  <script>
+  window.CSW_EXPLORE = [{"title": "Extract subvectors via vec_perm_const", "why": "Touches vector permute / subvector lowering used by SIMD backends.", "what": "Robin Dapp: RISC-V: Extract subvectors via vec_perm_const. (10 related commits) This groups 10 related commits as one development theme.", "stages": ["Backend"], "domains": ["CPU"], "areas": ["Code generation"], "project": "gcc", "change_type": "Backend", "signal": "deep_dive", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91"}, {"title": "Implement support for matrix splat cast", "why": "Extends Clang IR (CIR) language/codegen coverage \u2014 relevant to frontend and HLSL/matrix lowering.", "what": "Support for matrix splat cast was implemented. (5 related commits) This groups 5 related commits as one development theme.", "stages": ["Frontend"], "domains": ["Languages", "CPU"], "areas": ["Language", "Semantics", "Tooling"], "project": "llvm", "change_type": "New capability", "signal": "high_signal", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f"}, {"title": "Add RISCVABI helper functions for single/doubleFP and purecap", "why": "Changes instruction selection \u2014 how IR becomes machine instructions.", "what": "RISCVABI helper functions for single/doubleFP and purecap was added. (4 related commits) This groups 4 related commits as one development theme.", "stages": ["Backend"], "domains": ["CPU"], "areas": ["Register allocation", "Code generation", "Tooling"], "project": "llvm", "change_type": "Code generation", "signal": "high_signal", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263"}, {"title": "Add nvvm.mulf Op", "why": "Extends NVIDIA GPU IR / NVVM dialect support used when lowering GPU kernels.", "what": "Nvvm.mulf Op was added. (3 related commits) This groups 3 related commits as one development theme.", "stages": ["Middle-end", "Backend"], "domains": ["GPU"], "areas": ["IR", "Code generation", "Parallelism", "Tooling"], "project": "mlir", "change_type": "Backend", "signal": "high_signal", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125"}, {"title": "Use runCodeGenPipeline in SPIRVTranslate", "why": "Touches SPIR-V translation or tooling used by portable GPU / offload stacks.", "what": "Use runCodeGenPipeline in SPIRVTranslate. (3 related commits) This groups 3 related commits as one development theme.", "stages": ["Backend"], "domains": ["GPU"], "areas": ["Code generation", "Parallelism", "Tooling"], "project": "llvm", "change_type": "Code generation", "signal": "high_signal", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992"}, {"title": "Added support for functions to DWARFASTParserFortran", "why": "Affects debug information or debugger experience.", "what": "LLDB: support for functions to DWARFASTParserFortran was added. (2 related commits) This groups 2 related commits as one development theme.", "stages": ["Runtime & Toolchain"], "domains": ["Languages", "CPU"], "areas": ["Debugging", "Tooling"], "project": "llvm", "change_type": "Frontend", "signal": "high_signal", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7"}, {"title": "Clear NoPHIs after SIFixSGPRCopies under the new pass manager", "why": "Touches AMDGPU backend behavior \u2014 instruction selection, ABI, or codegen for AMD GPUs.", "what": "Clear NoPHIs after SIFixSGPRCopies under the new pass manager. (2 related commits) This groups 2 related commits as one development theme.", "stages": ["Backend"], "domains": ["GPU"], "areas": ["Code generation", "Parallelism", "Tooling"], "project": "llvm", "change_type": "Bug fix", "signal": "high_signal", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576"}, {"title": "Fold unmasked signed byte loads into D16 high loads", "why": "Touches AMDGPU backend behavior \u2014 instruction selection, ABI, or codegen for AMD GPUs.", "what": "Fold unmasked signed byte loads into D16 high loads. (2 related commits) This groups 2 related commits as one development theme.", "stages": ["Backend"], "domains": ["GPU"], "areas": ["Code generation", "Parallelism", "Tooling"], "project": "llvm", "change_type": "Code generation", "signal": "high_signal", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/6e37cd2cc855cd23aa30705a2cde4e3bb646624a"}, {"title": "Add documentation about ABI occupancy", "why": "Touches AMDGPU backend behavior \u2014 instruction selection, ABI, or codegen for AMD GPUs.", "what": "Documentation about ABI occupancy was added.", "stages": ["Backend"], "domains": ["GPU"], "areas": ["Code generation", "Parallelism", "Tooling"], "project": "llvm", "change_type": "Backend", "signal": "high_signal", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/c5b99ea2731d7d1cd3a851c1fc306bacb630020b"}, {"title": "Add AVX512BMM bitreverse lowering", "why": "Correctness fix \u2014 prevents miscompile or compiler crash (per commit subject).", "what": "AVX512BMM bitreverse lowering was added. (8 related commits) This groups 8 related commits as one development theme.", "stages": ["Backend"], "domains": ["CPU"], "areas": ["Code generation"], "project": "gcc", "change_type": "Backend", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/gcc-mirror/gcc/commit/6783b7375fff65e917637e86688918e808682f14"}, {"title": "Fix advancing past the end of an empty macro fusion list", "why": "Correctness fix \u2014 prevents miscompile or compiler crash (per commit subject).", "what": "Matt Arsenault: TableGen: Fix advancing past the end of an empty macro fusion list. (8 related commits) This groups 8 related commits as one development theme.", "stages": ["Middle-end", "Runtime & Toolchain", "Backend"], "domains": ["CPU"], "areas": ["Tooling", "Scheduling"], "project": "llvm", "change_type": "Bug fix", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/5bbc49f5d844871eadce3e06926dbd4cf538e180"}, {"title": "Add signatures for the divrem libcalls", "why": "Correctness fix \u2014 prevents miscompile or compiler crash (per commit subject).", "what": "Matt Arsenault: RuntimeLibcalls: Add signatures for the divrem libcalls. (7 related commits) This groups 7 related commits as one development theme.", "stages": ["Runtime & Toolchain", "Backend", "Middle-end"], "domains": ["CPU"], "areas": ["Tooling", "Code generation", "IR"], "project": "llvm", "change_type": "IR", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/2853de0422d2fd02dca9c4cc89a6def2a3794198"}, {"title": "Port vabd and vaba intrinscs to pragma-based framework", "why": "Correctness fix \u2014 prevents miscompile or compiler crash (per commit subject).", "what": "Port vabd and vaba intrinscs to pragma-based framework. (7 related commits) This groups 7 related commits as one development theme.", "stages": ["Backend"], "domains": ["CPU"], "areas": ["Code generation"], "project": "gcc", "change_type": "Backend", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/gcc-mirror/gcc/commit/a364d69a3241c689dfc6b1c68269223986916831"}, {"title": "Port MulMulBugFixPass to NewPM", "why": "Described as an optimization/performance change in the source message.", "what": "Port MulMulBugFixPass to NewPM. (6 related commits) This groups 6 related commits as one development theme.", "stages": ["Backend"], "domains": ["CPU"], "areas": ["Code generation", "Tooling"], "project": "llvm", "change_type": "Bug fix", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/76ded34e479dbe2f022ec1e021ee36a6f4f4331f"}, {"title": "Remove kill flags on virtual registers from MIR tests", "why": "Correctness fix \u2014 prevents miscompile or compiler crash (per commit subject).", "what": "Matt Arsenault: CodeGen: Remove kill flags on virtual registers from MIR tests. (6 related commits) This groups 6 related commits as one development theme.", "stages": ["Backend"], "domains": ["GPU", "CPU"], "areas": ["Code generation", "Parallelism", "Tooling", "Register allocation"], "project": "llvm", "change_type": "Bug fix", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/df3e0f8afb48090bf6441c4031ab0c366972424d"}, {"title": "Attach a single callgraph type identifier to function definitions", "why": "Extends language frontend coverage \u2014 verify impact in the linked source.", "what": "Attach a single callgraph type identifier to function definitions. (5 related commits) This groups 5 related commits as one development theme.", "stages": ["Frontend"], "domains": ["Languages", "CPU"], "areas": ["Language", "Semantics", "Tooling"], "project": "llvm", "change_type": "Code generation", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/c1498de98d839e25c4c020a5bdc4f390464c2930"}, {"title": "Check CF_RETURN bit in ix86_expand_epilogue", "why": "The practical impact is not yet clear from the commit message alone.", "what": "Check CF_RETURN bit in ix86_expand_epilogue. (5 related commits) This groups 5 related commits as one development theme.", "stages": ["Backend"], "domains": ["CPU"], "areas": ["Code generation"], "project": "gcc", "change_type": "Backend", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/gcc-mirror/gcc/commit/ea93a47f579607698186dbced583ad1729f4ccb8"}, {"title": "Add WaveMultiPrefixBitOr", "why": "Touches SPIR-V translation or tooling used by portable GPU / offload stacks.", "what": "WaveMultiPrefixBitOr was added. (4 related commits) This groups 4 related commits as one development theme.", "stages": ["Frontend", "Backend"], "domains": ["GPU", "Languages"], "areas": ["Language", "Semantics", "Code generation", "Parallelism", "Tooling"], "project": "llvm", "change_type": "Bug fix", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/625076dcb75c435a6ac4ef8ce432ed2d219be4ba"}, {"title": "Delete 'types' test", "why": "Affects debug information or debugger experience.", "what": "LLDB: delete 'types' test. (4 related commits) This groups 4 related commits as one development theme.", "stages": ["Runtime & Toolchain"], "domains": ["CPU"], "areas": ["Debugging", "Tooling"], "project": "llvm", "change_type": "Other", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/a48ee445b24b544bb13ca0f57041f76d2e0bb4ac"}, {"title": "Disable sycl-system-arch.cpp on macOS", "why": "Extends language frontend coverage \u2014 verify impact in the linked source.", "what": "Disable sycl-system-arch.cpp on macOS. (4 related commits) This groups 4 related commits as one development theme.", "stages": ["Frontend"], "domains": ["Languages", "CPU", "GPU"], "areas": ["Language", "Semantics", "Tooling"], "project": "llvm", "change_type": "Frontend", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/9e0f0ee64b41e1c74871b9685fdb25f16b800866"}, {"title": "Fix crash on a `sizes` argument of type `bool` or `_BitInt`", "why": "Touches GPU/offloading code generation or runtime.", "what": "Crash on a `sizes` argument of type `bool` or `_BitInt` was fixed. (4 related commits) This groups 4 related commits as one development theme.", "stages": ["Frontend", "Runtime & Toolchain"], "domains": ["Languages", "CPU"], "areas": ["Language", "Semantics", "Tooling"], "project": "llvm", "change_type": "Bug fix", "signal": "worth_knowing", "href": "../issues/2026/2026-11-07.html", "issue": "#001", "source": "https://github.com/llvm/llvm-project/commit/b32a7b9a292a49e81223612aed615d0bafd0eb93"}];
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.CSW && window.CSW.mountExplore) window.CSW.mountExplore(window.CSW_EXPLORE);
+  });
+  </script>
 
+  </div>
   <footer class="site-footer">
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
       <div>
+        <a href="../changelog.html">Change log</a> ·
         <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
         <a href="https://www.compilersutra.com/">Learn</a>

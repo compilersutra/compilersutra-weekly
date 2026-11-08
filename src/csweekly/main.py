@@ -51,6 +51,19 @@ def main(argv: list[str] | None = None) -> int:
     p_index.add_argument("--reports-dir", type=Path, default=Path("reports"))
     p_index.add_argument("--site-dir", type=Path, default=Path("site"))
 
+    p_refresh = sub.add_parser(
+        "refresh",
+        help="Re-enrich stories from changelog JSON and rewrite MD + site",
+    )
+    p_refresh.add_argument("--reports-dir", type=Path, default=Path("reports"))
+    p_refresh.add_argument("--site-dir", type=Path, default=Path("site"))
+    p_refresh.add_argument(
+        "--changelog",
+        type=Path,
+        default=None,
+        help="Specific *.changelog.json (default: all under reports)",
+    )
+
     p_run = sub.add_parser("run", help="collect + report + index")
     p_run.add_argument("--as-of", type=str, default=None)
     p_run.add_argument("--sources-dir", type=Path, default=None)
@@ -72,6 +85,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_report(args)
     if args.cmd == "index":
         return cmd_index(args)
+    if args.cmd == "refresh":
+        return cmd_refresh(args)
     if args.cmd == "run":
         return cmd_run(args)
     return 2
@@ -154,6 +169,44 @@ def cmd_report(args: argparse.Namespace) -> int:
 def cmd_index(args: argparse.Namespace) -> int:
     path = write_archive_index(args.reports_dir, args.site_dir)
     print(f"wrote {path}")
+    return 0
+
+
+def cmd_refresh(args: argparse.Namespace) -> int:
+    """Re-apply classification/editorial layer to stored changelogs without recollecting."""
+    files: list[Path]
+    if args.changelog:
+        files = [args.changelog]
+    else:
+        files = sorted(args.reports_dir.glob("**/*.changelog.json"))
+    if not files:
+        print("no changelog files found", file=sys.stderr)
+        return 1
+    for path in files:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        window = Window.model_validate(raw["window"])
+        stories = [enrich_story(Story.model_validate(s)) for s in raw.get("stories") or []]
+        issue = build_issue(
+            window,
+            stories,
+            reports_dir=args.reports_dir,
+            errors=[],
+        )
+        # Preserve published date / issue number from changelog when present.
+        if raw.get("published_on"):
+            issue.published_on = date.fromisoformat(str(raw["published_on"]))
+        if raw.get("issue_number") is not None:
+            issue.stats["issue_number"] = int(raw["issue_number"])
+            num = int(raw["issue_number"])
+            issue.title = (
+                f"CompilerSutra Weekly — #{num:03d}, "
+                f"{issue.published_on.strftime('%B')} {issue.published_on.day} "
+                f"{issue.published_on.year}"
+            )
+        out = write_issue(issue, args.reports_dir)
+        print(f"refreshed {out}", file=sys.stderr)
+    idx = write_archive_index(args.reports_dir, args.site_dir)
+    print(f"wrote {idx}")
     return 0
 
 

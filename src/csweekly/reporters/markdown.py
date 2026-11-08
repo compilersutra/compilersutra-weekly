@@ -244,24 +244,37 @@ def render_markdown(issue: WeeklyIssue) -> str:
         lines.append("")
         lines.append(f"### {g.title}")
         lines.append("")
-        lines.append("**Old context → problem → change → expected effect**")
-        lines.append("")
         lines.append(
-            f"- **What changed:** {g.what_changed or 'See source commits.'}"
-        )
-        lines.append(
-            f"- **Why it matters:** {g.why_it_matters or 'Impact not yet clear from the source alone.'}"
-        )
-        lines.append(
-            f"- **Who should care:** {', '.join(g.who_should_care) if g.who_should_care else 'Compiler engineers'}"
-        )
-        lines.append(
-            f"- **Relevant area:** {', '.join((g.stages or []) + (g.technical_areas or [])[:3]) or '—'}"
+            "Technical walkthrough grounded in the source commits. "
+            "Claims stay tied to evidence; unknowns are marked."
         )
         lines.append("")
-        lines.append("**Sources:**")
+        lines.append("1. **Background** — related work clustered as one development theme this week.")
+        lines.append(
+            f"2. **What changed** — {g.what_changed or 'See source commits.'}"
+        )
+        uncertain = (
+            " Impact is not fully clear from commit subjects alone."
+            if g.impact_uncertain
+            else ""
+        )
+        lines.append(
+            f"3. **Why it matters** — {g.why_it_matters or 'Impact not yet clear from the source alone.'}{uncertain}"
+        )
+        lines.append(
+            f"4. **Compiler stage** — {', '.join(g.stages) or 'unclassified'}"
+        )
+        lines.append(
+            f"5. **Domain / targets** — {', '.join((g.domains or []) + (g.hardware_targets or [])[:3]) or 'unclassified'}"
+        )
+        lines.append(
+            f"6. **Who should investigate next** — "
+            f"{', '.join(g.who_should_care) if g.who_should_care else 'Compiler engineers'}"
+        )
         lines.append("")
-        for s in g.stories[:6]:
+        lines.append("**Evidence (sources):**")
+        lines.append("")
+        for s in g.stories[:8]:
             sha = (s.related_ref or "")[:8]
             lines.append(f"- [`{sha}`]({s.source_url}) — {s.summary[:120]}")
         lines.append("")

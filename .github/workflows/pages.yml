@@ -5,6 +5,8 @@ on:
     paths:
       - "reports/**"
       - "site/**"
+      - "src/csweekly/**"
+      - "pyproject.toml"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

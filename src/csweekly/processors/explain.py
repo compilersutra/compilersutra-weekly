@@ -9,23 +9,80 @@ from csweekly.models import ChangeGroup, ChangeType, SignalLevel, Story
 from csweekly.processors.editorial import clean_subject, editorial_sentence, is_noise
 
 _WHY_RULES: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"(?i)vectoriz|loop.?vector"), "Affects automatic vectorization and SIMD code generation."),
-    (re.compile(r"(?i)register.?alloc|regalloc"), "Touches register allocation — impacts backend quality and spill behavior."),
-    (re.compile(r"(?i)globalisel|selectiondag|isel"), "Changes instruction selection — how IR becomes machine instructions."),
+    (
+        re.compile(r"(?i)\bnvvm\b|\bnvptx\b"),
+        "Extends NVIDIA GPU IR / NVVM dialect support used when lowering GPU kernels.",
+    ),
+    (
+        re.compile(r"(?i)amdgpu|amdgcn"),
+        "Touches AMDGPU backend behavior — instruction selection, ABI, or codegen for AMD GPUs.",
+    ),
+    (
+        re.compile(r"(?i)spir-?v|spirv"),
+        "Touches SPIR-V translation or tooling used by portable GPU / offload stacks.",
+    ),
+    (
+        re.compile(r"(?i)\bCIR\b|clang.?ir|matrix splat"),
+        "Extends Clang IR (CIR) language/codegen coverage — relevant to frontend and HLSL/matrix lowering.",
+    ),
+    (
+        re.compile(r"(?i)vectoriz|loop.?vector|sve\b|sve2|avx512.*vector"),
+        "Affects automatic vectorization and SIMD code generation.",
+    ),
+    (
+        re.compile(r"(?i)register.?alloc|regalloc"),
+        "Touches register allocation — impacts backend quality and spill behavior.",
+    ),
+    (
+        re.compile(r"(?i)globalisel|selectiondag|isel|instruction select"),
+        "Changes instruction selection — how IR becomes machine instructions.",
+    ),
     (re.compile(r"(?i)inline|inlining"), "Affects inlining decisions and resulting code size/performance tradeoffs."),
     (re.compile(r"(?i)alias.?analy"), "Changes alias analysis — foundational for many middle-end optimizations."),
-    (re.compile(r"(?i)compile.?time|compile time"), "Aimed at compile-time cost (message claims this; verify in source)."),
+    (
+        re.compile(r"(?i)compile.?time|compile time"),
+        "Aimed at compile-time cost (message claims this; verify in source).",
+    ),
     (re.compile(r"(?i)security|cve|sanitizer"), "Related to correctness/security hardening."),
-    (re.compile(r"(?i)abi\b|calling.?convention"), "Touches ABI / calling-convention behavior — can affect interoperability."),
-    (re.compile(r"(?i)new backend|add support|introduce support"), "Adds or extends target/feature support."),
+    (
+        re.compile(r"(?i)\babi\b|calling.?convention"),
+        "Touches ABI / calling-convention behavior — can affect interoperability.",
+    ),
+    (
+        re.compile(r"(?i)add support|implement support|introduce support|initial support"),
+        "Adds or extends target/feature support.",
+    ),
     (re.compile(r"(?i)diagnostic|error message"), "Improves diagnostics seen by language users."),
-    (re.compile(r"(?i)debug.?info|dwarf|lldb"), "Affects debug information or debugger experience."),
-    (re.compile(r"(?i)offload|openmp|cuda|hip|gpu"), "Touches GPU/offloading code generation or runtime."),
-    (re.compile(r"(?i)mlir|dialect|linalg|tosa"), "Changes MLIR dialect/transform infrastructure used by AI and accelerator compilers."),
-    (re.compile(r"(?i)fix|ice|crash|assert"), "Correctness fix — prevents miscompile or compiler crash (per commit subject)."),
-    (re.compile(r"(?i)optimize|performance|faster"), "Described as an optimization/performance change in the source message."),
+    (
+        re.compile(r"(?i)debug.?info|dwarf|lldb"),
+        "Affects debug information or debugger experience.",
+    ),
+    (
+        re.compile(r"(?i)offload|openmp|cuda|hip|\bgpu\b"),
+        "Touches GPU/offloading code generation or runtime.",
+    ),
+    (
+        re.compile(r"(?i)linalg|tosa|stablehlo|torch-mlir"),
+        "Changes MLIR dialect/transform infrastructure used by AI and accelerator compilers.",
+    ),
+    (
+        re.compile(r"(?i)\bmlir\b|dialect"),
+        "Changes MLIR dialect or transformation infrastructure.",
+    ),
+    (
+        re.compile(r"(?i)\bfix\b|ice|crash|assert"),
+        "Correctness fix — prevents miscompile or compiler crash (per commit subject).",
+    ),
+    (
+        re.compile(r"(?i)optimize|performance|faster"),
+        "Described as an optimization/performance change in the source message.",
+    ),
     (re.compile(r"(?i)legaliz"), "Changes legalization — which IR patterns a backend can handle."),
     (re.compile(r"(?i)schedule|schedul"), "Touches instruction scheduling / machine models."),
+    (
+        re.compile(r"(?i)vec_perm|subvector|splat"),
+        "Touches vector permute / subvector lowering used by SIMD backends.",
+    ),
 ]
 
 _TYPE_RULES: list[tuple[re.Pattern[str], ChangeType]] = [
@@ -148,10 +205,20 @@ def _what_changed(story: Story, subject: str) -> str:
 
 
 def _why_it_matters(story: Story, subject: str) -> tuple[str, bool]:
-    blob = f"{subject}\n{story.title}\n{' '.join(story.areas)}\n{' '.join(story.paths[:8])}"
+    # Prefer subject/title — areas previously caused generic false matches
+    # (e.g. test files named *_vector.mlir → "vectorization").
+    primary = f"{subject}\n{story.title}"
+    paths = "\n".join(story.paths[:12])
     for pat, msg in _WHY_RULES:
-        if pat.search(blob):
+        if pat.search(primary):
             return msg, False
+    for pat, msg in _WHY_RULES:
+        if pat.search(paths):
+            return msg, False
+    if "GPU" in story.domains:
+        return "Touches GPU compiler infrastructure or target lowering.", False
+    if "Frontend" in story.stages and "Languages" in story.domains:
+        return "Extends language frontend coverage — verify impact in the linked source.", False
     return (
         "The practical impact is not yet clear from the commit message alone.",
         True,

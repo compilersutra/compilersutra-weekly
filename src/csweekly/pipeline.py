@@ -49,8 +49,9 @@ def enrich_story(story: Story) -> Story:
     ):
         story.category = "mlir"
         story.project = "mlir"
-    if not story.areas:
-        story.areas = classify_areas(story.paths, story.title)
+    # Paths are source of truth — always refresh so classification fixes apply
+    # when regenerating reports from an existing changelog.
+    story.areas = classify_areas(story.paths, story.title)
     if not story.project:
         story.project = story.category
     story.importance = assign_importance(story)

@@ -38,7 +38,14 @@ Because.
     home = (site / "index.html").read_text(encoding="utf-8")
     assert "explained every week" in home.lower() or "worth understanding" in home.lower()
     assert "Read latest issue" in home
+    assert ">Explore<" in home
+    assert ">Topics<" in home
+    assert "Backend hardware" in home
     assert "theme-toggle" in home
     assert "data-theme" in home
     assert (site / "assets" / "theme.js").is_file()
     assert (site / "assets" / "site.css").is_file()
+    assert (site / "assets" / "filters.js").is_file()
+    explore = (site / "explore" / "index.html").read_text(encoding="utf-8")
+    assert "filters.js" in explore
+    assert ">Explore<" in explore

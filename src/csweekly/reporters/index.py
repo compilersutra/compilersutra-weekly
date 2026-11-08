@@ -20,6 +20,13 @@ TOPICS: list[dict[str, object]] = [
         "id": "llvm",
         "label": "LLVM",
         "blurb": "Optimization · IR · CodeGen · Clang · backends",
+        "about": (
+            "LLVM is a project ecosystem spanning Clang/CIR frontends, middle-end IR "
+            "and transforms, and many CPU/GPU backends. Treat it as infrastructure — "
+            "not a single stage or domain."
+        ),
+        "stages": ["Frontend", "Middle-end", "Backend", "Runtime & Toolchain"],
+        "domains": ["CPU", "GPU", "Languages"],
         "headings": ["LLVM", "Clang", "High signal", "By topic"],
         "domain": "CPU",
     },
@@ -27,6 +34,13 @@ TOPICS: list[dict[str, object]] = [
         "id": "gcc",
         "label": "GCC",
         "blurb": "GIMPLE · RTL · middle-end · targets",
+        "about": (
+            "GCC covers language frontends, GIMPLE/RTL middle-end work, and a large "
+            "set of CPU (and some accelerator) backends. Changes here often affect "
+            "ABI, vectorization, and target-specific codegen."
+        ),
+        "stages": ["Frontend", "Middle-end", "Backend"],
+        "domains": ["CPU", "Languages"],
         "headings": ["GCC", "By topic"],
         "domain": "CPU",
     },
@@ -34,6 +48,13 @@ TOPICS: list[dict[str, object]] = [
         "id": "mlir",
         "label": "MLIR",
         "blurb": "Dialects · transformations · infrastructure",
+        "about": (
+            "MLIR is a multi-level IR framework used by AI compilers, GPU stacks, "
+            "and hardware generators. A dialect change may be middle-end IR work, "
+            "GPU lowering, or both — classify from the change, not the repo name."
+        ),
+        "stages": ["Middle-end", "Backend"],
+        "domains": ["AI / ML", "GPU", "Accelerators"],
         "headings": ["MLIR", "By topic"],
         "domain": "AI / ML",
     },
@@ -41,6 +62,12 @@ TOPICS: list[dict[str, object]] = [
         "id": "ai",
         "label": "AI Compilers",
         "blurb": "Triton · XLA · IREE · TVM · MLIR",
+        "about": (
+            "AI / ML compilers lower models onto CPUs, GPUs, and accelerators. "
+            "Follow this topic for Triton, XLA, IREE, TVM and related stacks."
+        ),
+        "stages": ["Middle-end", "Backend", "Runtime & Toolchain"],
+        "domains": ["AI / ML", "GPU", "Accelerators"],
         "headings": ["AI Compilers", "By topic"],
         "domain": "AI / ML",
     },
@@ -48,6 +75,12 @@ TOPICS: list[dict[str, object]] = [
         "id": "gpu",
         "label": "GPU",
         "blurb": "AMDGPU · NVPTX · SPIR-V · offloading",
+        "about": (
+            "GPU compiler work spans NVPTX/NVVM, AMDGPU, SPIR-V, and offload "
+            "runtimes. Prefer Backend + GPU labels when the change is target lowering."
+        ),
+        "stages": ["Backend", "Runtime & Toolchain", "Middle-end"],
+        "domains": ["GPU"],
         "headings": ["GPU Compilers", "By topic"],
         "domain": "GPU",
     },
@@ -55,6 +88,12 @@ TOPICS: list[dict[str, object]] = [
         "id": "research",
         "label": "Research",
         "blurb": "Papers, benchmarks, technical notes",
+        "about": (
+            "Selected papers, RFCs, and technical discussions that help explain "
+            "where compiler research is heading — not a literature dump."
+        ),
+        "stages": [],
+        "domains": ["Research"],
         "headings": ["Worth reading", "Research papers"],
         "domain": "Research",
     },
@@ -214,6 +253,7 @@ def _topic_bar(active: str = "", *, depth: int = 0) -> str:
 def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
     payload = _load_changelog(latest.path) if latest else {}
     featured = ""
+    recent = ""
     latest_block = '<p class="topic-empty">No issues yet.</p>'
     if latest:
         num = f"#{latest.issue_number:03d}" if latest.issue_number else latest.date
@@ -227,51 +267,62 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
             ) + "</ul>"
         latest_block = f"""
         <div class="latest-card">
-          <p class="hero-kicker">Latest issue</p>
+          <p class="hero-kicker">This week</p>
           <h2>Issue {html.escape(num)}</h2>
           <p class="latest-meta">{html.escape(latest.date)} · {html.escape(latest.window)}</p>
           <p class="latest-cover">{hs} high signal · {wk} worth knowing</p>
           {overview}
           <div class="cta-row">
             <a class="btn btn-primary" href="{html.escape(latest.href_html)}">Read latest issue →</a>
-            <a class="btn btn-ghost" href="archive.html">Archive</a>
-            <a class="btn btn-ghost" href="changelog.html">Search stories</a>
+            <a class="btn btn-ghost" href="explore/index.html">Explore ecosystem</a>
+            <a class="btn btn-ghost" href="archive.html">Browse archive</a>
           </div>
         </div>
 """
-        # Featured development from deep_dive or first high_signal
         feat = payload.get("deep_dive") or (payload.get("high_signal") or [None])[0]
         if feat:
             why = html.escape((feat.get("why_it_matters") or "")[:220])
             what = html.escape((feat.get("what_changed") or feat.get("title") or "")[:240])
             who = html.escape(", ".join(feat.get("who_should_care") or [])[:140])
-            stages = " · ".join((feat.get("stages") or [])[:2])
-            domains = " · ".join((feat.get("domains") or [])[:2])
             src = "#"
             stories = feat.get("stories") or []
             if stories:
                 src = html.escape(stories[0].get("source_url") or "#")
             badges = "".join(
-                f'<span class="badge">{html.escape(b)}</span>'
-                for b in ([feat.get("change_type")] + (feat.get("stages") or [])[:1] + (feat.get("domains") or [])[:1])
+                f'<span class="badge">{html.escape(str(b))}</span>'
+                for b in (
+                    [feat.get("change_type")]
+                    + (feat.get("stages") or [])[:1]
+                    + (feat.get("domains") or [])[:1]
+                )
                 if b
             )
             featured = f"""
       <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
         <p class="hero-kicker">Featured development</p>
-        <h2 id="featured-heading" class="section-label">Selected for closer reading</h2>
+        <h2 id="featured-heading" class="section-label">A compiler change worth understanding</h2>
         <article class="feature-card">
           <h2>{html.escape((feat.get("title") or "")[:140])}</h2>
           <div class="badge-row">{badges}</div>
           <p class="secondary"><strong>What changed.</strong> {what}</p>
           <p class="secondary"><strong>Why it matters.</strong> {why}</p>
           <p class="muted"><strong>Who should care.</strong> {who or "Compiler engineers"}</p>
-          <p class="muted">{html.escape(stages)} · {html.escape(domains)}</p>
           <div class="cta-row" style="margin-top:0.85rem">
-            <a class="btn btn-primary" href="{src}" rel="noopener noreferrer">Original source</a>
-            <a class="btn btn-ghost" href="{html.escape(latest.href_html)}">In this issue</a>
+            <a class="btn btn-primary" href="{html.escape(latest.href_html)}#deep-dive">Read technical analysis →</a>
+            <a class="btn btn-ghost" href="{src}" rel="noopener noreferrer">Original source</a>
           </div>
         </article>
+      </section>
+"""
+        cards = "".join(
+            _group_html_card(g, depth=0) for g in (payload.get("high_signal") or [])[:6]
+        )
+        if cards:
+            recent = f"""
+      <section class="wrap" style="padding:1.5rem 0 0.5rem" aria-labelledby="latest-dev">
+        <h2 id="latest-dev" class="section-label">Latest developments</h2>
+        <p class="muted">High-signal items from the current issue.</p>
+        <div class="story-grid">{cards}</div>
       </section>
 """
 
@@ -289,32 +340,52 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
   <main>
     <section class="hero">
       <div class="wrap">
-        <h1>CompilerSutra Weekly</h1>
+        <p class="hero-kicker">Compiler ecosystem intelligence</p>
+        <h1>The compiler changes worth understanding.</h1>
         <p class="tagline">The compiler ecosystem, explained every week.</p>
-        <p class="lede">Important developments across CPU, GPU, AI, accelerator and language compilers —
-        selected, organized and explained for engineers. Not every commit — the changes worth knowing.</p>
+        <p class="lede">One weekly view of what is changing across compilers, runtimes,
+        hardware targets and research — selected and explained for engineers.</p>
         {latest_block}
       </div>
     </section>
     {featured}
     <div class="wrap" style="padding-top:2rem">
       <h2 class="section-label">Explore the compiler pipeline</h2>
-      <p class="muted" style="margin-bottom:0.85rem">A useful organizing model — not a claim that every compiler looks the same.</p>
+      <p class="muted" style="margin-bottom:0.85rem">An organizing model — not a claim every compiler looks the same.
+        <a href="explore/index.html">View all filters →</a></p>
       <div class="pipeline">
-        <a class="pipeline-step" href="explore/stage-frontend.html"><strong>Frontend</strong><span>Parsing · semantics · languages</span></a>
-        <a class="pipeline-step" href="explore/stage-middle-end.html"><strong>Middle-end</strong><span>IR · analysis · optimization</span></a>
-        <a class="pipeline-step" href="explore/stage-backend.html"><strong>Backend</strong><span>CodeGen · targets · ABI</span></a>
-        <a class="pipeline-step" href="explore/stage-runtime-toolchain.html"><strong>Runtime &amp; Toolchain</strong><span>JIT · linkers · debug</span></a>
+        <a class="pipeline-step" href="explore/stage-frontend.html"><strong>01 Frontend</strong><span>Parsing · types · semantics</span></a>
+        <a class="pipeline-step" href="explore/stage-middle-end.html"><strong>02 Middle-end</strong><span>IR · analysis · optimization</span></a>
+        <a class="pipeline-step" href="explore/stage-backend.html"><strong>03 Backend</strong><span>CodeGen · register allocation</span></a>
+        <a class="pipeline-step" href="explore/stage-runtime-toolchain.html"><strong>04 Runtime</strong><span>JIT · linkers · toolchains</span></a>
       </div>
-      <h2 class="section-label">Explore by domain</h2>
+      <h2 class="section-label">Backend hardware</h2>
+      <div class="hw-grid" aria-label="Hardware targets">
+        <div class="hw-col"><h3>CPU</h3>
+          <a href="explore/domain-cpu.html">x86-64</a>
+          <a href="explore/domain-cpu.html">AArch64</a>
+          <a href="explore/domain-cpu.html">RISC-V</a>
+        </div>
+        <div class="hw-col"><h3>GPU</h3>
+          <a href="explore/domain-gpu.html">NVIDIA</a>
+          <a href="explore/domain-gpu.html">AMD</a>
+          <a href="explore/domain-gpu.html">Intel</a>
+          <a href="explore/domain-gpu.html">Portable GPU</a>
+        </div>
+        <div class="hw-col"><h3>AI accelerators</h3>
+          <a href="explore/domain-ai-ml.html">TPU</a>
+          <a href="explore/domain-accelerators.html">NPU</a>
+          <a href="explore/domain-accelerators.html">ASIC</a>
+        </div>
+        <div class="hw-col"><h3>Other</h3>
+          <a href="explore/domain-fpga.html">FPGA</a>
+          <a href="explore/domain-dsp.html">DSP</a>
+          <a href="explore/domain-quantum.html">Quantum</a>
+        </div>
+      </div>
+      <h2 class="section-label">Explore domains &amp; projects</h2>
       <div class="buckets">{domain_cards}</div>
-      <h2 class="section-label">Discover by technical lens</h2>
-      <div class="dim-row">
-        <a href="explore/index.html#stages">Compiler stages</a>
-        <a href="explore/index.html#domains">Domains / hardware</a>
-        <a href="explore/index.html#areas">Technical areas</a>
-        <a href="changelog.html">Search all stories</a>
-      </div>
+      {recent}
       <section class="panel" aria-labelledby="archive-heading">
         <h2 id="archive-heading">Archive</h2>
         <ul class="issue-list">{items if items else '<li class="topic-empty">No issues yet.</li>'}</ul>
@@ -382,19 +453,64 @@ def _page_explore_hub(metas: list[IssueMeta]) -> str:
         f'<a class="chip" href="area-{html.escape(_slug(a))}.html">{html.escape(a)}</a>'
         for a in TECH_AREAS
     )
+    flat: list[dict] = []
+    for meta in metas:
+        payload = _load_changelog(meta.path)
+        for g in payload.get("groups") or meta.groups or []:
+            flat.append(
+                {
+                    "title": g.get("title"),
+                    "why": g.get("why_it_matters"),
+                    "what": g.get("what_changed"),
+                    "stages": g.get("stages") or [],
+                    "domains": g.get("domains") or [],
+                    "areas": g.get("technical_areas") or [],
+                    "project": g.get("project") or g.get("category") or "",
+                    "change_type": g.get("change_type") or "",
+                    "signal": g.get("signal") or "",
+                    "href": f"../{meta.href_html}",
+                    "issue": f"#{meta.issue_number:03d}" if meta.issue_number else meta.date,
+                    "source": ((g.get("stories") or [{}])[0].get("source_url") or "#"),
+                }
+            )
+    payload_json = json.dumps(flat)
     body = f"""
   {_topic_bar(active="explore", depth=1)}
-  <main class="wrap article-narrow">
+  <main class="wrap">
     <p class="hero-kicker">Explore</p>
-    <h1 class="page-title">Three ways to discover</h1>
-    <p class="muted">Independent filters over the same curated stories. Combine them mentally: GPU + Backend + CodeGen.</p>
-    <h2 id="stages">By compiler stage</h2>
+    <h1 class="page-title">Discover across stages, domains and projects</h1>
+    <p class="muted">Combine filters. Example: Backend + GPU + Code generation + LLVM.
+      Shareable via the URL query string.</p>
+    <div class="filters explore-filters" id="explore-filters">
+      <input id="q" type="search" placeholder="Search titles, why, projects…" aria-label="Search"/>
+      <select id="stage" aria-label="Compiler stage"><option value="">All stages</option>
+        {''.join(f'<option value="{html.escape(s)}">{html.escape(s)}</option>' for s in STAGES)}
+      </select>
+      <select id="domain" aria-label="Domain"><option value="">All domains</option>
+        {''.join(f'<option value="{html.escape(d)}">{html.escape(d)}</option>' for d in DOMAINS)}
+      </select>
+      <select id="area" aria-label="Technical area"><option value="">All areas</option>
+        {''.join(f'<option value="{html.escape(a)}">{html.escape(a)}</option>' for a in TECH_AREAS)}
+      </select>
+      <select id="project" aria-label="Project"><option value="">All projects</option></select>
+    </div>
+    <div class="chip-row" id="active-filters" aria-live="polite"></div>
+    <p id="count" class="muted"></p>
+    <div id="results" class="story-grid"></div>
+    <h2 id="stages" class="section-label" style="margin-top:2.5rem">Browse by stage</h2>
     <div class="chip-row">{stage_links}</div>
-    <h2 id="domains">By domain / hardware</h2>
+    <h2 id="domains" class="section-label">Browse by domain</h2>
     <div class="chip-row">{domain_links}</div>
-    <h2 id="areas">By technical area</h2>
+    <h2 id="areas" class="section-label">Browse by technical area</h2>
     <div class="chip-row">{area_links}</div>
   </main>
+  <script src="../assets/filters.js" defer></script>
+  <script>
+  window.CSW_EXPLORE = {payload_json};
+  document.addEventListener('DOMContentLoaded', function () {{
+    if (window.CSW && window.CSW.mountExplore) window.CSW.mountExplore(window.CSW_EXPLORE);
+  }});
+  </script>
 """
     return _shell("Explore — CompilerSutra Weekly", body, active="explore", depth=1)
 
@@ -450,21 +566,28 @@ def _page_topic(topic: dict[str, object], metas: list[IssueMeta]) -> str:
             if section_md:
                 used = str(h)
                 break
-        # Prefer groups from changelog matching category/domain
         groups = [
             g
             for g in meta.groups
             if (g.get("category") == topic["id"])
-            or (topic["id"] == "llvm" and g.get("category") in {"llvm"})
-            or (str(topic.get("domain")) in (g.get("domains") or []))
+            or (topic["id"] == "llvm" and g.get("category") in {"llvm", "clang"})
+            or (topic["id"] == "gpu" and "GPU" in (g.get("domains") or []))
+            or (
+                topic["id"] == "ai"
+                and (
+                    g.get("category") == "ai"
+                    or "AI / ML" in (g.get("domains") or [])
+                )
+            )
+            or (str(topic.get("domain")) in (g.get("domains") or []) and topic["id"] not in {"llvm", "gcc"})
         ]
         if groups:
-            cards = "".join(_group_html_card(g) for g in groups[:10])
+            cards = "".join(_group_html_card(g, depth=1) for g in groups[:10])
             num = f"#{meta.issue_number:03d}" if meta.issue_number else meta.date
             blocks.append(
                 f"""<section class="topic-issue-block">
   <h3><a href="../{html.escape(meta.href_html)}">{html.escape(num)} · full issue</a></h3>
-  <p class="muted">What's moving · {html.escape(meta.window)}</p>
+  <p class="muted">Latest developments · {html.escape(meta.window)}</p>
   <div class="story-grid">{cards}</div>
 </section>"""
             )
@@ -480,30 +603,66 @@ def _page_topic(topic: dict[str, object], metas: list[IssueMeta]) -> str:
 </section>"""
         )
     content = "\n".join(blocks) or '<p class="topic-empty">No stories yet.</p>'
+    stage_chips = " ".join(
+        f'<a class="chip" href="../explore/stage-{html.escape(_slug(s))}.html">{html.escape(s)}</a>'
+        for s in (topic.get("stages") or [])
+    )
+    domain_chips = " ".join(
+        f'<a class="chip" href="../explore/domain-{html.escape(_slug(d))}.html">{html.escape(d)}</a>'
+        for d in (topic.get("domains") or [])
+    )
+    related = ""
+    if stage_chips or domain_chips:
+        related = f"""
+    <section class="panel">
+      <h2 class="section-label" style="font-size:1.1rem">Related discovery</h2>
+      <p class="muted">Related stages</p>
+      <div class="chip-row">{stage_chips or '<span class="muted">—</span>'}</div>
+      <p class="muted">Related domains</p>
+      <div class="chip-row">{domain_chips or '<span class="muted">—</span>'}</div>
+    </section>
+"""
     body = f"""
   {_topic_bar(active=str(topic["id"]), depth=1)}
   <main class="wrap article-narrow">
-    <p class="hero-kicker">Topic</p>
+    <p class="hero-kicker">Topic · project ecosystem</p>
     <h1 class="page-title">{html.escape(str(topic["label"]))}</h1>
-    <p class="muted">{html.escape(str(topic["blurb"]))}</p>
+    <p class="muted">{html.escape(str(topic.get("about") or topic["blurb"]))}</p>
+    {related}
+    <h2 class="section-label">Latest developments</h2>
     {content}
   </main>
 """
     return _shell(f'{topic["label"]} — CompilerSutra Weekly', body, active="topics", depth=1)
 
 
-def _group_html_card(g: dict) -> str:
+def _group_html_card(g: dict, *, depth: int = 0, compact: bool = False) -> str:
     title = html.escape((g.get("title") or "")[:120])
-    why = html.escape((g.get("why_it_matters") or "Impact not yet clear.")[:180])
+    why = html.escape((g.get("why_it_matters") or "Impact not yet clear.")[:200])
+    what = html.escape((g.get("what_changed") or "")[:160])
     who = html.escape(", ".join(g.get("who_should_care") or [])[:120])
     ctype = html.escape(g.get("change_type") or "Other")
+    badges = "".join(
+        f'<span class="badge">{html.escape(str(b))}</span>'
+        for b in (g.get("stages") or [])[:2] + (g.get("domains") or [])[:2]
+        if b
+    )
     url = "#"
     stories = g.get("stories") or []
     if stories:
         url = html.escape(stories[0].get("source_url") or "#")
+    if compact:
+        return f"""<article class="story-row">
+  <h4><a href="{url}" rel="noopener noreferrer">{title}</a></h4>
+  <p class="secondary">{why}</p>
+  <div class="meta">{ctype} · {who}</div>
+</article>"""
+    what_block = f'<p class="secondary"><strong>What.</strong> {what}</p>' if what else ""
     return f"""<article class="story-card">
   <h4><a href="{url}" rel="noopener noreferrer">{title}</a></h4>
-  <p>{why}</p>
+  <div class="badge-row">{badges}</div>
+  {what_block}
+  <p><strong>Why.</strong> {why}</p>
   <div class="meta">{ctype} · {who}</div>
 </article>"""
 
@@ -663,12 +822,28 @@ def _page_changelog(metas: list[IssueMeta]) -> str:
 
 
 def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: IssueMeta | None) -> str:
-    content = markdown_to_html(md)
-    toc_links = [
-        f'<a href="#{html.escape(m.group(1))}">{html.escape(m.group(2))}</a>'
-        for m in re.finditer(r'<h2 id="([^"]+)">([^<]+)</h2>', content)
-    ]
-    toc = f'<nav class="toc" aria-label="On this page">{"".join(toc_links)}</nav>' if toc_links else ""
+    payload = _load_changelog(meta.path)
+    num = f"#{meta.issue_number:03d}" if meta.issue_number else meta.date
+    if payload.get("high_signal") or payload.get("groups"):
+        content = _render_issue_html(meta, payload)
+        toc_ids = [
+            ("week-overview", "This week"),
+            ("high-signal", "High signal"),
+            ("worth-knowing", "Worth knowing"),
+            ("moving-stories", "Moving stories"),
+            ("worth-reading", "Worth reading"),
+            ("deep-dive", "Deep dive"),
+            ("by-topic", "By topic"),
+        ]
+        toc_links = "".join(f'<a href="#{i}">{html.escape(l)}</a>' for i, l in toc_ids)
+        toc = f'<nav class="toc" aria-label="On this page">{toc_links}</nav>'
+    else:
+        content = markdown_to_html(md)
+        toc_links = [
+            f'<a href="#{html.escape(m.group(1))}">{html.escape(m.group(2))}</a>'
+            for m in re.finditer(r'<h2 id="([^"]+)">([^<]+)</h2>', content)
+        ]
+        toc = f'<nav class="toc" aria-label="On this page">{"".join(toc_links)}</nav>' if toc_links else ""
     nav_bits = ['<a class="back" href="../../archive.html">← Archive</a>']
     if prev_m:
         nav_bits.append(
@@ -678,17 +853,162 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
         nav_bits.append(
             f'<a class="back" href="../{html.escape(next_m.path.parent.name)}/{html.escape(next_m.date)}.html">Next →</a>'
         )
-    num = f"#{meta.issue_number:03d}" if meta.issue_number else meta.date
     body = f"""
   {_topic_bar(depth=2)}
-  <article class="article">
+  <article class="article issue-article">
     <div class="issue-nav">{" · ".join(nav_bits)}</div>
     <p class="hero-kicker">Issue {html.escape(num)}</p>
+    <h1 class="page-title">CompilerSutra Weekly — {html.escape(num)}</h1>
+    <p class="muted">{html.escape(meta.window)}</p>
     {toc}
     {content}
   </article>
 """
-    return _shell(f"{num} — CompilerSutra Weekly", body, active="archive", depth=2)
+    return _shell(f"{num} — CompilerSutra Weekly", body, active="home", depth=2)
+
+
+def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
+    parts: list[str] = []
+    overview = payload.get("week_overview") or []
+    if overview:
+        items = "".join(f"<li>{html.escape(b)}</li>" for b in overview)
+        parts.append(
+            f'<section id="week-overview" class="issue-section">'
+            f'<h2>The week in compiler development</h2>'
+            f'<ul class="overview-list">{items}</ul></section>'
+        )
+
+    high = payload.get("high_signal") or []
+    if high:
+        cards = "".join(_issue_story_card(g, prominent=True) for g in high)
+        parts.append(
+            f'<section id="high-signal" class="issue-section">'
+            f"<h2>High signal</h2>"
+            f"<p class=\"muted\">Changes that affect behavior, architecture support, or direction.</p>"
+            f'<div class="story-stack">{cards}</div></section>'
+        )
+
+    worth = payload.get("worth_knowing") or []
+    if worth:
+        rows = "".join(_issue_story_card(g, prominent=False) for g in worth)
+        parts.append(
+            f'<section id="worth-knowing" class="issue-section">'
+            f"<h2>Worth knowing</h2>"
+            f'<div class="story-stack compact">{rows}</div></section>'
+        )
+
+    moving = payload.get("moving_stories") or {}
+    if moving:
+        blocks = []
+        for track, items in sorted(moving.items()):
+            lis = "".join(f"<li>{html.escape(str(i))}</li>" for i in items)
+            blocks.append(f"<h3>{html.escape(str(track))}</h3><ul>{lis}</ul>")
+        parts.append(
+            f'<section id="moving-stories" class="issue-section">'
+            f"<h2>Moving stories</h2>{''.join(blocks)}</section>"
+        )
+
+    # Worth reading from markdown section when present
+    reading = _extract_section(meta.md, "Worth reading")
+    if reading:
+        parts.append(
+            f'<section id="worth-reading" class="issue-section">'
+            f"<h2>Worth reading</h2>"
+            f"{markdown_to_html(reading)}</section>"
+        )
+
+    deep = payload.get("deep_dive")
+    if deep:
+        parts.append(_deep_dive_html(deep))
+
+    by_topic = _extract_section(meta.md, "By topic")
+    if by_topic:
+        parts.append(
+            f'<section id="by-topic" class="issue-section">'
+            f"<h2>By topic</h2>"
+            f"{markdown_to_html(by_topic)}</section>"
+        )
+
+    parts.append(
+        '<p class="muted" style="margin-top:2rem">CompilerSutra Weekly explains '
+        "<em>why you should care</em> — we do not invent benchmarks or completion status.</p>"
+    )
+    return "\n".join(parts)
+
+
+def _issue_story_card(g: dict, *, prominent: bool) -> str:
+    title = html.escape((g.get("title") or "")[:140])
+    proj = html.escape((g.get("project") or g.get("category") or "").upper())
+    what = html.escape(g.get("what_changed") or "")
+    why = html.escape(g.get("why_it_matters") or "Impact not yet clear from the source alone.")
+    who = html.escape(", ".join(g.get("who_should_care") or []) or "Compiler engineers")
+    ctype = html.escape(g.get("change_type") or "Other")
+    stages = html.escape(", ".join(g.get("stages") or []) or "—")
+    domains = html.escape(", ".join(g.get("domains") or []) or "—")
+    badges = "".join(
+        f'<span class="badge">{html.escape(str(b))}</span>'
+        for b in (g.get("stages") or [])[:2] + (g.get("domains") or [])[:2]
+        if b
+    )
+    sources = []
+    for s in (g.get("stories") or [])[:5]:
+        sha = html.escape((s.get("related_ref") or "")[:8])
+        url = html.escape(s.get("source_url") or "#")
+        sources.append(f'<a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a>')
+    extra = ""
+    n = len(g.get("stories") or [])
+    if n > 5:
+        extra = f" <span class='muted'>(+{n - 5})</span>"
+    cls = "story-card issue-story" if prominent else "story-row"
+    return f"""<article class="{cls}">
+  <h3>{f'[{proj}] ' if proj else ''}{title}</h3>
+  <div class="badge-row">{badges}</div>
+  <p><strong>What changed.</strong> {what}</p>
+  <p><strong>Why it matters.</strong> {why}</p>
+  <p class="muted"><strong>Who should care.</strong> {who}</p>
+  <p class="meta">Type: {ctype} · Stage: {stages} · Domain: {domains}</p>
+  <p class="meta">Source: {" · ".join(sources)}{extra}</p>
+</article>"""
+
+
+def _deep_dive_html(g: dict) -> str:
+    title = html.escape((g.get("title") or "")[:160])
+    what = html.escape(g.get("what_changed") or "See source commits.")
+    why = html.escape(g.get("why_it_matters") or "Impact not yet clear.")
+    who = html.escape(", ".join(g.get("who_should_care") or []) or "Compiler engineers")
+    stages = html.escape(", ".join(g.get("stages") or []) or "unclassified")
+    domains = html.escape(
+        ", ".join((g.get("domains") or []) + (g.get("hardware_targets") or [])[:3])
+        or "unclassified"
+    )
+    uncertain = (
+        "<p class='muted'><em>Impact is not fully clear from commit subjects alone.</em></p>"
+        if g.get("impact_uncertain")
+        else ""
+    )
+    sources = []
+    for s in (g.get("stories") or [])[:8]:
+        sha = html.escape((s.get("related_ref") or "")[:8])
+        url = html.escape(s.get("source_url") or "#")
+        summary = html.escape((s.get("summary") or "")[:120])
+        sources.append(f'<li><a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a> — {summary}</li>')
+    return f"""<section id="deep-dive" class="issue-section deep-dive">
+  <h2>Deep dive</h2>
+  <article class="feature-card">
+    <h3>{title}</h3>
+    <ol class="deep-list">
+      <li><strong>Background</strong> — related work clustered as one development theme this week.</li>
+      <li><strong>What changed</strong> — {what}</li>
+      <li><strong>Why it matters</strong> — {why}</li>
+      <li><strong>Compiler stage</strong> — {stages}</li>
+      <li><strong>Domain / targets</strong> — {domains}</li>
+      <li><strong>Who should investigate next</strong> — {who}</li>
+    </ol>
+    {uncertain}
+    <h4>Evidence</h4>
+    <ul>{''.join(sources)}</ul>
+  </article>
+</section>"""
 
 
 def _issue_rows(metas: list[IssueMeta], *, depth: int) -> str:
@@ -757,50 +1077,58 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
   <title>{html.escape(title)}</title>
   <meta name="description" content="The compiler ecosystem, explained every week — selected, organized, and contextualized."/>
   <meta name="color-scheme" content="dark light"/>
-  <script src="{prefix}/theme.js"></script>
+  <script>
+  (function(){{try{{var t=localStorage.getItem('csw-theme');
+  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);}}catch(e){{}}}})();
+  </script>
+  <script src="{prefix}/theme.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{prefix}/site.css"/>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
       <a class="brand" href="{home}">CompilerSutra <span>Weekly</span><span class="brand-tag">The compiler ecosystem, explained every week.</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="{home}"{cur("home")}>Latest</a>
-        <a href="{stages}"{" aria-current=\"page\"" if active=="explore" else ""}>Stages</a>
-        <a href="{explore}">Domains</a>
-        <a href="{topics}"{" aria-current=\"page\"" if topic_active else ""}>Stories</a>
+        <a href="{explore}"{" aria-current=\"page\"" if active=="explore" else ""}>Explore</a>
+        <a href="{topics}"{" aria-current=\"page\"" if topic_active else ""}>Topics</a>
         <a href="{research}">Research</a>
         <a href="{archive}"{cur("archive")}>Archive</a>
-        <a href="{changelog}">Search</a>
         <a href="{about}"{cur("about")}>About</a>
       </nav>
       <div class="header-actions">
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false">Light</button>
-        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+        <a class="icon-btn" href="{html.escape(REPO_URL)}" rel="noopener noreferrer" title="GitHub">GitHub</a>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
-    <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav" id="mobile-nav" hidden>
       <div class="wrap" aria-label="Mobile">
         <a href="{home}">Latest</a>
-        <a href="{stages}">Compiler stages</a>
-        <a href="{explore}">Domains</a>
-        <a href="{topics}">Stories / projects</a>
+        <a href="{explore}">Explore</a>
+        <a href="{topics}">Topics</a>
         <a href="{research}">Research</a>
         <a href="{archive}">Archive</a>
-        <a href="{changelog}">Search</a>
         <a href="{about}">About</a>
+        <a href="{changelog}">Change log</a>
         <a href="{html.escape(REPO_URL)}" rel="noopener noreferrer">GitHub</a>
+        <a href="{html.escape(EDU_URL)}" rel="noopener noreferrer">CompilerSutra</a>
       </div>
     </div>
   </header>
+  <div id="main">
   {body}
+  </div>
   <footer class="site-footer">
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
       <div>
+        <a href="{changelog}">Change log</a> ·
         <a href="{html.escape(PAGES_URL)}">Pages</a> ·
         <a href="{html.escape(REPO_URL)}">Source</a> ·
         <a href="{html.escape(EDU_URL)}">Learn</a>

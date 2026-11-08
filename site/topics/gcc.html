@@ -6,45 +6,51 @@
   <title>GCC — CompilerSutra Weekly</title>
   <meta name="description" content="The compiler ecosystem, explained every week — selected, organized, and contextualized."/>
   <meta name="color-scheme" content="dark light"/>
-  <script src="../assets/theme.js"></script>
+  <script>
+  (function(){try{var t=localStorage.getItem('csw-theme');
+  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <script src="../assets/theme.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../assets/site.css"/>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
       <a class="brand" href="../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">The compiler ecosystem, explained every week.</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="../index.html">Latest</a>
-        <a href="../explore/index.html#stages">Stages</a>
-        <a href="../explore/index.html">Domains</a>
-        <a href="index.html" aria-current="page">Stories</a>
+        <a href="../explore/index.html">Explore</a>
+        <a href="index.html" aria-current="page">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
       </nav>
       <div class="header-actions">
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false">Light</button>
-        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+        <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
-    <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav" id="mobile-nav" hidden>
       <div class="wrap" aria-label="Mobile">
         <a href="../index.html">Latest</a>
-        <a href="../explore/index.html#stages">Compiler stages</a>
-        <a href="../explore/index.html">Domains</a>
-        <a href="index.html">Stories / projects</a>
+        <a href="../explore/index.html">Explore</a>
+        <a href="index.html">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
+        <a href="../changelog.html">Change log</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
     </div>
   </header>
+  <div id="main">
   
   
   <div class="subnav" aria-label="Secondary">
@@ -62,60 +68,56 @@
   </div>
 
   <main class="wrap article-narrow">
-    <p class="hero-kicker">Topic</p>
+    <p class="hero-kicker">Topic · project ecosystem</p>
     <h1 class="page-title">GCC</h1>
-    <p class="muted">GIMPLE · RTL · middle-end · targets</p>
+    <p class="muted">GCC covers language frontends, GIMPLE/RTL middle-end work, and a large set of CPU (and some accelerator) backends. Changes here often affect ABI, vectorization, and target-specific codegen.</p>
+    
+    <section class="panel">
+      <h2 class="section-label" style="font-size:1.1rem">Related discovery</h2>
+      <p class="muted">Related stages</p>
+      <div class="chip-row"><a class="chip" href="../explore/stage-frontend.html">Frontend</a> <a class="chip" href="../explore/stage-middle-end.html">Middle-end</a> <a class="chip" href="../explore/stage-backend.html">Backend</a></div>
+      <p class="muted">Related domains</p>
+      <div class="chip-row"><a class="chip" href="../explore/domain-cpu.html">CPU</a> <a class="chip" href="../explore/domain-languages.html">Languages</a></div>
+    </section>
+
+    <h2 class="section-label">Latest developments</h2>
     <section class="topic-issue-block">
   <h3><a href="../issues/2026/2026-11-07.html">#001 · full issue</a></h3>
-  <p class="muted">What's moving · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+  <p class="muted">Latest developments · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
   <div class="story-grid"><article class="story-card">
   <h4><a href="https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91" rel="noopener noreferrer">Extract subvectors via vec_perm_const</a></h4>
-  <p>Affects automatic vectorization and SIMD code generation.</p>
-  <div class="meta">Backend · Backend developers, Middle-end / optimization developers, CPU compiler developers, Performance engineers, CodeGen develo</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer">Implement support for matrix splat cast</a></h4>
-  <p>Affects automatic vectorization and SIMD code generation.</p>
-  <div class="meta">New capability · Frontend / Clang developers, Runtime and toolchain developers, CPU compiler developers, Middle-end / optimization develo</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer">Add RISCVABI helper functions for single/doubleFP and purecap</a></h4>
-  <p>Touches register allocation — impacts backend quality and spill behavior.</p>
-  <div class="meta">Code generation · Backend developers, CPU compiler developers, CodeGen developers, RISC-V developers, Runtime and toolchain developers</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer">Added support for functions to DWARFASTParserFortran</a></h4>
-  <p>Affects debug information or debugger experience.</p>
-  <div class="meta">Frontend · Runtime and toolchain developers, CPU compiler developers, Debugger / debug-info developers</div>
+  <div class="badge-row"><span class="badge">Backend</span><span class="badge">CPU</span></div>
+  <p class="secondary"><strong>What.</strong> Robin Dapp: RISC-V: Extract subvectors via vec_perm_const. (10 related commits) This groups 10 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Touches vector permute / subvector lowering used by SIMD backends.</p>
+  <div class="meta">Backend · Backend developers, CPU compiler developers, CodeGen developers, RISC-V developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/gcc-mirror/gcc/commit/6783b7375fff65e917637e86688918e808682f14" rel="noopener noreferrer">Add AVX512BMM bitreverse lowering</a></h4>
-  <p>Touches register allocation — impacts backend quality and spill behavior.</p>
+  <div class="badge-row"><span class="badge">Backend</span><span class="badge">CPU</span></div>
+  <p class="secondary"><strong>What.</strong> AVX512BMM bitreverse lowering was added. (8 related commits) This groups 8 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Correctness fix — prevents miscompile or compiler crash (per commit subject).</p>
   <div class="meta">Backend · Backend developers, CPU compiler developers, CodeGen developers</div>
 </article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/5bbc49f5d844871eadce3e06926dbd4cf538e180" rel="noopener noreferrer">Fix advancing past the end of an empty macro fusion list</a></h4>
-  <p>Correctness fix — prevents miscompile or compiler crash (per commit subject).</p>
-  <div class="meta">Bug fix · Middle-end / optimization developers, CPU compiler developers, Backend developers, Runtime and toolchain developers</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/2853de0422d2fd02dca9c4cc89a6def2a3794198" rel="noopener noreferrer">Add signatures for the divrem libcalls</a></h4>
-  <p>Affects automatic vectorization and SIMD code generation.</p>
-  <div class="meta">IR · Runtime and toolchain developers, CPU compiler developers, Middle-end / optimization developers, Performance engineers, </div>
-</article><article class="story-card">
   <h4><a href="https://github.com/gcc-mirror/gcc/commit/a364d69a3241c689dfc6b1c68269223986916831" rel="noopener noreferrer">Port vabd and vaba intrinscs to pragma-based framework</a></h4>
-  <p>Correctness fix — prevents miscompile or compiler crash (per commit subject).</p>
+  <div class="badge-row"><span class="badge">Backend</span><span class="badge">CPU</span></div>
+  <p class="secondary"><strong>What.</strong> Port vabd and vaba intrinscs to pragma-based framework. (7 related commits) This groups 7 related commits as one development theme.</p>
+  <p><strong>Why.</strong> Correctness fix — prevents miscompile or compiler crash (per commit subject).</p>
   <div class="meta">Backend · Backend developers, CPU compiler developers, CodeGen developers, AArch64 developers</div>
 </article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/65166e24ae3499f143ea9d8581e544c37b1977a7" rel="noopener noreferrer">Add signatures for size returning new and GPU profiling</a></h4>
-  <p>Touches GPU/offloading code generation or runtime.</p>
-  <div class="meta">IR · Middle-end / optimization developers, GPU compiler developers, Runtime and toolchain developers, CPU compiler developers</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/76ded34e479dbe2f022ec1e021ee36a6f4f4331f" rel="noopener noreferrer">Port MulMulBugFixPass to NewPM</a></h4>
-  <p>Correctness fix — prevents miscompile or compiler crash (per commit subject).</p>
-  <div class="meta">Bug fix · Backend developers, Runtime and toolchain developers, CPU compiler developers, CodeGen developers</div>
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/ea93a47f579607698186dbced583ad1729f4ccb8" rel="noopener noreferrer">Check CF_RETURN bit in ix86_expand_epilogue</a></h4>
+  <div class="badge-row"><span class="badge">Backend</span><span class="badge">CPU</span></div>
+  <p class="secondary"><strong>What.</strong> Check CF_RETURN bit in ix86_expand_epilogue. (5 related commits) This groups 5 related commits as one development theme.</p>
+  <p><strong>Why.</strong> The practical impact is not yet clear from the commit message alone.</p>
+  <div class="meta">Backend · Backend developers, CPU compiler developers, CodeGen developers, X86 developers</div>
 </article></div>
 </section>
   </main>
 
+  </div>
   <footer class="site-footer">
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
       <div>
+        <a href="../changelog.html">Change log</a> ·
         <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
         <a href="https://www.compilersutra.com/">Learn</a>

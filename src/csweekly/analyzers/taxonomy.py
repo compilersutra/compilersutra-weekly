@@ -41,20 +41,38 @@ TECH_AREAS = (
     "Research",
 )
 
+# Areas that should not dominate stage classification when stronger signals exist.
+_WEAK_AREAS = frozenset({"Testing", "Documentation", "Build infrastructure", "Other"})
+
 _PATH_STAGE: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"(^|/)(clang|flang|gcc/(c|cp|fortran)|rustc)/", re.I), "Frontend"),
-    (re.compile(r"(^|/)(llvm/lib/IR|llvm/lib/Analysis|llvm/lib/Transforms|mlir|gimple)/", re.I), "Middle-end"),
-    (re.compile(r"(^|/)(llvm/lib/CodeGen|llvm/lib/Target|gcc/config|SelectionDAG|GlobalISel)/", re.I), "Backend"),
-    (re.compile(r"(^|/)(compiler-rt|libcxx|lld|lldb|runtime|jit|linker)/", re.I), "Runtime & Toolchain"),
+    (
+        re.compile(
+            r"(^|/)(llvm/lib/IR|llvm/lib/Analysis|llvm/lib/Transforms|mlir|gimple)/",
+            re.I,
+        ),
+        "Middle-end",
+    ),
+    (
+        re.compile(
+            r"(^|/)(llvm/lib/CodeGen|llvm/lib/Target|gcc/config|SelectionDAG|GlobalISel)/",
+            re.I,
+        ),
+        "Backend",
+    ),
+    (
+        re.compile(r"(^|/)(compiler-rt|libcxx|lld|lldb|runtime|jit|linker)/", re.I),
+        "Runtime & Toolchain",
+    ),
 ]
 
 _PATH_DOMAIN: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"AMDGPU|NVPTX|SPIRV|cuda|rocm|hip|gpu", re.I), "GPU"),
-    (re.compile(r"mlir|triton|xla|iree|tvm|stablehlo|inductor|tensor", re.I), "AI / ML"),
+    (re.compile(r"AMDGPU|NVPTX|NVVM|SPIRV|cuda|rocm|hip|\bgpu\b", re.I), "GPU"),
+    (re.compile(r"triton|xla|iree|tvm|stablehlo|inductor|tensor", re.I), "AI / ML"),
     (re.compile(r"quantum|qiskit|cirq|qubit", re.I), "Quantum"),
     (re.compile(r"\bfpga\b|\bhls\b|\bverilog\b|\bvhdl\b|\bcirct\b", re.I), "FPGA"),
     (re.compile(r"X86|AArch64|RISCV|ARM|PowerPC|gcc/config", re.I), "CPU"),
-    (re.compile(r"clang|rust|swift|fortran|zig", re.I), "Languages"),
+    (re.compile(r"clang|rust|swift|fortran|zig|\bCIR\b", re.I), "Languages"),
 ]
 
 _AREA_MAP = {
@@ -96,7 +114,9 @@ def classify_dimensions(story: Story) -> tuple[list[str], list[str], list[str], 
         if pat.search(blob) and domain not in domains:
             domains.append(domain)
 
-    for area in story.areas:
+    strong = [a for a in story.areas if a not in _WEAK_AREAS]
+    weak = [a for a in story.areas if a in _WEAK_AREAS]
+    for area in strong:
         mapped = _AREA_MAP.get(area)
         if mapped:
             st, techs = mapped
@@ -105,8 +125,18 @@ def classify_dimensions(story: Story) -> tuple[list[str], list[str], list[str], 
             for t in techs:
                 if t not in areas:
                     areas.append(t)
+    # Weak areas only contribute tooling labels; stage only if nothing else found.
+    for area in weak:
+        mapped = _AREA_MAP.get(area)
+        if not mapped:
+            continue
+        st, techs = mapped
+        for t in techs:
+            if t not in areas:
+                areas.append(t)
+        if not stages and st not in stages:
+            stages.append(st)
 
-    # Category hints
     cat = story.category
     if cat == "ai" and "AI / ML" not in domains:
         domains.append("AI / ML")
@@ -116,15 +146,21 @@ def classify_dimensions(story: Story) -> tuple[list[str], list[str], list[str], 
         domains.append("Research")
         if "Research" not in areas:
             areas.append("Research")
+    # MLIR is infrastructure — do not force AI/ML when GPU evidence is present.
+    if cat == "mlir":
+        if "GPU" in domains or re.search(r"NVVM|NVPTX|AMDGPU|GPU", blob, re.I):
+            if "GPU" not in domains:
+                domains.append("GPU")
+            if "Backend" not in stages:
+                stages.append("Backend")
+        elif "AI / ML" not in domains:
+            domains.append("AI / ML")
     if cat in {"llvm", "gcc"} and "CPU" not in domains and "GPU" not in domains:
         domains.append("CPU")
-    if cat == "mlir" and "AI / ML" not in domains:
-        domains.append("AI / ML")
 
-    # Hardware targets from paths/title
     for name, pat in (
         ("AMDGPU", r"AMDGPU|amdgcn"),
-        ("NVPTX", r"NVPTX|nvptx"),
+        ("NVPTX", r"NVPTX|nvptx|NVVM|nvvm"),
         ("SPIR-V", r"SPIR-?V"),
         ("RISC-V", r"RISCV|RISC-V|riscv"),
         ("AArch64", r"AArch64|aarch64"),

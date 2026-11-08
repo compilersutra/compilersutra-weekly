@@ -6,45 +6,51 @@
   <title>CPU — CompilerSutra Weekly</title>
   <meta name="description" content="The compiler ecosystem, explained every week — selected, organized, and contextualized."/>
   <meta name="color-scheme" content="dark light"/>
-  <script src="../assets/theme.js"></script>
+  <script>
+  (function(){try{var t=localStorage.getItem('csw-theme');
+  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <script src="../assets/theme.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../assets/site.css"/>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
       <a class="brand" href="../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">The compiler ecosystem, explained every week.</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="../index.html">Latest</a>
-        <a href="index.html#stages" aria-current="page">Stages</a>
-        <a href="index.html">Domains</a>
-        <a href="../topics/index.html">Stories</a>
+        <a href="index.html" aria-current="page">Explore</a>
+        <a href="../topics/index.html">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
       </nav>
       <div class="header-actions">
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false">Light</button>
-        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+        <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
-    <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav" id="mobile-nav" hidden>
       <div class="wrap" aria-label="Mobile">
         <a href="../index.html">Latest</a>
-        <a href="index.html#stages">Compiler stages</a>
-        <a href="index.html">Domains</a>
-        <a href="../topics/index.html">Stories / projects</a>
+        <a href="index.html">Explore</a>
+        <a href="../topics/index.html">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
+        <a href="../changelog.html">Change log</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
     </div>
   </header>
+  <div id="main">
   
   
   <div class="subnav" aria-label="Secondary">
@@ -71,14 +77,16 @@
     </div>
     <section class="topic-issue-block">
   <h3><a href="../issues/2026/2026-11-07.html">#001 · 2026-11-07</a></h3>
-  <ul class="story-mini"><li><strong>Extract subvectors via vec_perm_const</strong><div class='meta'>Affects automatic vectorization and SIMD code generation.</div></li><li><strong>Implement support for matrix splat cast</strong><div class='meta'>Affects automatic vectorization and SIMD code generation.</div></li><li><strong>Add RISCVABI helper functions for single/doubleFP and purecap</strong><div class='meta'>Touches register allocation — impacts backend quality and spill behavior.</div></li><li><strong>Added support for functions to DWARFASTParserFortran</strong><div class='meta'>Affects debug information or debugger experience.</div></li><li><strong>Add AVX512BMM bitreverse lowering</strong><div class='meta'>Touches register allocation — impacts backend quality and spill behavior.</div></li><li><strong>Fix advancing past the end of an empty macro fusion list</strong><div class='meta'>Correctness fix — prevents miscompile or compiler crash (per commit subject).</div></li><li><strong>Add signatures for the divrem libcalls</strong><div class='meta'>Affects automatic vectorization and SIMD code generation.</div></li><li><strong>Port vabd and vaba intrinscs to pragma-based framework</strong><div class='meta'>Correctness fix — prevents miscompile or compiler crash (per commit subject).</div></li></ul>
+  <ul class="story-mini"><li><strong>Extract subvectors via vec_perm_const</strong><div class='meta'>Touches vector permute / subvector lowering used by SIMD backends.</div></li><li><strong>Implement support for matrix splat cast</strong><div class='meta'>Extends Clang IR (CIR) language/codegen coverage — relevant to frontend and HLSL/matrix lowering.</div></li><li><strong>Add RISCVABI helper functions for single/doubleFP and purecap</strong><div class='meta'>Changes instruction selection — how IR becomes machine instructions.</div></li><li><strong>Added support for functions to DWARFASTParserFortran</strong><div class='meta'>Affects debug information or debugger experience.</div></li><li><strong>Add AVX512BMM bitreverse lowering</strong><div class='meta'>Correctness fix — prevents miscompile or compiler crash (per commit subject).</div></li><li><strong>Fix advancing past the end of an empty macro fusion list</strong><div class='meta'>Correctness fix — prevents miscompile or compiler crash (per commit subject).</div></li><li><strong>Add signatures for the divrem libcalls</strong><div class='meta'>Correctness fix — prevents miscompile or compiler crash (per commit subject).</div></li><li><strong>Port vabd and vaba intrinscs to pragma-based framework</strong><div class='meta'>Correctness fix — prevents miscompile or compiler crash (per commit subject).</div></li></ul>
 </section>
   </main>
 
+  </div>
   <footer class="site-footer">
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
       <div>
+        <a href="../changelog.html">Change log</a> ·
         <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
         <a href="https://www.compilersutra.com/">Learn</a>

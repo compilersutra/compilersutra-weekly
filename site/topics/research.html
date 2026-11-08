@@ -6,45 +6,51 @@
   <title>Research — CompilerSutra Weekly</title>
   <meta name="description" content="The compiler ecosystem, explained every week — selected, organized, and contextualized."/>
   <meta name="color-scheme" content="dark light"/>
-  <script src="../assets/theme.js"></script>
+  <script>
+  (function(){try{var t=localStorage.getItem('csw-theme');
+  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <script src="../assets/theme.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../assets/site.css"/>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
       <a class="brand" href="../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">The compiler ecosystem, explained every week.</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="../index.html">Latest</a>
-        <a href="../explore/index.html#stages">Stages</a>
-        <a href="../explore/index.html">Domains</a>
-        <a href="index.html" aria-current="page">Stories</a>
+        <a href="../explore/index.html">Explore</a>
+        <a href="index.html" aria-current="page">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
       </nav>
       <div class="header-actions">
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false">Light</button>
-        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+        <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
-    <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav" id="mobile-nav" hidden>
       <div class="wrap" aria-label="Mobile">
         <a href="../index.html">Latest</a>
-        <a href="../explore/index.html#stages">Compiler stages</a>
-        <a href="../explore/index.html">Domains</a>
-        <a href="index.html">Stories / projects</a>
+        <a href="../explore/index.html">Explore</a>
+        <a href="index.html">Topics</a>
         <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
+        <a href="../changelog.html">Change log</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
     </div>
   </header>
+  <div id="main">
   
   
   <div class="subnav" aria-label="Secondary">
@@ -62,9 +68,19 @@
   </div>
 
   <main class="wrap article-narrow">
-    <p class="hero-kicker">Topic</p>
+    <p class="hero-kicker">Topic · project ecosystem</p>
     <h1 class="page-title">Research</h1>
-    <p class="muted">Papers, benchmarks, technical notes</p>
+    <p class="muted">Selected papers, RFCs, and technical discussions that help explain where compiler research is heading — not a literature dump.</p>
+    
+    <section class="panel">
+      <h2 class="section-label" style="font-size:1.1rem">Related discovery</h2>
+      <p class="muted">Related stages</p>
+      <div class="chip-row"><span class="muted">—</span></div>
+      <p class="muted">Related domains</p>
+      <div class="chip-row"><a class="chip" href="../explore/domain-research.html">Research</a></div>
+    </section>
+
+    <h2 class="section-label">Latest developments</h2>
     <section class="topic-issue-block">
   <h3><a href="../issues/2026/2026-11-07.html">#001</a></h3>
   <div class="article" style="padding:0;width:auto;margin:0"><h2 id="worth-reading">Worth reading</h2>
@@ -127,10 +143,12 @@ Large language models (LLM) have been the key focus of recent machine learning b
 </section>
   </main>
 
+  </div>
   <footer class="site-footer">
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
       <div>
+        <a href="../changelog.html">Change log</a> ·
         <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
         <a href="https://www.compilersutra.com/">Learn</a>

@@ -15,6 +15,10 @@
     if (btn) {
       btn.setAttribute("aria-pressed", theme === "light" ? "true" : "false");
       btn.textContent = theme === "light" ? "Dark" : "Light";
+      btn.setAttribute(
+        "aria-label",
+        theme === "light" ? "Switch to dark theme" : "Switch to light theme"
+      );
     }
   }
   apply(preferred());
@@ -37,7 +41,14 @@
     var panel = document.getElementById("mobile-nav");
     if (toggle && panel) {
       toggle.addEventListener("click", function () {
-        var open = panel.classList.toggle("open");
+        var open = panel.hasAttribute("hidden");
+        if (open) {
+          panel.removeAttribute("hidden");
+          panel.classList.add("open");
+        } else {
+          panel.setAttribute("hidden", "");
+          panel.classList.remove("open");
+        }
         toggle.setAttribute("aria-expanded", open ? "true" : "false");
       });
     }
