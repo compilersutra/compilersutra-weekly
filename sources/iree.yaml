@@ -1,7 +1,7 @@
 id: iree
 name: IREE
 org: OpenXLA / IREE
-category: tvm
+category: ai
 kind: git
 enabled: true
 url: https://github.com/iree-org/iree.git

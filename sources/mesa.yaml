@@ -8,4 +8,6 @@ url: https://gitlab.freedesktop.org/mesa/mesa.git
 default_branch: main
 mirror_dirname: mesa
 max_commits: 400
-notes: Prefer GitLab clone URL; enable when ready.
+
+notes: Prefer GitLab clone URL; enable when ready. Open-source GPU track. Proprietary stacks are out of scope.
+

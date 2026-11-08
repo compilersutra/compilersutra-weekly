@@ -13,6 +13,19 @@ Tracks LLVM, MLIR, GCC, TVM, IREE, Triton, GPU stacks, and research papers using
 
 CompilerSutra (Docusaurus/Vercel) stays educational. This repo owns collection, processing, reports, and Pages.
 
+
+## Taxonomy
+
+| Bucket | Sources |
+| --- | --- |
+| **CPU compilers** | LLVM/Clang, GCC |
+| **IR & infra** | MLIR |
+| **GPU compilers** | Open source only (ROCm LLVM, Mesa, …) — proprietary CUDA out of scope |
+| **AI / DL compilers** | TVM, IREE, Triton, ONNX Runtime (when enabled) |
+| **Research** | arXiv |
+
+Details: [docs/TAXONOMY.md](docs/TAXONOMY.md).
+
 ## Install
 
 ```bash
