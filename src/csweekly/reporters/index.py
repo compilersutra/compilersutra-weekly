@@ -875,7 +875,7 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         parts.append(
             f'<section id="briefing" class="issue-section">'
             f"<h2>Five-minute briefing</h2>"
-            f'<p class="muted">The developments worth understanding first — not a commit census.</p>'
+            f'<p class="muted">Start here if you only have a few minutes.</p>'
             f'<ul class="overview-list">{items}</ul></section>'
         )
 
@@ -889,7 +889,7 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         parts.append(
             f'<section id="featured" class="issue-section">'
             f"<h2>Featured developments</h2>"
-            f'<p class="muted">Source-grounded explanations. Open the primary source for the full diff.</p>'
+            f'<p class="muted">What changed, why it matters, and where to read the source.</p>'
             f'<div class="story-stack">{cards}</div></section>'
         )
 
@@ -902,7 +902,7 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         parts.append(
             f'<section id="worth-knowing" class="issue-section">'
             f"<h2>Worth knowing</h2>"
-            f'<p class="muted">Compact entries — one canonical explanation each.</p>'
+            f'<p class="muted">Shorter notes for changes that still deserve a look.</p>'
             f'<div class="story-stack compact">{rows}</div></section>'
         )
 
@@ -926,8 +926,7 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         parts.append(
             f'<section id="themes" class="issue-section">'
             f"<h2>Themes this week</h2>"
-            f'<p class="muted">Index into canonical stories above — not a second full reprint. '
-            f"Cross-issue history appears when the same story_id recurs.</p>"
+            f'<p class="muted">Same stories as above, grouped by project. Useful for scanning.</p>'
             f"{''.join(blocks)}</section>"
         )
 
@@ -1112,7 +1111,7 @@ def _topic_index_html(groups: list[dict]) -> str:
     return (
         f'<section id="topic-index" class="issue-section">'
         f"<h2>Topic index</h2>"
-        f'<p class="muted">Jump to the canonical story — explanations are not repeated here.</p>'
+        f'<p class="muted">Jump links only — details are in the sections above.</p>'
         f"{''.join(blocks)}</section>"
     )
 
