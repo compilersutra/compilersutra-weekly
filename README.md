@@ -26,6 +26,12 @@ CompilerSutra (Docusaurus/Vercel) stays educational. This repo owns collection, 
 
 Details: [docs/TAXONOMY.md](docs/TAXONOMY.md).
 
+## Public links
+
+- **GitHub:** https://github.com/compilersutra/compilersutra-weekly
+- **Pages:** https://compilersutra.github.io/compilersutra-weekly/
+- **CompilerSutra** (education): https://www.compilersutra.com/ — link out only
+
 ## Install
 
 ```bash

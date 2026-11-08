@@ -8,7 +8,7 @@ from typing import Any
 
 import requests
 
-UA = "compilersutra-weekly/0.1 (+https://github.com/aabhinavg1/compilersutra-weekly)"
+UA = "compilersutra-weekly/0.1 (+https://github.com/compilersutra/compilersutra-weekly)"
 
 
 def github_token() -> str | None:

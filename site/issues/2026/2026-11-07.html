@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>2026-11-07 — CompilerSutra Weekly</title>
+  <meta name="description" content="Compiler ecosystem intelligence — CPU, MLIR, open GPU, AI/DL compilers, research."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../assets/site.css"/>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../../index.html">CompilerSutra <span>Weekly</span></a>
+      <nav class="nav" aria-label="Primary">
+        <a href="../../index.html">Home</a>
+        <a href="../../archive.html" aria-current="page">Archive</a>
+        <a href="../../about.html">About</a>
+        <a class="pill" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+        <a class="pill" href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
+      </nav>
+    </div>
+  </header>
+  
+  <article class="article">
+    <a class="back" href="../../archive.html">← Archive</a>
+    <nav class="toc" aria-label="On this page"><a href="#this-week-in-compiler-engineering">This Week in Compiler Engineering</a><a href="#churn-hotspots-paths">Churn hotspots (paths)</a><a href="#cpu-compilers-llvm-gcc">CPU compilers (LLVM, GCC)</a><a href="#compilersutra-perspective">CompilerSutra Perspective</a><a href="#what-to-watch-next-week">What to Watch Next Week</a></nav>
+    <h1>CompilerSutra Weekly — 2026-11-07</h1>
+<p>
+<strong>Reporting window:</strong> 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)
+<br/>
+<strong>Published:</strong> 2026-11-07 (Saturday)
+</p>
+<blockquote><p>Source-backed findings only. Summaries stay factual; we do not invent technical details.</p></blockquote>
+<p>
+&gt;
+</p>
+<blockquote><p><strong>Scope:</strong> CPU (LLVM/GCC) · MLIR · GPU (<strong>open source only</strong>) · AI/DL compilers · research. Proprietary CUDA/toolkit internals are out of scope.</p></blockquote>
+<h2 id="this-week-in-compiler-engineering">This Week in Compiler Engineering</h2>
+<ul>
+<li>Stories collected: <strong>1039</strong> (after dedupe)</li>
+<li>Window: <code>2026-10-30T00:00:00+00:00</code> → <code>2026-11-06T00:00:00+00:00</code></li>
+</ul>
+<h2 id="churn-hotspots-paths">Churn hotspots (paths)</h2>
+<ul>
+<li><code>llvm/test</code> — 1416 commits touching path</li>
+<li><code>llvm/lib</code> — 852 commits touching path</li>
+<li><code>clang/test</code> — 426 commits touching path</li>
+<li><code>gcc/testsuite</code> — 422 commits touching path</li>
+<li><code>gcc/config</code> — 370 commits touching path</li>
+<li><code>clang/lib</code> — 266 commits touching path</li>
+<li><code>libc/src</code> — 209 commits touching path</li>
+<li><code>llvm/include</code> — 166 commits touching path</li>
+<li><code>mlir/test</code> — 125 commits touching path</li>
+<li><code>lldb/source</code> — 118 commits touching path</li>
+<li><code>libc/config</code> — 111 commits touching path</li>
+<li><code>lldb/test</code> — 102 commits touching path</li>
+</ul>
+<h2 id="cpu-compilers-llvm-gcc">CPU compilers (LLVM, GCC)</h2>
+<ul>
+<li><strong>[Clang] [AMDGPU] Validate prefetch length and cache policy operands (#232143)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/e214f7aa1d129c6d4358c619e3c91a0e11ef50de" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Gheorghe-Teodor Bercea: [AMDGPU] Validate prefetch length and cache policy operands (#232143)</li>
+<li class="sub">Ref: <code>e214f7aa1d129c6d4358c619e3c91a0e11ef50de</code></li>
+<li><strong>[Clang] [HLSL] Add WaveMultiPrefixBitOr (#238187)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/625076dcb75c435a6ac4ef8ce432ed2d219be4ba" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Joshua Batista: [HLSL] Add WaveMultiPrefixBitOr (#238187)</li>
+<li class="sub">Ref: <code>625076dcb75c435a6ac4ef8ce432ed2d219be4ba</code></li>
+<li><strong>[Clang] [HLSL] Add WaveMultiPrefixSum (#238175)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/b34ea7bb151c24c011fed910b53ba48e9d7ba6e7" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Joshua Batista: [HLSL] Add WaveMultiPrefixSum (#238175)</li>
+<li class="sub">Ref: <code>b34ea7bb151c24c011fed910b53ba48e9d7ba6e7</code></li>
+<li><strong>[Clang] [HLSL] Add WaveMultiPrefixProduct (#238164)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/a7bdff39bbbccdd0d8d388961aa03d83e0e231ff" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Joshua Batista: [HLSL] Add WaveMultiPrefixProduct (#238164)</li>
+<li class="sub">Ref: <code>a7bdff39bbbccdd0d8d388961aa03d83e0e231ff</code></li>
+<li><strong>[Clang] [HLSL] Add WaveMultiPrefixCountBits (#238132)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/926040bad7abaff76e07a854f9f3edb3ca490248" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Joshua Batista: [HLSL] Add WaveMultiPrefixCountBits (#238132)</li>
+<li class="sub">Ref: <code>926040bad7abaff76e07a854f9f3edb3ca490248</code></li>
+<li><strong>[Clang] [HLSL] Add WaveMultiPrefixBitXor (#238097)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/6c4b35aa3841163a189bd52a51eb474c3a872e53" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Joshua Batista: [HLSL] Add WaveMultiPrefixBitXor (#238097)</li>
+<li class="sub">Ref: <code>6c4b35aa3841163a189bd52a51eb474c3a872e53</code></li>
+<li><strong>[LLVM] Revert 216506 Add PreLegalizer pattern matching for degrees GL extension (#239353)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/989d8944ab952529eeebf082cdbd105d96bd5ac4" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: albertbolt1: Revert 216506 Add PreLegalizer pattern matching for degrees GL extension (#239353)</li>
+<li class="sub">Ref: <code>989d8944ab952529eeebf082cdbd105d96bd5ac4</code></li>
+<li><strong>[LLVM] [AMDGPU] Infer the global address space for llvm.amdgcn.flat.prefetch (#231968)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/4ccb556e20235a1d84bc5643524a1ca1a579922e" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Gheorghe-Teodor Bercea: [AMDGPU] Infer the global address space for llvm.amdgcn.flat.prefetch (#231968)</li>
+<li class="sub">Ref: <code>4ccb556e20235a1d84bc5643524a1ca1a579922e</code></li>
+<li><strong>[LLVM] [MemProf] Keep the ambiguous attribute on allocations cloning could not disambiguate (#239087)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/d64abc6ff7e974f162ce2ce64dbe5e589eb446d4" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: David Li: [MemProf] Keep the ambiguous attribute on allocations cloning could not disambiguate (#239087)</li>
+<li class="sub">Ref: <code>d64abc6ff7e974f162ce2ce64dbe5e589eb446d4</code></li>
+<li><strong>[Clang] [HLSL] Add WaveMultiPrefixBitAnd (#238083)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/a39d802460c744b47891d7480ea16691dce6dd03" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Joshua Batista: [HLSL] Add WaveMultiPrefixBitAnd (#238083)</li>
+<li class="sub">Ref: <code>a39d802460c744b47891d7480ea16691dce6dd03</code></li>
+<li><strong>[LLVM] [GlobalISel] Don&#x27;t assert on tied multi-register inline asm inputs (#238927)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/16f7571293199bae6af10c676d5003fda774930d" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Joel Walker: [GlobalISel] Don&#x27;t assert on tied multi-register inline asm inputs (#238927)</li>
+<li class="sub">Ref: <code>16f7571293199bae6af10c676d5003fda774930d</code></li>
+<li><strong>[LLVM] [llvm-diff] Compare function and call-site attributes (#238928)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/8dd8e63ddfdaa4400206a23251a4e9b1d70f8812" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Abhay Kanhere: [llvm-diff] Compare function and call-site attributes (#238928)</li>
+<li class="sub">Ref: <code>8dd8e63ddfdaa4400206a23251a4e9b1d70f8812</code></li>
+<li><strong>[LLVM] [GlobalISel] Fold urem x, (shl pow2, y) to a mask (#238879)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/d7c9f3a5847dd908bee572162910f8e8bac65422" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Felix: [GlobalISel] Fold urem x, (shl pow2, y) to a mask (#238879)</li>
+<li class="sub">Ref: <code>d7c9f3a5847dd908bee572162910f8e8bac65422</code></li>
+<li><strong>[LLVM] [ARM] Enable SlotIndexes compaction by default (#238515)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/dbce6ebf8ab00e6b88b2f123ae8ee9d6ab3bbb52" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Petar Jovanovic: [ARM] Enable SlotIndexes compaction by default (#238515)</li>
+<li class="sub">Ref: <code>dbce6ebf8ab00e6b88b2f123ae8ee9d6ab3bbb52</code></li>
+<li><strong>[LLVM] [SelectionDAG] Add opcode class metadata to DOT nodes (#228965)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/7374c58a131c5ec367ee95e83ddedb7c450cfe77" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Jonathan L&#x27;Work: [SelectionDAG] Add opcode class metadata to DOT nodes (#228965)</li>
+<li class="sub">Ref: <code>7374c58a131c5ec367ee95e83ddedb7c450cfe77</code></li>
+<li><strong>[LLVM] [MemProf] Only synthesize tail-call callsite records for unique chains (#239335)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/8568cc04122a01e52fc42e8a7c1e3ccdb115fdd5" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Teresa Johnson: [MemProf] Only synthesize tail-call callsite records for unique chains (#239335)</li>
+<li class="sub">Ref: <code>8568cc04122a01e52fc42e8a7c1e3ccdb115fdd5</code></li>
+<li><strong>[LLVM] [SPARC] Add support for constrained floating-point operations (#239047)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/7fd78b793d7d402a647862bf5892bf9868001e7d" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Brad Smith: [SPARC] Add support for constrained floating-point operations (#239047)</li>
+<li class="sub">Ref: <code>7fd78b793d7d402a647862bf5892bf9868001e7d</code></li>
+<li><strong>[LLVM] RuntimeLibcalls: Add signatures for vector stret libcalls (#238573)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/a44284d636607a3ee6cd4f79134730de339a5de9" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Matt Arsenault: RuntimeLibcalls: Add signatures for vector stret libcalls (#238573)</li>
+<li class="sub">Ref: <code>a44284d636607a3ee6cd4f79134730de339a5de9</code></li>
+<li><strong>[LLVM] [lit] Fix echo escape, glob handling (#234243)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/868214ce7064efa9ff39b02166300876e7f077b6" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Harald van Dijk: [lit] Fix echo escape, glob handling (#234243)</li>
+<li class="sub">Ref: <code>868214ce7064efa9ff39b02166300876e7f077b6</code></li>
+<li><strong>[LLVM] RuntimeLibcalls: Add signatures for the divrem libcalls (#238554)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/2853de0422d2fd02dca9c4cc89a6def2a3794198" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Matt Arsenault: RuntimeLibcalls: Add signatures for the divrem libcalls (#238554)</li>
+<li class="sub">Ref: <code>2853de0422d2fd02dca9c4cc89a6def2a3794198</code></li>
+<li><strong>[LLVM] [InlineSpiller] Don&#x27;t spill values defined by a read-undef IMPLICIT_DEF (#231917)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/f4c72a95f1c8275b30a430c50cf7070fcdde7a0c" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Pablo Reble: [InlineSpiller] Don&#x27;t spill values defined by a read-undef IMPLICIT_DEF (#231917)</li>
+<li class="sub">Ref: <code>f4c72a95f1c8275b30a430c50cf7070fcdde7a0c</code></li>
+<li><strong>[LLVM] [SPIR-V] Don&#x27;t incur vector16 capability req for Vulkan (#233985)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/ca28b513e26988fb93f0f12f9de1067486039991" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Gregory Roth: [SPIR-V] Don&#x27;t incur vector16 capability req for Vulkan (#233985)</li>
+<li class="sub">Ref: <code>ca28b513e26988fb93f0f12f9de1067486039991</code></li>
+<li><strong>[LLVM] Revert &quot;[CodeGen] Overwrite a 0 sized alloca to have same number of bytes as it&#x27;s Frame Object (#232755)&quot; (#239338)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/74566140edabff1ce8cb23d20389e1b9e0366674" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Matthias Braun: Revert &quot;[CodeGen] Overwrite a 0 sized alloca to have same number of bytes as it&#x27;s Frame Object (#232755)&quot; (#239338)</li>
+<li class="sub">Ref: <code>74566140edabff1ce8cb23d20389e1b9e0366674</code></li>
+<li><strong>[LLVM] DroppedVarStats: Move InlinedAt to VarID rather than a separate map (#238936)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/fc98fe161eacf84b482eeccda4ba6c5a08769a16" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Emil Pedersen: DroppedVarStats: Move InlinedAt to VarID rather than a separate map (#238936)</li>
+<li class="sub">Ref: <code>fc98fe161eacf84b482eeccda4ba6c5a08769a16</code></li>
+<li><strong>[LLVM] [SystemZ][z/OS] Ignore case on od output (#239271)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/5bfdd7b7633173d020efd700d3dbf87bf552d64e" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Abhina Sree: [SystemZ][z/OS] Ignore case on od output (#239271)</li>
+<li class="sub">Ref: <code>5bfdd7b7633173d020efd700d3dbf87bf552d64e</code></li>
+<li><strong>[LLVM] [llvm-cas] Use subcommands for llvm-cas actions (#233966)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/e0ea53fe677d217ddec04177c7e5b098ba3677fe" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Steven Wu: [llvm-cas] Use subcommands for llvm-cas actions (#233966)</li>
+<li class="sub">Ref: <code>e0ea53fe677d217ddec04177c7e5b098ba3677fe</code></li>
+<li><strong>[LLVM] RuntimeLibcalls: Mark vector libcall out pointers dereferenceable (#238228)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/1c4ccccefdab30d294d3dc5778c49a7b07fc4379" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Matt Arsenault: RuntimeLibcalls: Mark vector libcall out pointers dereferenceable (#238228)</li>
+<li class="sub">Ref: <code>1c4ccccefdab30d294d3dc5778c49a7b07fc4379</code></li>
+<li><strong>[LLVM] [IPO] Declare more command line options in TableGen (#239305)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/ea62042c9bbe7f15ef52b211a4c396380a97b8b3" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Fangrui Song: [IPO] Declare more command line options in TableGen (#239305)</li>
+<li class="sub">Ref: <code>ea62042c9bbe7f15ef52b211a4c396380a97b8b3</code></li>
+<li><strong>[LLVM] [MIR] Reject out-of-range CFI address space (#233410)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/29ed4ed82097b7552ba48827f42f969824a6a026" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Alexander Hück: [MIR] Reject out-of-range CFI address space (#233410)</li>
+<li class="sub">Ref: <code>29ed4ed82097b7552ba48827f42f969824a6a026</code></li>
+<li><strong>[LLVM] [MIR][MC] Use int64_t for CFI offset (#233437)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/e07d88cc9142c76a40cec205a1735c1826e003db" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Alexander Hück: [MIR][MC] Use int64_t for CFI offset (#233437)</li>
+<li class="sub">Ref: <code>e07d88cc9142c76a40cec205a1735c1826e003db</code></li>
+<li><strong>[LLVM] [SafeStack] Stop emitting an invalid function annotation for the unsafe stack size (#229440)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/d762bbb59e43de58f6ac71c047231a6c0747fc89" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Aochang Liu: [SafeStack] Stop emitting an invalid function annotation for the unsafe stack size (#229440)</li>
+<li class="sub">Ref: <code>d762bbb59e43de58f6ac71c047231a6c0747fc89</code></li>
+<li><strong>[LLVM] [llvm-diff] Compare poison-generating flags (#238599)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/63e82d93cb63bf4931695d2b0a63a0d1912aea79" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Abhay Kanhere: [llvm-diff] Compare poison-generating flags (#238599)</li>
+<li class="sub">Ref: <code>63e82d93cb63bf4931695d2b0a63a0d1912aea79</code></li>
+<li><strong>[LLVM] Hexagon: Stop adding kill flags on virtual registers (#239040)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/a934ab2410aaf3cbf20656dd6a2c96dd28a7b1eb" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Matt Arsenault: Hexagon: Stop adding kill flags on virtual registers (#239040)</li>
+<li class="sub">Ref: <code>a934ab2410aaf3cbf20656dd6a2c96dd28a7b1eb</code></li>
+<li><strong>[LLVM] [ValueTracking] Add constrained intrinsics variants to intrinsicPropagatesPoison (#239270)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/bd6e444961db6ff5a59b3e4fd3e8933d7a8d8aa1" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Mattéo Rizza Murgier: [ValueTracking] Add constrained intrinsics variants to intrinsicPropagatesPoison (#239270)</li>
+<li class="sub">Ref: <code>bd6e444961db6ff5a59b3e4fd3e8933d7a8d8aa1</code></li>
+<li><strong>[LLVM] RuntimeLibcalls: Declare vector libcall attributes in TableGen (#238227)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/ae02bf2a525c599d6d566f4eb9312560d7aa7589" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Matt Arsenault: RuntimeLibcalls: Declare vector libcall attributes in TableGen (#238227)</li>
+<li class="sub">Ref: <code>ae02bf2a525c599d6d566f4eb9312560d7aa7589</code></li>
+<li><strong>[LLVM] TableGen: Allow macro fusion predicates for a separate subtarget feature (#239102)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/88bd907d7478c91ff034f7b2edf4dce2fde95489" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Matt Arsenault: TableGen: Allow macro fusion predicates for a separate subtarget feature (#239102)</li>
+<li class="sub">Ref: <code>88bd907d7478c91ff034f7b2edf4dce2fde95489</code></li>
+<li><strong>[LLVM] [CodeGen] Overwrite a 0 sized alloca to have same number of bytes as it&#x27;s Frame Object (#232755)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/483672872f92939d7587d0e4827cd6b1629f09e4" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Alexander Wilson: [CodeGen] Overwrite a 0 sized alloca to have same number of bytes as it&#x27;s Frame Object (#232755)</li>
+<li class="sub">Ref: <code>483672872f92939d7587d0e4827cd6b1629f09e4</code></li>
+<li><strong>[LLVM] [WebAssembly] simd-intrinsics.ll - add missing FAST-ISEL check-prefix (#239269)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/beec9ad7c366dd08af89bef6b5c10948673ef364" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Simon Pilgrim: [WebAssembly] simd-intrinsics.ll - add missing FAST-ISEL check-prefix (#239269)</li>
+<li class="sub">Ref: <code>beec9ad7c366dd08af89bef6b5c10948673ef364</code></li>
+<li><strong>[LLVM] [AMDGPU] Fix malformed copy-like MIR in tests. NFC (#235323)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/71926eeb7dc375ada8aaeb42d0c29efa574971d9" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Tim Gymnich: [AMDGPU] Fix malformed copy-like MIR in tests. NFC (#235323)</li>
+<li class="sub">Ref: <code>71926eeb7dc375ada8aaeb42d0c29efa574971d9</code></li>
+<li><strong>[LLVM] [InstrProf] Use CreatePtrAddWithSExtOrTrunc() for bias (#239261)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/0fa861dbbf46e5a75f621406fd91cb015d8754bf" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Nikita Popov: [InstrProf] Use CreatePtrAddWithSExtOrTrunc() for bias (#239261)</li>
+<li class="sub">Ref: <code>0fa861dbbf46e5a75f621406fd91cb015d8754bf</code></li>
+<li><strong>[LLVM] [AMDGPU] Align packed-f64 VALU source operands (#236873)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/0dbadcdc39046dfe452c76f4d104375cd21c61f5" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Valery Pykhtin: [AMDGPU] Align packed-f64 VALU source operands (#236873)</li>
+<li class="sub">Ref: <code>0dbadcdc39046dfe452c76f4d104375cd21c61f5</code></li>
+<li><strong>[LLVM] [SLP]Allow copyable when other operand is built from same-lane operand</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/4b8f5da9b4e6c3fcb29521cc7c1715b4fc1c9763" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Alexey Bataev: [SLP]Allow copyable when other operand is built from same-lane operand</li>
+<li class="sub">Ref: <code>4b8f5da9b4e6c3fcb29521cc7c1715b4fc1c9763</code></li>
+<li><strong>[LLVM] [SLP][NFC]Add a test with the missing vectorization, NFC</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/069e9c56b29b4b16e34ca3b3c8c4afe0c879b7cc" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Alexey Bataev: [SLP][NFC]Add a test with the missing vectorization, NFC</li>
+<li class="sub">Ref: <code>069e9c56b29b4b16e34ca3b3c8c4afe0c879b7cc</code></li>
+<li><strong>[LLVM] [ValueTracking] Allow compares against a variable bound to be analyzed (#237661)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/af3d18a02dffdb7e3dac7684c6f1600091ae3188" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: LU-JOHN: [ValueTracking] Allow compares against a variable bound to be analyzed (#237661)</li>
+<li class="sub">Ref: <code>af3d18a02dffdb7e3dac7684c6f1600091ae3188</code></li>
+<li><strong>[LLVM] [X86] Fix <code>combineFP_EXTEND</code> for <code>bf16</code> vectors to <code>f80/f128</code> and strict <code>fpext</code> (#233066)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/9075a1c2b8d805a2e4f798ee38fc1788496e88db" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Akash Manna: [X86] Fix <code>combineFP_EXTEND</code> for <code>bf16</code> vectors to <code>f80/f128</code> and strict <code>fpext</code> (#233066)</li>
+<li class="sub">Ref: <code>9075a1c2b8d805a2e4f798ee38fc1788496e88db</code></li>
+<li><strong>[LLVM] [LowerMemIntrinsics] Explicitly set unknown branch weights in expandBoundedMemSet (#239159)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/9cc13c3e9f39422abc7e0db7ae5eca043f351552" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Kuba (Brecka) Mracek: [LowerMemIntrinsics] Explicitly set unknown branch weights in expandBoundedMemSet (#239159)</li>
+<li class="sub">Ref: <code>9cc13c3e9f39422abc7e0db7ae5eca043f351552</code></li>
+<li><strong>[LLVM] [AArch64] Handle illegal expandloads and compressstores (#238828)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/abf40a6a51cc2da7932fcffad0403345b6f508fd" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Benjamin Maxwell: [AArch64] Handle illegal expandloads and compressstores (#238828)</li>
+<li class="sub">Ref: <code>abf40a6a51cc2da7932fcffad0403345b6f508fd</code></li>
+<li><strong>[LLVM] [NFC][AMDGPU] Fix filecheck for MSVC pass names in si-pre-allocate-wwm-regs-preserve-rci test (#239093)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/fe0c80215b0d23548f58c76c53753480560e2a95" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Nikhil Kotikalapudi: [NFC][AMDGPU] Fix filecheck for MSVC pass names in si-pre-allocate-wwm-regs-preserve-rci test (#239093)</li>
+<li class="sub">Ref: <code>fe0c80215b0d23548f58c76c53753480560e2a95</code></li>
+<li><strong>[LLVM] [Attributor] Don&#x27;t move allocations passed to musttail calls to the stack (#239059)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/81f5ed540126eae33a3a829ec38406709305098a" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Shilei Tian: [Attributor] Don&#x27;t move allocations passed to musttail calls to the stack (#239059)</li>
+<li class="sub">Ref: <code>81f5ed540126eae33a3a829ec38406709305098a</code></li>
+<li><strong>[LLVM] [AMDGPU][GlobalISel] Fold unmasked signed byte loads into D16 high loads (#236136)</strong></li>
+<li class="sub">Source: <a href="https://github.com/llvm/llvm-project/commit/6e37cd2cc855cd23aa30705a2cde4e3bb646624a" rel="noopener noreferrer">LLVM Project</a> · 2026-11-05 · <code>git_commit</code></li>
+<li class="sub">Fact: Tim Gymnich: [AMDGPU][GlobalISel] Fold unmasked signed byte loads into D16 high loads (#236136)</li>
+<li class="sub">Ref: <code>6e37cd2cc855cd23aa30705a2cde4e3bb646624a</code></li>
+</ul>
+<h2 id="compilersutra-perspective">CompilerSutra Perspective</h2>
+<p>
+_Editorial notes go here. Keep them clearly separate from source facts._
+</p>
+<h2 id="what-to-watch-next-week">What to Watch Next Week</h2>
+<ul>
+<li>Follow-up merges in the hottest paths above</li>
+<li>Downstream releases that absorb this week&#x27;s commits</li>
+</ul>
+<p>
+---
+</p>
+<p>
+Generated by <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">compilersutra-weekly</a>. Hosted on GitHub Pages; <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a> links out only. Original sources linked above — do not republish copyrighted articles wholesale.
+</p>
+  </article>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>© CompilerSutra · Apache-2.0 · Pages + GitHub; education site links out only</div>
+      <div>
+        <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
+        <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
+        <a href="https://www.compilersutra.com/">Learn</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

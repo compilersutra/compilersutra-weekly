@@ -31,10 +31,13 @@ csweekly = "csweekly.main:main"
 
 [project.urls]
 Homepage = "https://www.compilersutra.com/"
-Repository = "https://github.com/aabhinavg1/compilersutra-weekly"
+Repository = "https://github.com/compilersutra/compilersutra-weekly"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+csweekly = ["reporters/static/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

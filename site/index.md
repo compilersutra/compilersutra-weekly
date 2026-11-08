@@ -1,8 +1,3 @@
 # CompilerSutra Weekly
 
-Open-source compiler ecosystem intelligence (LLVM, MLIR, GCC, TVM, GPU compilers, research).
-
-- [Issue archive](reports/)
-- [Source repository](https://github.com/aabhinavg1/compilersutra-weekly)
-
-Schedule: collect Fri→Fri (UTC), publish Saturday.
+Open [https://compilersutra.github.io/compilersutra-weekly/](https://compilersutra.github.io/compilersutra-weekly/) or the HTML `index.html`.
