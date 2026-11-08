@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
-// Optional: self-hosted agent with persistent data/mirrors for llvm-project + gcc.
+// Self-hosted agent with persistent data/mirrors recommended for full git collect.
 pipeline {
   agent any
-  triggers { cron('0 3 * * 6') } // Saturday 03:00
+  triggers { cron('0 3 * * 6') }
+  environment {
+    CSWEEKLY_GITHUB_TOKEN = credentials('csweekly-github-token')
+  }
   stages {
     stage('Setup') {
       steps {
@@ -13,13 +16,13 @@ pipeline {
       steps {
         sh '''
           . .venv/bin/activate
-          csweekly run --mirrors-dir data/mirrors --reports-dir reports
+          csweekly run --mirrors-dir data/mirrors --reports-dir reports --site-dir site
         '''
       }
     }
     stage('Archive') {
       steps {
-        archiveArtifacts artifacts: 'reports/**/*.md,data/last_collect.json', fingerprint: true
+        archiveArtifacts artifacts: 'reports/**/*.md,site/**,data/last_collect.json', fingerprint: true
       }
     }
   }

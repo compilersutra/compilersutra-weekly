@@ -1,0 +1,12 @@
+id: onnxruntime
+name: ONNX Runtime
+org: Microsoft
+category: tvm
+kind: git
+enabled: false
+url: https://github.com/microsoft/onnxruntime.git
+github_repo: microsoft/onnxruntime
+default_branch: main
+mirror_dirname: onnxruntime
+max_commits: 300
+notes: Large repo — enable when mirror disk is ready.

@@ -8,10 +8,8 @@ url: https://github.com/gcc-mirror/gcc.git
 github_repo: gcc-mirror/gcc
 default_branch: master
 mirror_dirname: gcc
-path_prefixes: []
 path_labels:
   gcc/: GCC
   libstdc++-v3/: libstdc++
   libgcc/: libgcc
 max_commits: 500
-notes: Public mirror of GCC git. Adjust url if you prefer git://gcc.gnu.org/git/gcc.git.

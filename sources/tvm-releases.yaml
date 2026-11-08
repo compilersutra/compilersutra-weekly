@@ -1,0 +1,8 @@
+id: tvm-releases
+name: TVM GitHub Releases
+org: Apache TVM
+category: tvm
+kind: github_releases
+enabled: true
+github_repo: apache/tvm
+max_releases: 10

@@ -11,3 +11,7 @@ data/mirrors/
 data/last_collect.json
 .DS_Store
 tests/fixtures/tiny_repo/
+site/reports/
+data/last_collect.json
+*.egg-info/
+src/*.egg-info/

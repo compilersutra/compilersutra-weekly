@@ -2,78 +2,90 @@
 
 Independent open-source **compiler ecosystem intelligence**.
 
-Tracks what landed across LLVM, MLIR, GCC (and later TVM / GPU stacks) using **local git mirrors**, not the CompilerSutra website runtime.
+Tracks LLVM, MLIR, GCC, TVM, IREE, Triton, GPU stacks, and research papers using **git mirrors** plus optional GitHub Releases, RSS, and arXiv — not the CompilerSutra website runtime.
 
 | | |
 | --- | --- |
 | Window | **Friday → Friday** (UTC, end exclusive) |
 | Publish | **Saturday** |
 | License | Apache-2.0 |
-| Site link only | [compilersutra.com](https://www.compilersutra.com/) → Weekly (external) |
+| CLI | `csweekly` |
 
-CompilerSutra (Docusaurus/Vercel) stays a learning site. This repo owns collection, processing, and reports.
+CompilerSutra (Docusaurus/Vercel) stays educational. This repo owns collection, processing, reports, and Pages.
 
-## Quick start
+## Install
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e '.[dev]'
-
 csweekly week --as-of 2026-11-08
-# window: 2026-10-30 → 2026-11-06 (UTC)
-# publish: 2026-11-07 (Saturday)
+csweekly sources
 ```
 
-### Demo with the tiny fixture (no LLVM clone)
+## Five-minute demo (no LLVM clone)
 
 ```bash
 bash scripts/make_fixture_repo.sh
-csweekly collect --as-of 2026-11-08 --no-fetch \
-  --repo tests/fixtures/tiny_repo --source llvm \
-  --out data/last_collect.json
-csweekly report --in data/last_collect.json --stdout
+csweekly collect --as-of 2026-11-08 --no-fetch --kind git \
+  --repo tests/fixtures/tiny_repo --source llvm
+csweekly report --stdout
+csweekly index
 ```
 
-### Real mirrors (Phase 1)
-
-First fetch is large (esp. `llvm-project`). Keep mirrors under `data/mirrors/` on a persistent disk (Jenkins / self-hosted runner).
+## Weekly production flow
 
 ```bash
-# optional: authenticated GitHub API later
-export CSWEEKLY_GITHUB_TOKEN=ghp_...   # never commit
+# optional for GitHub API rate limits
+export CSWEEKLY_GITHUB_TOKEN=ghp_...
 
-csweekly run --as-of 2026-11-08 --mirrors-dir data/mirrors
-# → reports/2026/2026-11-08.md
+# light (hosted CI): releases + RSS + arXiv
+csweekly run --kind github_releases --kind rss --kind arxiv
+
+# full (self-hosted / Jenkins with disk):
+csweekly run --mirrors-dir /var/cache/csweekly/mirrors
 ```
 
-`mlir.yaml` reuses the **same** `llvm-project` mirror and keeps commits that touch `mlir/`.
+Artifacts:
+
+- `reports/YYYY/YYYY-MM-DD.md` — Saturday issue  
+- `reports/README.md` — archive index  
+- `site/` — GitHub Pages payload  
 
 ## Add another compiler
 
-Copy `sources/llvm.yaml` → `sources/<id>.yaml`, set `url`, `default_branch`, optional `path_prefixes`, set `enabled: true`. Same collector — no new Python required for git-tracked projects.
+1. Copy `sources/llvm.yaml` → `sources/<id>.yaml`
+2. Set `url`, `mirror_dirname`, `category`, `enabled: true`
+3. Optional: `path_prefixes`, `path_labels`, ignore regexes  
+4. Open a PR — no Python required for git sources  
 
-See [docs/architecture.md](docs/architecture.md) and [docs/sources.md](docs/sources.md).
+Same pattern for `github_releases`, `rss`, or `arxiv` kinds (`docs/sources.md`).
 
-## Layout
+## Commands
 
-```text
-sources/          # contributor-friendly source definitions
-src/csweekly/     # collectors / processors / analyzers / reporters
-data/mirrors/     # persistent git mirrors (gitignored)
-reports/YYYY/     # Saturday Markdown issues
-```
+| Command | Role |
+| --- | --- |
+| `csweekly week` | Show Fri→Fri window + Saturday publish date |
+| `csweekly sources` | List enabled sources (`--all` for disabled) |
+| `csweekly collect` | Write `data/last_collect.json` |
+| `csweekly report` | Render Markdown issue |
+| `csweekly index` | Archive + `site/` for Pages |
+| `csweekly run` | collect + report + index |
 
 ## Auth
 
-Git commit collection needs **no** token. Optional `CSWEEKLY_GITHUB_TOKEN` is for future PR/release API collectors. Tests use fixtures only.
+See [docs/auth.md](docs/auth.md). Git history needs no token.
 
-## CI
+## Docs
 
-- GitHub Actions: `.github/workflows/weekly.yml` (Saturday)
-- Jenkins: `Jenkinsfile` (optional)
+- [Architecture](docs/architecture.md)
+- [Sources](docs/sources.md)
+- [Publishing / Pages](docs/publishing.md)
+- [Contributing](CONTRIBUTING.md)
 
-## Related projects
+## Related
 
-- **CompilerSutra** — education / tutorials  
-- **CompilerSutraPerf (`csperf`)** — hardware performance measurement  
-- **CompilerSutra Weekly** — ecosystem intelligence (this repo)
+| Project | Role |
+| --- | --- |
+| CompilerSutra | Education / tutorials |
+| CompilerSutraPerf (`csperf`) | Hardware performance measurement |
+| **CompilerSutra Weekly** | Ecosystem intelligence (this repo) |

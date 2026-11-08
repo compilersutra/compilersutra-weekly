@@ -54,7 +54,7 @@ def render_markdown(issue: WeeklyIssue) -> str:
         f"**Reporting window:** {issue.window.label} ({issue.window.timezone}, Fri→Fri, end exclusive)",
         f"**Published:** {issue.published_on.isoformat()} (Saturday)",
         "",
-        "> Source-backed findings only. Summaries quote commit subjects; we do not invent technical details.",
+        "> Source-backed findings only. Summaries stay factual; we do not invent technical details.",
         "",
         "## This Week in Compiler Engineering",
         "",
@@ -119,9 +119,10 @@ def _story_bullets(story: Story) -> list[str]:
     when = story.published_at.date().isoformat() if story.published_at else "unknown-date"
     lines = [
         f"- **{story.title}**",
-        f"  - Source: [{story.source_org}]({story.source_url}) · {when}",
+        f"  - Source: [{story.source_org}]({story.source_url}) · {when} · `{story.evidence_kind.value}`",
         f"  - Fact: {story.summary}",
     ]
     if story.related_ref:
-        lines.append(f"  - Ref: `{story.related_ref[:12]}`")
+        ref = story.related_ref
+        lines.append(f"  - Ref: `{ref[:48]}`")
     return lines

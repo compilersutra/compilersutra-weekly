@@ -1,13 +1,17 @@
 name: Weekly report
 on:
   schedule:
-    # Saturday 03:00 UTC — after Friday window closes
-    - cron: "0 3 * * 6"
+    - cron: "0 3 * * 6"   # Saturday 03:00 UTC
   workflow_dispatch:
     inputs:
       as_of:
         description: "UTC date YYYY-MM-DD (default: today)"
         required: false
+      mode:
+        description: "fixture | network-light | full-mirrors"
+        default: "network-light"
+        type: choice
+        options: [fixture, network-light, full-mirrors]
 
 jobs:
   report:
@@ -17,21 +21,41 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install
-        run: pip install -e .
-      - name: Generate (fixture demo on GitHub-hosted runners)
+      - run: pip install -e .
+      - name: Generate
         env:
           AS_OF: ${{ inputs.as_of }}
+          MODE: ${{ inputs.mode || 'network-light' }}
+          CSWEEKLY_GITHUB_TOKEN: ${{ secrets.CSWEEKLY_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           AS_OF_ARG=""
-          if [ -n "$AS_OF" ]; then AS_OF_ARG="--as-of $AS_OF"; fi
-          # Hosted runners: fixture until a self-hosted mirror cache exists.
-          bash scripts/make_fixture_repo.sh
-          csweekly collect $AS_OF_ARG --no-fetch \
-            --repo tests/fixtures/tiny_repo --source llvm \
-            --out data/last_collect.json
+          if [ -n "${AS_OF:-}" ]; then AS_OF_ARG="--as-of $AS_OF"; fi
+          case "$MODE" in
+            fixture)
+              bash scripts/make_fixture_repo.sh
+              csweekly collect $AS_OF_ARG --no-fetch --kind git \
+                --repo tests/fixtures/tiny_repo --source llvm \
+                --out data/last_collect.json
+              ;;
+            network-light)
+              # No giant clones on hosted runners — releases + RSS + arXiv only.
+              csweekly collect $AS_OF_ARG \
+                --kind github_releases --kind rss --kind arxiv \
+                --out data/last_collect.json
+              ;;
+            full-mirrors)
+              csweekly collect $AS_OF_ARG --mirrors-dir data/mirrors \
+                --out data/last_collect.json
+              ;;
+          esac
           csweekly report --in data/last_collect.json --reports-dir reports
+          csweekly index --reports-dir reports --site-dir site
       - uses: actions/upload-artifact@v4
         with:
           name: weekly-report
-          path: reports/
+          path: |
+            reports/
+            site/
+            data/last_collect.json

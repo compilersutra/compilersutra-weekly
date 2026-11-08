@@ -13,4 +13,3 @@ path_prefixes:
 path_labels:
   mlir/: MLIR
 max_commits: 400
-notes: Same mirror as llvm.yaml; only commits touching mlir/ are kept.

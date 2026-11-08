@@ -3,10 +3,9 @@ name: Apache TVM
 org: Apache TVM
 category: tvm
 kind: git
-enabled: false
+enabled: true
 url: https://github.com/apache/tvm.git
 github_repo: apache/tvm
 default_branch: main
 mirror_dirname: tvm
 max_commits: 300
-notes: Enable when Phase 2 mirrors are ready.

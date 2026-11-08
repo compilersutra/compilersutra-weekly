@@ -6,9 +6,14 @@ from csweekly.config import load_sources
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_load_phase1_sources():
-    sources = load_sources(ROOT / "sources")
-    ids = {s.id for s in sources}
-    assert {"llvm", "mlir", "gcc"} <= ids
-    enabled = {s.id for s in sources if s.enabled}
-    assert "llvm" in enabled and "mlir" in enabled and "gcc" in enabled
+def test_phase1_git_sources_enabled():
+    sources = {s.id: s for s in load_sources(ROOT / "sources")}
+    for sid in ("llvm", "mlir", "gcc"):
+        assert sources[sid].enabled
+        assert sources[sid].kind == "git"
+    assert sources["mlir"].mirror_dirname == sources["llvm"].mirror_dirname
+
+
+def test_catalog_has_network_kinds():
+    kinds = {s.kind for s in load_sources(ROOT / "sources")}
+    assert {"git", "github_releases", "rss", "arxiv"} <= kinds

@@ -1,0 +1,8 @@
+id: arxiv-compilers
+name: arXiv — compilers / PL / architecture
+org: arXiv
+category: research
+kind: arxiv
+enabled: true
+arxiv_query: 'cat:cs.PL OR cat:cs.AR OR all:"LLVM" OR all:"MLIR" OR all:"GPU compiler"'
+arxiv_max_results: 40

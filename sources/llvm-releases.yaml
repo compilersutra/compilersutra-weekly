@@ -1,0 +1,8 @@
+id: llvm-releases
+name: LLVM GitHub Releases
+org: LLVM Project
+category: llvm
+kind: github_releases
+enabled: true
+github_repo: llvm/llvm-project
+max_releases: 15

@@ -1,0 +1,11 @@
+id: mesa
+name: Mesa
+org: Mesa3D
+category: gpu
+kind: git
+enabled: false
+url: https://gitlab.freedesktop.org/mesa/mesa.git
+default_branch: main
+mirror_dirname: mesa
+max_commits: 400
+notes: Prefer GitLab clone URL; enable when ready.

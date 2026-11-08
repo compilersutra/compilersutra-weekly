@@ -15,7 +15,7 @@ class SourceConfig(BaseModel):
     name: str
     org: str
     category: str
-    kind: str = "git"  # git | github | rss | arxiv
+    kind: str = "git"  # git | github_releases | rss | arxiv
     enabled: bool = True
     # git
     url: str | None = None
@@ -24,11 +24,29 @@ class SourceConfig(BaseModel):
     path_prefixes: list[str] = Field(default_factory=list)
     path_labels: dict[str, str] = Field(default_factory=dict)
     ignore_author_regexes: list[str] = Field(default_factory=list)
+    ignore_subject_regexes: list[str] = Field(
+        default_factory=lambda: [
+            r"(?i)^merge ",
+            r"(?i)^revert \"",
+            r"(?i)nfc\b",
+            r"(?i)typo",
+            r"(?i)^\[skip ci\]",
+        ]
+    )
     max_commits: int = 500
-    # optional API / feeds
-    github_repo: str | None = None
+    # github
+    github_repo: str | None = None  # owner/name
+    github_include_prs: bool = False
+    max_releases: int = 20
+    # feeds / arxiv
     feed_url: str | None = None
+    arxiv_query: str | None = None
+    arxiv_max_results: int = 25
     notes: str | None = None
+
+
+def repo_root() -> Path:
+    return Path(__file__).resolve().parents[2]
 
 
 def sources_dir(root: Path | None = None) -> Path:
@@ -36,8 +54,7 @@ def sources_dir(root: Path | None = None) -> Path:
     candidate = base / "sources"
     if candidate.is_dir():
         return candidate
-    # editable install from repo root
-    return Path(__file__).resolve().parents[2] / "sources"
+    return repo_root() / "sources"
 
 
 def load_sources(directory: Path | None = None) -> list[SourceConfig]:

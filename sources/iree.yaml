@@ -1,0 +1,11 @@
+id: iree
+name: IREE
+org: OpenXLA / IREE
+category: tvm
+kind: git
+enabled: true
+url: https://github.com/iree-org/iree.git
+github_repo: iree-org/iree
+default_branch: main
+mirror_dirname: iree
+max_commits: 300

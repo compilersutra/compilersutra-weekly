@@ -1,16 +1,14 @@
-# Source configuration
+# Sources
 
-Each `sources/<id>.yaml` describes one feed into the weekly.
+Each `sources/<id>.yaml` is one collector input.
 
-| Field | Purpose |
+| `kind` | Required fields |
 | --- | --- |
-| `id` | Stable id (`llvm`, `gcc`, …) |
-| `category` | Report section key (`llvm`, `mlir`, `gcc`, `tvm`, `gpu`, …) |
-| `kind` | `git` today; later `rss` / `arxiv` / `github` |
-| `url` | Clone URL |
-| `mirror_dirname` | Folder under `data/mirrors/` |
-| `path_prefixes` | Keep commits that touch these paths |
-| `path_labels` | Prefix titles when paths match |
-| `enabled` | `false` until you are ready to fetch |
+| `git` | `url`, `default_branch`, optional `path_prefixes` |
+| `github_releases` | `github_repo` |
+| `rss` | `feed_url` |
+| `arxiv` | `arxiv_query` |
 
-MLIR shares the LLVM mirror via the same `mirror_dirname: llvm-project`.
+`mlir` and `llvm` share `mirror_dirname: llvm-project`.
+
+Large forks (`rocm-llvm`, `mesa`, `onnxruntime`) ship with `enabled: false` until you have disk.
