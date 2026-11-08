@@ -2,6 +2,7 @@ id: gcc
 name: GCC
 org: GNU Project
 category: gcc
+project: gcc
 kind: git
 enabled: true
 url: https://github.com/gcc-mirror/gcc.git
@@ -10,6 +11,3 @@ default_branch: master
 mirror_dirname: gcc
 path_labels:
   gcc/: GCC
-  libstdc++-v3/: libstdc++
-  libgcc/: libgcc
-max_commits: 500

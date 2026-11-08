@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>LLVM — CompilerSutra Weekly</title>
+  <meta name="description" content="What changed in compilers this week — LLVM, GCC, MLIR, AI and GPU compilers."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../assets/site.css"/>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../index.html">CompilerSutra <span>Weekly</span></a>
+      <nav class="nav" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="index.html" aria-current="page">Topics</a>
+        <a href="../archive.html">Archive</a>
+        <a href="../changelog.html">Change log</a>
+        <a href="../about.html">About</a>
+        <a class="pill" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  
+  
+  <div class="topic-bar">
+    <div class="wrap" aria-label="Topics">
+      <a href="../topics/index.html">All topics</a>
+      <a href="../topics/llvm.html" aria-current="page">LLVM</a><a href="../topics/gcc.html">GCC</a><a href="../topics/mlir.html">MLIR</a><a href="../topics/ai.html">AI Compilers</a><a href="../topics/gpu.html">GPU</a><a href="../topics/research.html">Research</a>
+    </div>
+  </div>
+
+  <main class="wrap article-narrow">
+    <p class="hero-kicker">Topic</p>
+    <h1 class="page-title">LLVM</h1>
+    <p class="muted">Clang, backends, CodeGen</p>
+    <div class="cta-row" style="margin-bottom:1.75rem">
+      <a class="btn btn-primary" href="../issues/2026/2026-11-07.html">Jump in latest issue →</a>
+      <a class="btn btn-ghost" href="index.html">All topics</a>
+      <a class="btn btn-ghost" href="../archive.html">Archive</a>
+    </div>
+    <section class="topic-issue-block">
+  <h3><a href="../issues/2026/2026-11-07.html">#001 · 2026-11-07</a></h3>
+  <p class="muted">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+  <div class="article" style="padding:0;width:auto;margin:0"><h2 id="llvm">LLVM</h2>
+<p>
+<strong>[CIR] Implement support for matrix splat cast (#239299)</strong>
+</p>
+<p>
+5 related commits on this development. Latest: [CIR] Implement support for matrix splat cast (#239299) *(Frontend, Testing, Vectorization)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer"><code>6fff663f</code></a>, <a href="https://github.com/llvm/llvm-project/commit/191ca4ec5bb4b394810c3e11e57b125770050a07" rel="noopener noreferrer"><code>191ca4ec</code></a>, <a href="https://github.com/llvm/llvm-project/commit/3c4aa885091c12572281a7117dd254907d8cd732" rel="noopener noreferrer"><code>3c4aa885</code></a>, <a href="https://github.com/llvm/llvm-project/commit/446cfbe6f546780f933048016ad342ac278657ff" rel="noopener noreferrer"><code>446cfbe6</code></a>, <a href="https://github.com/llvm/llvm-project/commit/7276f01f4bfed51ff829a8180df54c179062fcd3" rel="noopener noreferrer"><code>7276f01f</code></a>
+</p>
+<p>
+<strong>Revert &quot;[AMDGPU] Reserve ENABLE_WAVEFRONT_SIZE32 on gfx125x&quot; (#239028)</strong>
+</p>
+<p>
+3 related commits on this development. Latest: Revert &quot;[AMDGPU] Reserve ENABLE_WAVEFRONT_SIZE32 on gfx125x&quot; (#239028) *(GPU, Diagnostics, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/da1fdef250e88423c972130b22c987cc24262fa0" rel="noopener noreferrer"><code>da1fdef2</code></a>, <a href="https://github.com/llvm/llvm-project/commit/805c6514dcfc8558f19b5f75f24e756167b0da0e" rel="noopener noreferrer"><code>805c6514</code></a>, <a href="https://github.com/llvm/llvm-project/commit/12f4d065b9348bcfb3382c8cf91be1541b7acf2d" rel="noopener noreferrer"><code>12f4d065</code></a>
+</p>
+<p>
+<strong>[SPIR-V][NewPM] Use runCodeGenPipeline in SPIRVTranslate (#238451)</strong>
+</p>
+<p>
+3 related commits on this development. Latest: [SPIR-V][NewPM] Use runCodeGenPipeline in SPIRVTranslate (#238451) *(Backend, GPU, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer"><code>e5a911fa</code></a>, <a href="https://github.com/llvm/llvm-project/commit/930f2d2cfa1e33b6786e351f32833968295e373a" rel="noopener noreferrer"><code>930f2d2c</code></a>, <a href="https://github.com/llvm/llvm-project/commit/30a475d9ca714102d31ed7ab5217ab5233ecb720" rel="noopener noreferrer"><code>30a475d9</code></a>
+</p>
+<p>
+<strong>[lldb][Fortran] Added support for functions to DWARFASTParserFortran (#234312)</strong>
+</p>
+<p>
+2 related commits on this development. Latest: [lldb][Fortran] Added support for functions to DWARFASTParserFortran (#234312) *(Debug information, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer"><code>e799d5c4</code></a>, <a href="https://github.com/llvm/llvm-project/commit/52247d54bb7ce5bc5e336652dde72876727903c6" rel="noopener noreferrer"><code>52247d54</code></a>
+</p>
+<p>
+<strong>[AMDGPU] Clear NoPHIs after SIFixSGPRCopies under the new pass manager (#238531)</strong>
+</p>
+<p>
+2 related commits on this development. Latest: [AMDGPU] Clear NoPHIs after SIFixSGPRCopies under the new pass manager (#238531) *(Backend, GPU, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer"><code>e2e487df</code></a>, <a href="https://github.com/llvm/llvm-project/commit/73fd9cd9a94de9f524125481bc24883c1f9390a0" rel="noopener noreferrer"><code>73fd9cd9</code></a>
+</p>
+<p>
+<strong>[AMDGPU][GlobalISel] Fold unmasked signed byte loads into D16 high loads (#236136)</strong>
+</p>
+<p>
+2 related commits on this development. Latest: [AMDGPU][GlobalISel] Fold unmasked signed byte loads into D16 high loads (#236136) *(Backend, GPU, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/6e37cd2cc855cd23aa30705a2cde4e3bb646624a" rel="noopener noreferrer"><code>6e37cd2c</code></a>, <a href="https://github.com/llvm/llvm-project/commit/06f4a14f71edc0dd3cf6032cbb1b853e01f9e1fa" rel="noopener noreferrer"><code>06f4a14f</code></a>
+</p>
+<p>
+<strong>[CIR] Implement local &#x27;cleanup&#x27; attribute (#238501)</strong>
+</p>
+<p>
+[CIR] Implement local &#x27;cleanup&#x27; attribute (#238501) *(Frontend, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/56f7848ba9705153682da7a1377ae8b12473634f" rel="noopener noreferrer"><code>56f7848b</code></a>
+</p>
+<p>
+<strong>[Matrix] Implement matrix support for the <code>step</code> intrinsic (#236850)</strong>
+</p>
+<p>
+[Matrix] Implement matrix support for the <code>step</code> intrinsic (#236850) *(Frontend, GPU, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/e2e1703c2143de0d5dd4eaf26b8ac1a4daad8800" rel="noopener noreferrer"><code>e2e1703c</code></a>
+</p>
+<p>
+<strong>[RISC-V][MC][RVY] Introduce support for the Zyhybrid extension (#233969)</strong>
+</p>
+<p>
+[RISC-V][MC][RVY] Introduce support for the Zyhybrid extension (#233969) *(Frontend, Register allocation, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/743905e1f847704358d93bb06faf8c018ebdeb32" rel="noopener noreferrer"><code>743905e1</code></a>
+</p>
+<p>
+<strong>[WebAssembly] Rename relaxed-atomics to acquire-release-atomics (#238113)</strong>
+</p>
+<p>
+[WebAssembly] Rename relaxed-atomics to acquire-release-atomics (#238113) *(Frontend, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/5de65c74da1b613a2251bae53677cf6dce298078" rel="noopener noreferrer"><code>5de65c74</code></a>
+</p>
+<p>
+<strong>[cuda] Add support to build temporary-stack (#239403)</strong>
+</p>
+<p>
+[flang-rt][cuda] Add support to build temporary-stack (#239403) *(Frontend, Build infrastructure)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/6273f264aa88c8fc55d3fec231f80638bca1de13" rel="noopener noreferrer"><code>6273f264</code></a>
+</p>
+<p>
+<strong>Implement LWG3601: <code>common_iterator</code>&#x27;s postfix-proxy needs <code>indirectly_readable</code> (#237574)</strong>
+</p>
+<p>
+[libc++] Implement LWG3601: <code>common_iterator</code>&#x27;s postfix-proxy needs <code>indirectly_readable</code> (#237574) *(Runtime, Testing, Documentation)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/eca43cccbe0eb9477a658b6c64f47a6fc5e79a29" rel="noopener noreferrer"><code>eca43ccc</code></a>
+</p>
+<p>
+<strong>Implement LWG4294: bitset(const CharT*) constructor needs to be constrained (#238119)</strong>
+</p>
+<p>
+anant: [libc++] Implement LWG4294: bitset(const CharT*) constructor needs to be constrained (#238119) *(Runtime, Testing, Documentation)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/da922a4d85be38a0a0f5615756bd685327d88eeb" rel="noopener noreferrer"><code>da922a4d</code></a>
+</p>
+<p>
+<strong>Implement close_range in unistd (#236913)</strong>
+</p>
+<p>
+[libc] Implement close_range in unistd (#236913) *(Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/69b3a4f9a1fea599a2adecfd82be2088e6e6af90" rel="noopener noreferrer"><code>69b3a4f9</code></a>
+</p>
+<p>
+<strong>Implement copy_file_range in unistd (#236914)</strong>
+</p>
+<p>
+[libc] Implement copy_file_range in unistd (#236914) *(Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/860204dbcede865d9f3bde2f047d40e4c58ce76a" rel="noopener noreferrer"><code>860204db</code></a>
+</p>
+<p>
+<strong>Implement killpg (#237561)</strong>
+</p>
+<p>
+[libc] Implement killpg (#237561) *(Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/e170a4aa5e0f63f7a83139901ac41a7154c5c5eb" rel="noopener noreferrer"><code>e170a4aa</code></a>
+</p>
+<p>
+<strong>Implement sigpending (#237568)</strong>
+</p>
+<p>
+[libc] Implement sigpending (#237568) *(Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/90cd08c8381cf01921b915a56c7347bed1bf7a11" rel="noopener noreferrer"><code>90cd08c8</code></a>
+</p>
+<p>
+<strong>Implement sigsuspend in signal (#237223)</strong>
+</p>
+<p>
+[libc] Implement sigsuspend in signal (#237223) *(Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/d2fc6dc9ddf7eaf9ec404caf3321fa15572f4c02" rel="noopener noreferrer"><code>d2fc6dc9</code></a>
+</p>
+<p>
+<strong>Implement swprintf. (#235008)</strong>
+</p>
+<p>
+[libc] Implement swprintf. (#235008) *(Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/b9b95cc44497adb40a2c8166010da4491a490d93" rel="noopener noreferrer"><code>b9b95cc4</code></a>
+</p>
+<p>
+<strong>[GPU] Restore release/acquire ordering on the allocator bitfield (#238208)</strong>
+</p>
+<p>
+[libc][GPU] Restore release/acquire ordering on the allocator bitfield (#238208) *(Other)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/e61a9cc5ffb6c4f59a49fb8ed365b172f9dea619" rel="noopener noreferrer"><code>e61a9cc5</code></a>
+</p>
+<p>
+<strong>[math] Implement acoshbf16 function (#236475)</strong>
+</p>
+<p>
+[libc][math] Implement acoshbf16 function (#236475) *(GPU, Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/c60156bd5bce204fca91d71fed396503e5273b40" rel="noopener noreferrer"><code>c60156bd</code></a>
+</p>
+<p>
+<strong>[sys/shm] Implement shmget syscall wrapper on Linux. (#239380)</strong>
+</p>
+<p>
+[libc][sys/shm] Implement shmget syscall wrapper on Linux. (#239380) *(Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/03d3d830cbcb366785066cc2a8038b9ae3348335" rel="noopener noreferrer"><code>03d3d830</code></a>
+</p>
+<p>
+<strong>implement property_list for sycl::queue (#232668)</strong>
+</p>
+<p>
+[libsycl] implement property_list for sycl::queue (#232668) *(Build infrastructure, Testing, Documentation)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/3b2fe02fbb264b12d28c08a0c4d523d71d33f1f3" rel="noopener noreferrer"><code>3b2fe02f</code></a>
+</p>
+<p>
+<strong>[AMDGPU][GlobalISel] Compute known bits for llvm.amdgcn.mul.u24/i24 (#236738)</strong>
+</p>
+<p>
+TelGome: [AMDGPU][GlobalISel] Compute known bits for llvm.amdgcn.mul.u24/i24 (#236738) *(Backend, GPU, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/60e151dae52bd722c574f9e89a040c77dd2a934e" rel="noopener noreferrer"><code>60e151da</code></a>
+</p>
+<p>
+<strong>[GlobalISel] Combine shifted power-of-two division and nonnegative signed div/rem (#236601)</strong>
+</p>
+<p>
+[GlobalISel] Combine shifted power-of-two division and nonnegative signed div/rem (#236601) *(GPU, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/6e5a44fb059d5b49862e3e6eeb14c4b0a8c20901" rel="noopener noreferrer"><code>6e5a44fb</code></a>
+</p>
+<p>
+<strong>[GlobalISel] Compare element sizes in minScalarSameAs/maxScalarSameAs (#237753)</strong>
+</p>
+<p>
+nodecoda: [GlobalISel] Compare element sizes in minScalarSameAs/maxScalarSameAs (#237753) *(Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/f5eb672ca0a7675674542f569c515c37073646e7" rel="noopener noreferrer"><code>f5eb672c</code></a>
+</p>
+<p>
+<strong>[GlobalISel] Do not attach instruction metadata to debug instructions (#232607)</strong>
+</p>
+<p>
+[GlobalISel] Do not attach instruction metadata to debug instructions (#232607) *(Instruction selection, Code generation, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/ffc837621043197c56b9f213f58da9ebcc6aa962" rel="noopener noreferrer"><code>ffc83762</code></a>
+</p>
+<p>
+<strong>[GlobalISel] Don&#x27;t assert on tied multi-register inline asm inputs (#238927)</strong>
+</p>
+<p>
+[GlobalISel] Don&#x27;t assert on tied multi-register inline asm inputs (#238927) *(Instruction selection, Code generation, Register allocation)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/16f7571293199bae6af10c676d5003fda774930d" rel="noopener noreferrer"><code>16f75712</code></a>
+</p></div>
+</section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>© CompilerSutra · Apache-2.0</div>
+      <div>
+        <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
+        <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
+        <a href="https://www.compilersutra.com/">Learn</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

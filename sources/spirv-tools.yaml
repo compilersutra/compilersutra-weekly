@@ -1,0 +1,12 @@
+id: spirv-tools
+name: SPIR-V Tools
+org: Khronos Group
+category: gpu
+project: spirv-tools
+kind: git
+enabled: true
+url: https://github.com/KhronosGroup/SPIRV-Tools.git
+github_repo: KhronosGroup/SPIRV-Tools
+default_branch: main
+mirror_dirname: spirv-tools
+max_commits: 300

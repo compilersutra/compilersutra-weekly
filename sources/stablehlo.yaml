@@ -1,0 +1,12 @@
+id: stablehlo
+name: StableHLO
+org: OpenXLA
+category: ai
+project: stablehlo
+kind: git
+enabled: true
+url: https://github.com/openxla/stablehlo.git
+github_repo: openxla/stablehlo
+default_branch: main
+mirror_dirname: stablehlo
+max_commits: 300

@@ -2,6 +2,7 @@ id: rocm-llvm
 name: ROCm LLVM / AMDGPU
 org: AMD ROCm
 category: gpu
+project: rocm-llvm
 kind: git
 enabled: false
 url: https://github.com/ROCm/llvm-project.git
@@ -9,6 +10,3 @@ github_repo: ROCm/llvm-project
 default_branch: amd-staging
 mirror_dirname: rocm-llvm
 max_commits: 400
-
-notes: Large fork — enable on self-hosted mirror cache. Open-source GPU/AMDGPU track only. Proprietary CUDA toolkit internals are out of scope.
-

@@ -2,6 +2,7 @@ id: tvm
 name: Apache TVM
 org: Apache TVM
 category: ai
+project: tvm
 kind: git
 enabled: true
 url: https://github.com/apache/tvm.git

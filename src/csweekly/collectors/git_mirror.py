@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Git mirror collector — primary path for LLVM / GCC monorepos.
+"""Git mirror collector — primary source of weekly truth.
 
-Clones once (or uses an existing mirror), fetches, then reads commits in the
-Friday→Friday window. No GitHub REST required for commit discovery.
+Clones/fetches mirrors and extracts commits by **committer timestamp**
+inside the Friday→Friday UTC window (end exclusive).
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
+from csweekly.analyzers.areas import classify_areas
 from csweekly.collectors.filters import author_ignored, subject_ignored
 from csweekly.config import SourceConfig
 from csweekly.models import CollectResult, EvidenceKind, Story, Window
@@ -29,18 +30,28 @@ def ensure_mirror(
     mirrors_root: Path,
     *,
     fetch: bool = True,
-) -> Path:
-    """Clone ``--mirror`` if missing; optionally ``git fetch --prune``."""
+) -> tuple[Path, list[str]]:
+    """Clone ``--mirror`` if missing; optionally ``git fetch --prune``.
+
+    Returns (path, errors).
+    """
+    errors: list[str] = []
     if not source.url:
-        raise ValueError(f"source {source.id}: git url required")
+        return mirrors_root / (source.mirror_dirname or source.id), [
+            f"{source.id}: git url required"
+        ]
     path = mirror_path(mirrors_root, source)
     path.parent.mkdir(parents=True, exist_ok=True)
-    if not (path / "HEAD").exists() and not (path / ".git").exists():
-        path.mkdir(parents=True, exist_ok=True)
-        _run(["git", "clone", "--mirror", source.url, str(path)])
-    elif fetch:
-        _run(["git", "fetch", "--prune"], cwd=path)
-    return path
+    try:
+        if not (path / "HEAD").exists() and not (path / ".git").exists():
+            path.mkdir(parents=True, exist_ok=True)
+            _run(["git", "clone", "--mirror", source.url, str(path)])
+        elif fetch:
+            _run(["git", "fetch", "--prune"], cwd=path)
+    except subprocess.CalledProcessError as exc:
+        err = exc.stderr[-400:] if exc.stderr else str(exc)
+        errors.append(f"{source.id}: git clone/fetch failed: {err}")
+    return path, errors
 
 
 def collect_git(
@@ -51,48 +62,77 @@ def collect_git(
     fetch: bool = True,
     repo_path: Path | None = None,
 ) -> CollectResult:
-    """Collect commits for ``source`` inside ``window``."""
-    repo = repo_path or ensure_mirror(source, mirrors_root, fetch=fetch)
-    since, until = git_since_until(window)
-    fmt = "%H%x09%cI%x09%an%x09%s"
-    ref = source.default_branch
-    if (repo / "HEAD").exists() and not (repo / ".git").exists():
-        ref = f"refs/heads/{source.default_branch}"
+    errors: list[str] = []
+    if repo_path is not None:
+        repo = repo_path
+    else:
+        repo, errors = ensure_mirror(source, mirrors_root, fetch=fetch)
+        if errors and not (repo / "HEAD").exists() and not (repo / ".git").exists():
+            return CollectResult(
+                source_id=source.id, window=window, stories=[], meta={}, errors=errors
+            )
 
-    cmd = [
-        "git",
-        "log",
-        f"--since={since}",
-        f"--until={until}",
-        f"--pretty=format:{fmt}",
-        "--no-merges",
-        f"-n{source.max_commits}",
-        ref,
-    ]
-    try:
-        out = _run(cmd, cwd=repo)
-    except subprocess.CalledProcessError:
-        cmd[-1] = "HEAD"
-        out = _run(cmd, cwd=repo)
+    since, until = git_since_until(window)
+    fmt = "%H%x09%cI%x09%aI%x09%an%x09%cn%x09%s"
+    refs = _candidate_refs(repo, source.default_branch)
+    out = ""
+    used_ref = refs[0]
+    last_err = ""
+    for ref in refs:
+        cmd = [
+            "git",
+            "log",
+            f"--since={since}",
+            f"--until={until}",
+            f"--pretty=format:{fmt}",
+            "--no-merges",
+            f"-n{source.max_commits}",
+            ref,
+        ]
+        try:
+            out = _run(cmd, cwd=repo)
+            used_ref = ref
+            break
+        except subprocess.CalledProcessError as exc:
+            last_err = exc.stderr[-200:] if exc.stderr else str(exc)
+            continue
+    else:
+        errors.append(f"{source.id}: git log failed on refs {refs}: {last_err}")
+        return CollectResult(
+            source_id=source.id,
+            window=window,
+            stories=[],
+            meta={"repo": str(repo)},
+            errors=errors,
+        )
 
     stories: list[Story] = []
     discovered = datetime.now(UTC)
+    project = source.project or source.id
 
     for line in out.splitlines():
         if not line.strip():
             continue
-        parts = line.split("\t", 3)
-        if len(parts) < 4:
+        parts = line.split("\t", 5)
+        if len(parts) < 6:
             continue
-        sha, when, author, subject = parts
+        sha, cwhen, awhen, author, committer, subject = parts
         subject = subject.strip()
         if author_ignored(author, source) or subject_ignored(subject, source):
             continue
-        paths = _paths_for_commit(repo, sha)
+        try:
+            paths = _paths_for_commit(repo, sha)
+        except subprocess.CalledProcessError:
+            paths = []
+            errors.append(f"{source.id}: failed to list paths for {sha[:12]}")
         if source.path_prefixes and not _matches_prefixes(paths, source.path_prefixes):
+            continue
+        if source.path_excludes and _matches_prefixes(paths, source.path_excludes):
             continue
         label = _path_label(paths, source.path_labels)
         title = f"[{label}] {subject}" if label else subject
+        areas = classify_areas(paths, subject)
+        commit_dt = _parse_dt(cwhen)
         stories.append(
             Story(
                 id=f"git:{source.id}:{sha}",
@@ -100,13 +140,24 @@ def collect_git(
                 source_url=_commit_url(source, sha),
                 source_org=source.org,
                 category=source.category,
-                published_at=_parse_dt(when),
+                project=project,
+                published_at=commit_dt,
                 discovered_at=discovered,
                 evidence_kind=EvidenceKind.GIT_COMMIT,
-                summary=f"{author}: {subject}",
+                summary=subject,
                 related_ref=sha,
-                paths=paths[:40],
-                raw={"author": author, "sha": sha},
+                paths=paths[:80],
+                areas=areas,
+                author=author,
+                committer=committer,
+                raw={
+                    "sha": sha,
+                    "author": author,
+                    "committer": committer,
+                    "author_date": awhen,
+                    "committer_date": cwhen,
+                    "ref": used_ref,
+                },
             )
         )
 
@@ -114,8 +165,34 @@ def collect_git(
         source_id=source.id,
         window=window,
         stories=stories,
-        meta={"repo": str(repo), "commit_count": len(stories)},
+        meta={
+            "repo": str(repo),
+            "commit_count": len(stories),
+            "ref": used_ref,
+            "since": since,
+            "until": until,
+            "date_field": "committer",
+        },
+        errors=errors,
     )
+
+
+def _candidate_refs(repo: Path, default_branch: str) -> list[str]:
+    bare = (repo / "HEAD").exists() and not (repo / ".git").exists()
+    refs: list[str] = []
+    if bare:
+        refs.append(f"refs/heads/{default_branch}")
+        for alt in ("main", "master", "trunk", "amd-staging"):
+            r = f"refs/heads/{alt}"
+            if r not in refs:
+                refs.append(r)
+    else:
+        refs.append(default_branch)
+        for alt in ("main", "master"):
+            if alt not in refs:
+                refs.append(alt)
+    refs.append("HEAD")
+    return refs
 
 
 def _paths_for_commit(repo: Path, sha: str) -> list[str]:

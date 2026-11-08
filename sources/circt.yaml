@@ -1,0 +1,12 @@
+id: circt
+name: CIRCT
+org: LLVM CIRCT
+category: mlir
+project: circt
+kind: git
+enabled: true
+url: https://github.com/llvm/circt.git
+github_repo: llvm/circt
+default_branch: main
+mirror_dirname: circt
+max_commits: 300

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>IR / infra — CompilerSutra Weekly</title>
-  <meta name="description" content="Compiler ecosystem intelligence — browse CPU, MLIR, GPU, AI/DL, research."/>
+  <title>MLIR — CompilerSutra Weekly</title>
+  <meta name="description" content="What changed in compilers this week — LLVM, GCC, MLIR, AI and GPU compilers."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
@@ -18,9 +18,9 @@
         <a href="../index.html">Home</a>
         <a href="index.html" aria-current="page">Topics</a>
         <a href="../archive.html">Archive</a>
+        <a href="../changelog.html">Change log</a>
         <a href="../about.html">About</a>
         <a class="pill" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
-        <a class="pill" href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </nav>
     </div>
   </header>
@@ -29,20 +29,168 @@
   <div class="topic-bar">
     <div class="wrap" aria-label="Topics">
       <a href="../topics/index.html">All topics</a>
-      <a href="../topics/cpu.html">CPU</a><a href="../topics/mlir.html" aria-current="page">IR / infra</a><a href="../topics/gpu.html">GPU</a><a href="../topics/ai.html">AI / DL</a><a href="../topics/research.html">Research</a>
+      <a href="../topics/llvm.html">LLVM</a><a href="../topics/gcc.html">GCC</a><a href="../topics/mlir.html" aria-current="page">MLIR</a><a href="../topics/ai.html">AI Compilers</a><a href="../topics/gpu.html">GPU</a><a href="../topics/research.html">Research</a>
     </div>
   </div>
 
-  <main class="wrap" style="padding:2.5rem 0 3rem">
+  <main class="wrap article-narrow">
     <p class="hero-kicker">Topic</p>
-    <h1 style="font-family:var(--font-display);font-size:clamp(2rem,4vw,2.8rem);margin:0 0 0.35rem">IR / infra</h1>
-    <p style="color:var(--muted);margin:0 0 1.25rem">MLIR · IR &amp; compiler infra (MLIR)</p>
+    <h1 class="page-title">MLIR</h1>
+    <p class="muted">Dialects &amp; infra</p>
     <div class="cta-row" style="margin-bottom:1.75rem">
-      <a class="btn btn-primary" href="../issues/2026/2026-11-07.html#ir-compiler-infra-mlir">Jump in latest issue →</a>
+      <a class="btn btn-primary" href="../issues/2026/2026-11-07.html">Jump in latest issue →</a>
       <a class="btn btn-ghost" href="index.html">All topics</a>
       <a class="btn btn-ghost" href="../archive.html">Archive</a>
     </div>
-    <p class="topic-empty">No stories in this topic for published issues yet. Check the latest Saturday issue or come back next week.</p>
+    <section class="topic-issue-block">
+  <h3><a href="../issues/2026/2026-11-07.html">#001 · 2026-11-07</a></h3>
+  <p class="muted">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+  <div class="article" style="padding:0;width:auto;margin:0"><h2 id="mlir">MLIR</h2>
+<p>
+<strong>[NVVM] Add nvvm.mulf Op (#238395)</strong>
+</p>
+<p>
+3 related commits on this development. Latest: [MLIR][NVVM] Add nvvm.mulf Op (#238395) *(MLIR dialects, Vectorization, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer"><code>aa1bf897</code></a>, <a href="https://github.com/llvm/llvm-project/commit/04e0db52562678dcd95d6a04af001c70780e9262" rel="noopener noreferrer"><code>04e0db52</code></a>, <a href="https://github.com/llvm/llvm-project/commit/0c0e3e79246e4c4a195d436b70373b1748725d05" rel="noopener noreferrer"><code>0c0e3e79</code></a>
+</p>
+<p>
+<strong>[acc] Do not report a negative launch width as a size (#238572)</strong>
+</p>
+<p>
+2 related commits on this development. Latest: [mlir][acc] Do not report a negative launch width as a size (#238572) *(MLIR dialects, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/b603a2c914fdac2b77ae464831af4c7487fbbc69" rel="noopener noreferrer"><code>b603a2c9</code></a>, <a href="https://github.com/llvm/llvm-project/commit/9640b6a6cc9516095c37006f78438e6aa7fc7c05" rel="noopener noreferrer"><code>9640b6a6</code></a>
+</p>
+<p>
+<strong>[bufferization] Skip non-identity layouts in static memory planning (#237125)</strong>
+</p>
+<p>
+2 related commits on this development. Latest: [mlir][bufferization] Skip non-identity layouts in static memory planning (#237125) *(MLIR dialects, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/c389e88caf1c12fe4ab25d074eccc00a6679441a" rel="noopener noreferrer"><code>c389e88c</code></a>, <a href="https://github.com/llvm/llvm-project/commit/78233779428032e599aff583384a2aead41d774d" rel="noopener noreferrer"><code>78233779</code></a>
+</p>
+<p>
+<strong>[CIR][mlir][ABI] Add IndirectAliased (byref) argument lowering (#230415)</strong>
+</p>
+<p>
+Chaitanya: [CIR][mlir][ABI] Add IndirectAliased (byref) argument lowering (#230415) *(Frontend, MLIR dialects, GPU)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/dd05b6ce79289e8932e86e687e82cdcc5d2651b5" rel="noopener noreferrer"><code>dd05b6ce</code></a>
+</p>
+<p>
+<strong>[clang][APFloat] Print floating-point literals in the shortest round-trip form (#218471)</strong>
+</p>
+<p>
+[clang][APFloat] Print floating-point literals in the shortest round-trip form (#218471) *(Frontend, Testing, Documentation)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/dc8efda565542c002e0f018936cb451eda8b05b8" rel="noopener noreferrer"><code>dc8efda5</code></a>
+</p>
+<p>
+<strong>[mlir][NFC] Remove includes provided by generated declarations and definitions (#238848)</strong>
+</p>
+<p>
+[mlir][NFC] Remove includes provided by generated declarations and definitions (#238848) *(Frontend, MLIR dialects, GPU)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/63122d8959961ce28c0cf12d93a1b114db5ab064" rel="noopener noreferrer"><code>63122d89</code></a>
+</p>
+<p>
+<strong>[Passes] Make PipelineTuningOptions not read library options (#238434)</strong>
+</p>
+<p>
+[Passes] Make PipelineTuningOptions not read library options (#238434) *(Frontend, Build infrastructure)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/0fa939a990bf901802abadf4e502fa8c4a66fc9c" rel="noopener noreferrer"><code>0fa939a9</code></a>
+</p>
+<p>
+<strong>[OpenMP] Fix sections construct emitting a barrier with a nowait clause. (#238269)</strong>
+</p>
+<p>
+JRP-arm: [flang][OpenMP] Fix sections construct emitting a barrier with a nowait clause. (#238269) *(MLIR dialects, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/28cf852471d1ff855084950f47bd2b0a1d9b5211" rel="noopener noreferrer"><code>28cf8524</code></a>
+</p>
+<p>
+<strong>[OpenMP][MLIR] Add virtual collapse for constant static worksharing (#235822)</strong>
+</p>
+<p>
+[OpenMP][MLIR] Add virtual collapse for constant static worksharing (#235822) *(Frontend, MLIR dialects, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/920022915a8a2b103f66a31c0b6fe0749140121a" rel="noopener noreferrer"><code>92002291</code></a>
+</p>
+<p>
+<strong>Add CmpFIntToFPConst and SelectToExtUI to an anonymous NS. (#238091)</strong>
+</p>
+<p>
+[MLIR] Add CmpFIntToFPConst and SelectToExtUI to an anonymous NS. (#238091) *(MLIR dialects)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/f158c8fdd5aa9825d063c447aa2e7c573e6626ec" rel="noopener noreferrer"><code>f158c8fd</code></a>
+</p>
+<p>
+<strong>Add Diagnostic::getStringArgument for diagnostic-owned strings (#236965)</strong>
+</p>
+<p>
+[mlir] Add Diagnostic::getStringArgument for diagnostic-owned strings (#236965) *(MLIR dialects, Diagnostics, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/ddd945fa38597e19154defa99e130188361ff49d" rel="noopener noreferrer"><code>ddd945fa</code></a>
+</p>
+<p>
+<strong>Add TableGen &quot;variant&quot; of MLIRSupport (#239165)</strong>
+</p>
+<p>
+[MLIR] Add TableGen &quot;variant&quot; of MLIRSupport (#239165) *(MLIR dialects, Build infrastructure)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/b0203bdf7015543999499c5dea5f392945995d10" rel="noopener noreferrer"><code>b0203bdf</code></a>
+</p>
+<p>
+<strong>Disable Dylib when building for MSVC (#238037)</strong>
+</p>
+<p>
+[MLIR] Disable Dylib when building for MSVC (#238037) *(MLIR dialects, Build infrastructure)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/ffdf6b81d520dda781c0114d60817e7b852f63c7" rel="noopener noreferrer"><code>ffdf6b81</code></a>
+</p>
+<p>
+<strong>Fix detection of default sub-element handlers (#238027)</strong>
+</p>
+<p>
+[mlir] Fix detection of default sub-element handlers (#238027) *(MLIR dialects, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/e47817f3448db8b782469f400331d90cb9dd5416" rel="noopener noreferrer"><code>e47817f3</code></a>
+</p>
+<p>
+<strong>Fix Final remark links and synchronize reporting (#238730)</strong>
+</p>
+<p>
+[mlir] Fix Final remark links and synchronize reporting (#238730) *(MLIR dialects, Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/91c7f957f1bbc397373054af2b4a0b9704113870" rel="noopener noreferrer"><code>91c7f957</code></a>
+</p>
+<p>
+<strong>Fix ThinLTO printing failures in dylib-linked test tools (#236742)</strong>
+</p>
+<p>
+[mlir] Fix ThinLTO printing failures in dylib-linked test tools (#236742) *(MLIR dialects, Build infrastructure, Testing)*
+</p>
+<p>
+<a href="https://github.com/llvm/llvm-project/commit/68c9a5269b5ec28c3afaaedf1f497339654aa746" rel="noopener noreferrer"><code>68c9a526</code></a>
+</p></div>
+</section>
   </main>
 
   <footer class="site-footer">

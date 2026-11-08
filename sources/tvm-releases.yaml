@@ -2,6 +2,7 @@ id: tvm-releases
 name: TVM GitHub Releases
 org: Apache TVM
 category: ai
+project: tvm
 kind: github_releases
 enabled: true
 github_repo: apache/tvm

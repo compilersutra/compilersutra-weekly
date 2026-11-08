@@ -1,0 +1,13 @@
+id: xla
+name: OpenXLA / XLA
+org: OpenXLA
+category: ai
+project: xla
+kind: git
+enabled: false
+url: https://github.com/openxla/xla.git
+github_repo: openxla/xla
+default_branch: main
+mirror_dirname: xla
+max_commits: 400
+notes: Enable when mirror disk is ready (large).

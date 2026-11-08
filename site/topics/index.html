@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Topics — CompilerSutra Weekly</title>
-  <meta name="description" content="Compiler ecosystem intelligence — browse CPU, MLIR, GPU, AI/DL, research."/>
+  <meta name="description" content="What changed in compilers this week — LLVM, GCC, MLIR, AI and GPU compilers."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
@@ -18,9 +18,9 @@
         <a href="../index.html">Home</a>
         <a href="index.html" aria-current="page">Topics</a>
         <a href="../archive.html">Archive</a>
+        <a href="../changelog.html">Change log</a>
         <a href="../about.html">About</a>
         <a class="pill" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
-        <a class="pill" href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </nav>
     </div>
   </header>
@@ -29,37 +29,42 @@
   <div class="topic-bar">
     <div class="wrap" aria-label="Topics">
       <a href="../topics/index.html" aria-current="page">All topics</a>
-      <a href="../topics/cpu.html">CPU</a><a href="../topics/mlir.html">IR / infra</a><a href="../topics/gpu.html">GPU</a><a href="../topics/ai.html">AI / DL</a><a href="../topics/research.html">Research</a>
+      <a href="../topics/llvm.html">LLVM</a><a href="../topics/gcc.html">GCC</a><a href="../topics/mlir.html">MLIR</a><a href="../topics/ai.html">AI Compilers</a><a href="../topics/gpu.html">GPU</a><a href="../topics/research.html">Research</a>
     </div>
   </div>
 
-  <main class="wrap" style="padding:2.5rem 0 3rem">
+  <main class="wrap article-narrow">
     <p class="hero-kicker">Topics</p>
-    <h1 style="font-family:var(--font-display);font-size:clamp(2rem,4vw,2.8rem);margin:0 0 0.75rem">Five modules</h1>
-    <p style="color:var(--muted);max-width:36rem;margin-bottom:1.5rem">Each topic pulls matching sections from Saturday issues. Proprietary CUDA stacks stay out of scope.</p>
-    <div class="buckets"><a class="bucket" href="cpu.html">
-  <strong>CPU</strong>
-  <span>LLVM, GCC</span>
+    <h1 class="page-title">Browse by area</h1>
+    <p class="muted">Jump into matching sections from published Saturday issues.</p>
+    <div class="buckets"><a class="bucket" href="llvm.html">
+  <strong>LLVM</strong>
+  <span>Clang, backends, CodeGen</span>
+  <span class="go">Open →</span>
+</a>
+<a class="bucket" href="gcc.html">
+  <strong>GCC</strong>
+  <span>GIMPLE, RTL, targets</span>
   <span class="go">Open →</span>
 </a>
 <a class="bucket" href="mlir.html">
-  <strong>IR / infra</strong>
-  <span>MLIR</span>
+  <strong>MLIR</strong>
+  <span>Dialects &amp; infra</span>
+  <span class="go">Open →</span>
+</a>
+<a class="bucket" href="ai.html">
+  <strong>AI Compilers</strong>
+  <span>Triton, XLA, IREE, TVM</span>
   <span class="go">Open →</span>
 </a>
 <a class="bucket" href="gpu.html">
   <strong>GPU</strong>
-  <span>Open source only</span>
-  <span class="go">Open →</span>
-</a>
-<a class="bucket" href="ai.html">
-  <strong>AI / DL</strong>
-  <span>TVM, IREE, Triton…</span>
+  <span>AMDGPU, ROCm, SPIR-V</span>
   <span class="go">Open →</span>
 </a>
 <a class="bucket" href="research.html">
   <strong>Research</strong>
-  <span>arXiv</span>
+  <span>Papers &amp; notes</span>
   <span class="go">Open →</span>
 </a></div>
   </main>

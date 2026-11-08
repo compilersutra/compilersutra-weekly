@@ -1,0 +1,13 @@
+id: rust
+name: rustc
+org: Rust Project
+category: other
+project: rustc
+kind: git
+enabled: true
+url: https://github.com/rust-lang/rust.git
+github_repo: rust-lang/rust
+default_branch: master
+mirror_dirname: rust
+max_commits: 400
+notes: Other compiler projects track. Large mirror.

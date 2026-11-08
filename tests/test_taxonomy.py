@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 from pathlib import Path
+from datetime import datetime, timezone
 
 from csweekly.config import load_sources
-from csweekly.reporters.markdown import SECTION_GROUPS, build_issue, render_markdown
+from csweekly.reporters.markdown import SECTION_ORDER, build_issue, render_markdown
 from csweekly.models import EvidenceKind, Story, Window
-from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
 UTC = timezone.utc
@@ -16,7 +16,7 @@ def test_ai_sources_use_ai_category():
         assert sources[sid].category == "ai"
 
 
-def test_report_groups_cpu_and_ai():
+def test_report_groups_llvm_and_ai():
     window = Window(
         start=datetime(2026, 10, 30, tzinfo=UTC),
         end=datetime(2026, 11, 6, tzinfo=UTC),
@@ -29,10 +29,12 @@ def test_report_groups_cpu_and_ai():
             source_url="https://example.com/1",
             source_org="LLVM",
             category="llvm",
+            project="llvm",
             published_at=now,
             discovered_at=now,
             evidence_kind=EvidenceKind.GIT_COMMIT,
-            summary="fact",
+            summary="clang change",
+            paths=["clang/lib/Sema/Sema.cpp"],
         ),
         Story(
             id="2",
@@ -40,14 +42,16 @@ def test_report_groups_cpu_and_ai():
             source_url="https://example.com/2",
             source_org="TVM",
             category="ai",
+            project="tvm",
             published_at=now,
             discovered_at=now,
             evidence_kind=EvidenceKind.GIT_COMMIT,
-            summary="fact",
+            summary="tvm change",
+            paths=["src/relay/op/nn.cc"],
         ),
     ]
     md = render_markdown(build_issue(window, stories))
-    assert "CPU compilers" in md
-    assert "AI / DL compilers" in md
-    assert "open source only" in md.lower() or "open source" in md.lower()
-    assert any("CPU" in h for h, _ in SECTION_GROUPS)
+    assert "LLVM" in md
+    assert "AI Compilers" in md
+    assert "What changed in compilers this week" in md
+    assert any(h == "LLVM" for h, _ in SECTION_ORDER)

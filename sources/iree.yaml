@@ -2,6 +2,7 @@ id: iree
 name: IREE
 org: OpenXLA / IREE
 category: ai
+project: iree
 kind: git
 enabled: true
 url: https://github.com/iree-org/iree.git

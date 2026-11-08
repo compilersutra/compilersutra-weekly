@@ -2,12 +2,15 @@ id: llvm
 name: LLVM / Clang
 org: LLVM Project
 category: llvm
+project: llvm
 kind: git
 enabled: true
 url: https://github.com/llvm/llvm-project.git
 github_repo: llvm/llvm-project
 default_branch: main
 mirror_dirname: llvm-project
+path_excludes:
+- mlir/
 path_labels:
   clang/: Clang
   clang-tools-extra/: Clang Tools

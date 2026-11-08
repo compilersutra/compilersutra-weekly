@@ -2,6 +2,7 @@ id: llvm-discourse
 name: LLVM Discourse Announcements
 org: LLVM Project
 category: llvm
+project: llvm
 kind: rss
 enabled: true
 feed_url: https://discourse.llvm.org/c/announce/8.rss

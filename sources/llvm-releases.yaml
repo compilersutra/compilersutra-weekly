@@ -2,6 +2,7 @@ id: llvm-releases
 name: LLVM GitHub Releases
 org: LLVM Project
 category: llvm
+project: llvm
 kind: github_releases
 enabled: true
 github_repo: llvm/llvm-project

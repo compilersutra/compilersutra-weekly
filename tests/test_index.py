@@ -9,19 +9,22 @@ def test_write_archive_index(tmp_path: Path):
     year = reports / "2026"
     year.mkdir(parents=True)
     (year / "2026-11-07.md").write_text(
-        """# Issue
+        """# CompilerSutra Weekly — #001, November 7 2026
 
-**Reporting window:** 2026-10-30 → 2026-11-06 (UTC)
+**Reporting period:** 2026-10-30 → 2026-11-06 (UTC)
 
-## CPU compilers (LLVM, GCC)
+## LLVM
 
-- **clang tweak**
-  - Fact: hello
+**clang tweak**
+
+fact about clang
+
+[`abc123`](https://example.com/1)
 
 ## Research papers
 
 - **paper**
-  - Fact: arxiv
+  - [Paper](https://arxiv.org/abs/1)
 """,
         encoding="utf-8",
     )
@@ -29,12 +32,13 @@ def test_write_archive_index(tmp_path: Path):
     archive = write_archive_index(reports, site)
     assert archive.is_file()
     assert (site / "index.html").is_file()
-    assert (site / "topics" / "cpu.html").is_file()
+    assert (site / "changelog.html").is_file()
+    assert (site / "topics" / "llvm.html").is_file()
     assert (site / "topics" / "research.html").is_file()
     home = (site / "index.html").read_text(encoding="utf-8")
-    assert 'href="topics/cpu.html"' in home
-    assert "Open topic" in home
-    cpu = (site / "topics" / "cpu.html").read_text(encoding="utf-8")
-    assert "clang tweak" in cpu
+    assert "What changed in compilers this week" in home
+    assert "Read latest issue" in home
+    llvm = (site / "topics" / "llvm.html").read_text(encoding="utf-8")
+    assert "clang tweak" in llvm
     research = (site / "topics" / "research.html").read_text(encoding="utf-8")
     assert "paper" in research

@@ -15,13 +15,14 @@ class SourceConfig(BaseModel):
     name: str
     org: str
     category: str
-    kind: str = "git"  # git | github_releases | rss | arxiv
+    project: str = ""
+    kind: str = "git"  # git | github_releases | rss | arxiv | web_discovery
     enabled: bool = True
-    # git
     url: str | None = None
     default_branch: str = "main"
     mirror_dirname: str | None = None
     path_prefixes: list[str] = Field(default_factory=list)
+    path_excludes: list[str] = Field(default_factory=list)
     path_labels: dict[str, str] = Field(default_factory=dict)
     ignore_author_regexes: list[str] = Field(default_factory=list)
     ignore_subject_regexes: list[str] = Field(
@@ -34,11 +35,9 @@ class SourceConfig(BaseModel):
         ]
     )
     max_commits: int = 500
-    # github
-    github_repo: str | None = None  # owner/name
+    github_repo: str | None = None
     github_include_prs: bool = False
     max_releases: int = 20
-    # feeds / arxiv
     feed_url: str | None = None
     arxiv_query: str | None = None
     arxiv_max_results: int = 25

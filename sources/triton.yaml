@@ -2,6 +2,7 @@ id: triton
 name: OpenAI Triton
 org: OpenAI
 category: ai
+project: triton
 kind: git
 enabled: true
 url: https://github.com/triton-lang/triton.git

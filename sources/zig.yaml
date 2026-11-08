@@ -1,0 +1,12 @@
+id: zig
+name: Zig
+org: Zig Software Foundation
+category: other
+project: zig
+kind: git
+enabled: true
+url: https://github.com/ziglang/zig.git
+github_repo: ziglang/zig
+default_branch: master
+mirror_dirname: zig
+max_commits: 300

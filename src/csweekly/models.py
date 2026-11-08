@@ -11,47 +11,59 @@ from pydantic import BaseModel, Field
 
 
 class EvidenceKind(str, Enum):
-    """How the finding was observed."""
-
     GIT_COMMIT = "git_commit"
     GIT_TAG = "git_tag"
     GITHUB_RELEASE = "github_release"
     RSS = "rss"
     ARXIV = "arxiv"
+    WEB_ANNOUNCEMENT = "web_announcement"
     MANUAL = "manual"
+
+
+class Importance(str, Enum):
+    HIGHLIGHT = "highlight"
+    NOTABLE = "notable"
+    OTHER = "other"
 
 
 class Story(BaseModel):
     """One source-backed finding for the weekly window."""
 
-    id: str = Field(description="Stable id for dedupe, e.g. git:llvm:<sha>")
+    id: str
     title: str
     source_url: str
     source_org: str
-    category: str
+    category: str  # llvm | gcc | mlir | ai | gpu | other | research
+    project: str = ""
     published_at: datetime | None = None
     discovered_at: datetime
     evidence_kind: EvidenceKind
-    summary: str = Field(description="Factual summary from the source only")
-    engineering_significance: str | None = Field(
-        default=None,
-        description="Optional analysis; must not invent source facts",
-    )
+    summary: str
+    engineering_significance: str | None = None
     relevance_score: float = Field(default=0.0, ge=0.0, le=1.0)
-    related_ref: str | None = Field(
-        default=None, description="commit sha, PR number, paper id, …"
-    )
+    related_ref: str | None = None
     paths: list[str] = Field(default_factory=list)
+    areas: list[str] = Field(default_factory=list)
+    importance: Importance = Importance.OTHER
+    group_id: str | None = None
+    group_title: str | None = None
+    author: str | None = None
+    committer: str | None = None
     raw: dict[str, Any] = Field(default_factory=dict)
-    analysis_generated: bool = Field(
-        default=False,
-        description="True only when engineering_significance was machine-written",
-    )
+    analysis_generated: bool = False
+
+
+class ChangeGroup(BaseModel):
+    id: str
+    title: str
+    category: str
+    project: str
+    areas: list[str] = Field(default_factory=list)
+    importance: Importance = Importance.OTHER
+    stories: list[Story] = Field(default_factory=list)
 
 
 class Window(BaseModel):
-    """Friday→Friday reporting window (end exclusive)."""
-
     start: datetime
     end: datetime
     timezone: str = "UTC"
@@ -66,6 +78,7 @@ class CollectResult(BaseModel):
     window: Window
     stories: list[Story]
     meta: dict[str, Any] = Field(default_factory=dict)
+    errors: list[str] = Field(default_factory=list)
 
 
 class WeeklyIssue(BaseModel):
@@ -73,5 +86,7 @@ class WeeklyIssue(BaseModel):
     published_on: date
     window: Window
     stories: list[Story]
+    groups: list[ChangeGroup] = Field(default_factory=list)
     sections: dict[str, list[Story]] = Field(default_factory=dict)
     hotspots: dict[str, list[tuple[str, int]]] = Field(default_factory=dict)
+    stats: dict[str, Any] = Field(default_factory=dict)

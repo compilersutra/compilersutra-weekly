@@ -11,7 +11,7 @@ from pathlib import Path
 
 from csweekly.config import load_sources, sources_dir
 from csweekly.models import Story, Window
-from csweekly.pipeline import collect_all
+from csweekly.pipeline import collect_all, enrich_story
 from csweekly.reporters.index import write_archive_index
 from csweekly.reporters.markdown import build_issue, render_markdown, write_issue
 from csweekly.window import friday_friday_window, publish_saturday
@@ -130,8 +130,16 @@ def cmd_collect(args: argparse.Namespace) -> int:
 def cmd_report(args: argparse.Namespace) -> int:
     raw = json.loads(args.infile.read_text(encoding="utf-8"))
     window = Window.model_validate(raw["window"])
-    stories = [Story.model_validate(s) for s in raw["stories"]]
-    issue = build_issue(window, stories)
+    stories = [enrich_story(Story.model_validate(s)) for s in raw["stories"]]
+    errors: list[str] = []
+    for r in raw.get("results") or []:
+        errors.extend(r.get("errors") or [])
+    issue = build_issue(
+        window,
+        stories,
+        reports_dir=args.reports_dir,
+        errors=errors,
+    )
     text = render_markdown(issue)
     if args.stdout:
         print(text)

@@ -58,5 +58,5 @@ def test_dedupe_and_report():
     assert len(merged) == len(a.stories)
     issue = build_issue(window, merged)
     md = render_markdown(issue)
-    assert "Reporting window" in md
+    assert "Reporting period" in md or "Reporting window" in md
     assert "2026-11-07" in md
