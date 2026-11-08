@@ -36,5 +36,9 @@ Because.
     assert (site / "explore" / "index.html").is_file()
     assert (site / "topics" / "llvm.html").is_file()
     home = (site / "index.html").read_text(encoding="utf-8")
-    assert "worth understanding" in home.lower()
+    assert "explained every week" in home.lower() or "worth understanding" in home.lower()
     assert "Read latest issue" in home
+    assert "theme-toggle" in home
+    assert "data-theme" in home
+    assert (site / "assets" / "theme.js").is_file()
+    assert (site / "assets" / "site.css").is_file()

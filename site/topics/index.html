@@ -1,36 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Topics — CompilerSutra Weekly</title>
-  <meta name="description" content="The compiler changes worth understanding — with context."/>
+  <meta name="description" content="The compiler ecosystem, explained every week — selected, organized, and contextualized."/>
+  <meta name="color-scheme" content="dark light"/>
+  <script src="../assets/theme.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../assets/site.css"/>
 </head>
 <body>
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href="../index.html">CompilerSutra <span>Weekly</span></a>
-      <nav class="nav" aria-label="Primary">
-        <a href="../index.html">Home</a>
-        <a href="index.html" aria-current="page">Topics</a>
-        <a href="../explore/index.html">Explore</a>
+      <a class="brand" href="../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">The compiler ecosystem, explained every week.</span></a>
+      <nav class="nav-desktop" aria-label="Primary">
+        <a href="../index.html">Latest</a>
+        <a href="../explore/index.html#stages">Stages</a>
+        <a href="../explore/index.html">Domains</a>
+        <a href="index.html" aria-current="page">Stories</a>
+        <a href="../topics/research.html">Research</a>
         <a href="../archive.html">Archive</a>
-        <a href="../changelog.html">Change log</a>
+        <a href="../changelog.html">Search</a>
         <a href="../about.html">About</a>
-        <a class="pill" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
       </nav>
+      <div class="header-actions">
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false">Light</button>
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav">
+      <div class="wrap" aria-label="Mobile">
+        <a href="../index.html">Latest</a>
+        <a href="../explore/index.html#stages">Compiler stages</a>
+        <a href="../explore/index.html">Domains</a>
+        <a href="index.html">Stories / projects</a>
+        <a href="../topics/research.html">Research</a>
+        <a href="../archive.html">Archive</a>
+        <a href="../changelog.html">Search</a>
+        <a href="../about.html">About</a>
+        <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+      </div>
     </div>
   </header>
   
   
-  <div class="topic-bar">
-    <div class="wrap" aria-label="Topics">
-      <a href="../topics/index.html" aria-current="page">Topics</a>
-      <a href="../explore/index.html">Explore</a>
+  <div class="subnav" aria-label="Secondary">
+    <div class="wrap">
+      <a href="../explore/stage-frontend.html">Frontend</a>
+      <a href="../explore/stage-middle-end.html">Middle-end</a>
+      <a href="../explore/stage-backend.html">Backend</a>
+      <a href="../explore/stage-runtime-toolchain.html">Runtime</a>
+      <a href="../explore/domain-cpu.html">CPU</a>
+      <a href="../explore/domain-gpu.html">GPU</a>
+      <a href="../explore/domain-ai-ml.html">AI / ML</a>
+      <a href="../topics/index.html" aria-current="page">Projects</a>
       <a href="../topics/llvm.html">LLVM</a><a href="../topics/gcc.html">GCC</a><a href="../topics/mlir.html">MLIR</a><a href="../topics/ai.html">AI Compilers</a><a href="../topics/gpu.html">GPU</a><a href="../topics/research.html">Research</a>
     </div>
   </div>
@@ -69,7 +95,7 @@
 
   <footer class="site-footer">
     <div class="wrap">
-      <div>© CompilerSutra · Apache-2.0</div>
+      <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
       <div>
         <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·

@@ -195,10 +195,16 @@ def _topic_bar(active: str = "", *, depth: int = 0) -> str:
         cur = ' aria-current="page"' if active == t["id"] else ""
         links.append(f'<a href="{href}"{cur}>{html.escape(str(t["label"]))}</a>')
     return f"""
-  <div class="topic-bar">
-    <div class="wrap" aria-label="Topics">
-      <a href="{prefix}topics/index.html"{' aria-current="page"' if active=='topics' else ''}>Topics</a>
-      <a href="{prefix}explore/index.html"{' aria-current="page"' if active=='explore' else ''}>Explore</a>
+  <div class="subnav" aria-label="Secondary">
+    <div class="wrap">
+      <a href="{prefix}explore/stage-frontend.html">Frontend</a>
+      <a href="{prefix}explore/stage-middle-end.html">Middle-end</a>
+      <a href="{prefix}explore/stage-backend.html">Backend</a>
+      <a href="{prefix}explore/stage-runtime-toolchain.html">Runtime</a>
+      <a href="{prefix}explore/domain-cpu.html">CPU</a>
+      <a href="{prefix}explore/domain-gpu.html">GPU</a>
+      <a href="{prefix}explore/domain-ai-ml.html">AI / ML</a>
+      <a href="{prefix}topics/index.html"{' aria-current="page"' if active=='topics' else ''}>Projects</a>
       {''.join(links)}
     </div>
   </div>
@@ -206,14 +212,15 @@ def _topic_bar(active: str = "", *, depth: int = 0) -> str:
 
 
 def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
+    payload = _load_changelog(latest.path) if latest else {}
+    featured = ""
+    latest_block = '<p class="topic-empty">No issues yet.</p>'
     if latest:
         num = f"#{latest.issue_number:03d}" if latest.issue_number else latest.date
         hs = int(latest.stats.get("high_signal") or 0)
         wk = int(latest.stats.get("worth_knowing") or 0)
-        overview = ""
-        # pull week overview from changelog if present
-        payload = _load_changelog(latest.path)
         bullets = payload.get("week_overview") or []
+        overview = ""
         if bullets:
             overview = "<ul class='overview-list'>" + "".join(
                 f"<li>{html.escape(b)}</li>" for b in bullets[:5]
@@ -228,12 +235,45 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
           <div class="cta-row">
             <a class="btn btn-primary" href="{html.escape(latest.href_html)}">Read latest issue →</a>
             <a class="btn btn-ghost" href="archive.html">Archive</a>
-            <a class="btn btn-ghost" href="explore/index.html">Explore</a>
+            <a class="btn btn-ghost" href="changelog.html">Search stories</a>
           </div>
         </div>
 """
-    else:
-        latest_block = '<p class="topic-empty">No issues yet.</p>'
+        # Featured development from deep_dive or first high_signal
+        feat = payload.get("deep_dive") or (payload.get("high_signal") or [None])[0]
+        if feat:
+            why = html.escape((feat.get("why_it_matters") or "")[:220])
+            what = html.escape((feat.get("what_changed") or feat.get("title") or "")[:240])
+            who = html.escape(", ".join(feat.get("who_should_care") or [])[:140])
+            stages = " · ".join((feat.get("stages") or [])[:2])
+            domains = " · ".join((feat.get("domains") or [])[:2])
+            src = "#"
+            stories = feat.get("stories") or []
+            if stories:
+                src = html.escape(stories[0].get("source_url") or "#")
+            badges = "".join(
+                f'<span class="badge">{html.escape(b)}</span>'
+                for b in ([feat.get("change_type")] + (feat.get("stages") or [])[:1] + (feat.get("domains") or [])[:1])
+                if b
+            )
+            featured = f"""
+      <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
+        <p class="hero-kicker">Featured development</p>
+        <h2 id="featured-heading" class="section-label">Selected for closer reading</h2>
+        <article class="feature-card">
+          <h2>{html.escape((feat.get("title") or "")[:140])}</h2>
+          <div class="badge-row">{badges}</div>
+          <p class="secondary"><strong>What changed.</strong> {what}</p>
+          <p class="secondary"><strong>Why it matters.</strong> {why}</p>
+          <p class="muted"><strong>Who should care.</strong> {who or "Compiler engineers"}</p>
+          <p class="muted">{html.escape(stages)} · {html.escape(domains)}</p>
+          <div class="cta-row" style="margin-top:0.85rem">
+            <a class="btn btn-primary" href="{src}" rel="noopener noreferrer">Original source</a>
+            <a class="btn btn-ghost" href="{html.escape(latest.href_html)}">In this issue</a>
+          </div>
+        </article>
+      </section>
+"""
 
     domain_cards = "\n".join(
         f"""<a class="bucket" href="topics/{html.escape(str(t['id']))}.html">
@@ -250,23 +290,33 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
     <section class="hero">
       <div class="wrap">
         <h1>CompilerSutra Weekly</h1>
-        <p class="tagline">The compiler changes worth understanding.</p>
-        <p class="lede">A weekly signal from LLVM, GCC, MLIR, GPU compilers, AI compilers, and research.
-        Not every commit — just the changes worth knowing, with context.</p>
+        <p class="tagline">The compiler ecosystem, explained every week.</p>
+        <p class="lede">Important developments across CPU, GPU, AI, accelerator and language compilers —
+        selected, organized and explained for engineers. Not every commit — the changes worth knowing.</p>
         {latest_block}
       </div>
     </section>
-    <div class="wrap">
-      <h2 class="section-label">Follow a track</h2>
+    {featured}
+    <div class="wrap" style="padding-top:2rem">
+      <h2 class="section-label">Explore the compiler pipeline</h2>
+      <p class="muted" style="margin-bottom:0.85rem">A useful organizing model — not a claim that every compiler looks the same.</p>
+      <div class="pipeline">
+        <a class="pipeline-step" href="explore/stage-frontend.html"><strong>Frontend</strong><span>Parsing · semantics · languages</span></a>
+        <a class="pipeline-step" href="explore/stage-middle-end.html"><strong>Middle-end</strong><span>IR · analysis · optimization</span></a>
+        <a class="pipeline-step" href="explore/stage-backend.html"><strong>Backend</strong><span>CodeGen · targets · ABI</span></a>
+        <a class="pipeline-step" href="explore/stage-runtime-toolchain.html"><strong>Runtime &amp; Toolchain</strong><span>JIT · linkers · debug</span></a>
+      </div>
+      <h2 class="section-label">Explore by domain</h2>
       <div class="buckets">{domain_cards}</div>
-      <h2 class="section-label">Discover by dimension</h2>
+      <h2 class="section-label">Discover by technical lens</h2>
       <div class="dim-row">
-        <a href="explore/index.html#stages">By compiler stage</a>
-        <a href="explore/index.html#domains">By domain / hardware</a>
-        <a href="explore/index.html#areas">By technical area</a>
+        <a href="explore/index.html#stages">Compiler stages</a>
+        <a href="explore/index.html#domains">Domains / hardware</a>
+        <a href="explore/index.html#areas">Technical areas</a>
+        <a href="changelog.html">Search all stories</a>
       </div>
       <section class="panel" aria-labelledby="archive-heading">
-        <h2 id="archive-heading">Previous issues</h2>
+        <h2 id="archive-heading">Archive</h2>
         <ul class="issue-list">{items if items else '<li class="topic-empty">No issues yet.</li>'}</ul>
       </section>
     </div>
@@ -682,55 +732,74 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
     archive = "archive.html" if depth == 0 else "../" * depth + "archive.html"
     about = "about.html" if depth == 0 else "../" * depth + "about.html"
     changelog = "changelog.html" if depth == 0 else "../" * depth + "changelog.html"
+    research = f"{'../' * depth}topics/research.html" if depth else "topics/research.html"
     if depth == 0:
-        topics, explore = "topics/index.html", "explore/index.html"
+        topics, explore, stages = "topics/index.html", "explore/index.html", "explore/index.html#stages"
     elif depth == 1:
-        topics, explore = (
-            ("index.html" if "topics" in active or active in {t["id"] for t in TOPICS} else "../topics/index.html"),
-            ("index.html" if active == "explore" else "../explore/index.html"),
-        )
         if active == "explore":
-            topics = "../topics/index.html"
-            explore = "index.html"
+            topics, explore, stages = "../topics/index.html", "index.html", "index.html#stages"
         elif active in {t["id"] for t in TOPICS} or active == "topics":
-            topics = "index.html"
-            explore = "../explore/index.html"
+            topics, explore, stages = "index.html", "../explore/index.html", "../explore/index.html#stages"
         else:
-            topics = "../topics/index.html"
-            explore = "../explore/index.html"
+            topics, explore, stages = "../topics/index.html", "../explore/index.html", "../explore/index.html#stages"
     else:
-        topics, explore = "../../topics/index.html", "../../explore/index.html"
+        topics, explore, stages = "../../topics/index.html", "../../explore/index.html", "../../explore/index.html#stages"
+
+    def cur(name: str) -> str:
+        return ' aria-current="page"' if active == name else ""
+
+    topic_active = active in {"topics"} | {t["id"] for t in TOPICS}
     return f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>{html.escape(title)}</title>
-  <meta name="description" content="The compiler changes worth understanding — with context."/>
+  <meta name="description" content="The compiler ecosystem, explained every week — selected, organized, and contextualized."/>
+  <meta name="color-scheme" content="dark light"/>
+  <script src="{prefix}/theme.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{prefix}/site.css"/>
 </head>
 <body>
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href="{home}">CompilerSutra <span>Weekly</span></a>
-      <nav class="nav" aria-label="Primary">
-        <a href="{home}"{" aria-current=\"page\"" if active=="home" else ""}>Home</a>
-        <a href="{topics}"{" aria-current=\"page\"" if active in {"topics"}|{t["id"] for t in TOPICS} else ""}>Topics</a>
-        <a href="{explore}"{" aria-current=\"page\"" if active=="explore" else ""}>Explore</a>
-        <a href="{archive}"{" aria-current=\"page\"" if active=="archive" else ""}>Archive</a>
-        <a href="{changelog}">Change log</a>
-        <a href="{about}"{" aria-current=\"page\"" if active=="about" else ""}>About</a>
-        <a class="pill" href="{html.escape(REPO_URL)}" rel="noopener noreferrer">GitHub</a>
+      <a class="brand" href="{home}">CompilerSutra <span>Weekly</span><span class="brand-tag">The compiler ecosystem, explained every week.</span></a>
+      <nav class="nav-desktop" aria-label="Primary">
+        <a href="{home}"{cur("home")}>Latest</a>
+        <a href="{stages}"{" aria-current=\"page\"" if active=="explore" else ""}>Stages</a>
+        <a href="{explore}">Domains</a>
+        <a href="{topics}"{" aria-current=\"page\"" if topic_active else ""}>Stories</a>
+        <a href="{research}">Research</a>
+        <a href="{archive}"{cur("archive")}>Archive</a>
+        <a href="{changelog}">Search</a>
+        <a href="{about}"{cur("about")}>About</a>
       </nav>
+      <div class="header-actions">
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false">Light</button>
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav">Menu</button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav">
+      <div class="wrap" aria-label="Mobile">
+        <a href="{home}">Latest</a>
+        <a href="{stages}">Compiler stages</a>
+        <a href="{explore}">Domains</a>
+        <a href="{topics}">Stories / projects</a>
+        <a href="{research}">Research</a>
+        <a href="{archive}">Archive</a>
+        <a href="{changelog}">Search</a>
+        <a href="{about}">About</a>
+        <a href="{html.escape(REPO_URL)}" rel="noopener noreferrer">GitHub</a>
+      </div>
     </div>
   </header>
   {body}
   <footer class="site-footer">
     <div class="wrap">
-      <div>© CompilerSutra · Apache-2.0</div>
+      <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
       <div>
         <a href="{html.escape(PAGES_URL)}">Pages</a> ·
         <a href="{html.escape(REPO_URL)}">Source</a> ·
