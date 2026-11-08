@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>CompilerSutra Weekly</title>
-  <meta name="description" content="Compiler ecosystem intelligence — CPU, MLIR, open GPU, AI/DL compilers, research."/>
+  <meta name="description" content="Compiler ecosystem intelligence — browse CPU, MLIR, GPU, AI/DL, research."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
@@ -16,6 +16,7 @@
       <a class="brand" href="index.html">CompilerSutra <span>Weekly</span></a>
       <nav class="nav" aria-label="Primary">
         <a href="index.html" aria-current="page">Home</a>
+        <a href="topics/index.html">Topics</a>
         <a href="archive.html">Archive</a>
         <a href="about.html">About</a>
         <a class="pill" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
@@ -24,46 +25,74 @@
     </div>
   </header>
   
+  
+  <div class="topic-bar">
+    <div class="wrap" aria-label="Topics">
+      <a href="topics/index.html">All topics</a>
+      <a href="topics/cpu.html">CPU</a><a href="topics/mlir.html">IR / infra</a><a href="topics/gpu.html">GPU</a><a href="topics/ai.html">AI / DL</a><a href="topics/research.html">Research</a>
+    </div>
+  </div>
+
   <main>
     <section class="hero">
       <div class="wrap">
         <p class="hero-kicker">Compiler ecosystem intelligence</p>
         <h1>CompilerSutra Weekly</h1>
-        <p class="lede">What landed in open compilers this week — CPU, MLIR, GPU, and AI/DL stacks — with source links. Fri→Fri window, Saturday publish.</p>
+        <p class="lede">Browse by topic or open the Saturday issue. Fri→Fri window, source-backed links only.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="issues/2026/2026-11-07.html">Read latest issue →</a>
-          <a class="btn btn-ghost" href="archive.html">Browse archive</a>
-          <a class="btn btn-ghost" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">View source</a>
+          <a class="btn btn-ghost" href="archive.html">Archive</a>
+          <a class="btn btn-ghost" href="topics/index.html">Topics</a>
         </div>
         <div class="meta-strip">
           <span>Window: Friday → Friday (UTC)</span>
           <span>Publish: Saturday</span>
-          <span>Hosted on GitHub Pages</span>
         </div>
       </div>
     </section>
     <div class="wrap">
-      <div class="buckets"><div class="bucket"><strong>CPU</strong><span>LLVM, GCC</span></div>
-<div class="bucket"><strong>IR / infra</strong><span>MLIR</span></div>
-<div class="bucket"><strong>GPU</strong><span>Open source only</span></div>
-<div class="bucket"><strong>AI / DL</strong><span>TVM, IREE, Triton…</span></div>
-<div class="bucket"><strong>Research</strong><span>arXiv</span></div></div>
+      <h2 class="section-label">Browse by topic</h2>
+      <div class="buckets"><a class="bucket" href="topics/cpu.html">
+  <strong>CPU</strong>
+  <span>LLVM, GCC</span>
+  <span class="go">Open topic →</span>
+</a>
+<a class="bucket" href="topics/mlir.html">
+  <strong>IR / infra</strong>
+  <span>MLIR</span>
+  <span class="go">Open topic →</span>
+</a>
+<a class="bucket" href="topics/gpu.html">
+  <strong>GPU</strong>
+  <span>Open source only</span>
+  <span class="go">Open topic →</span>
+</a>
+<a class="bucket" href="topics/ai.html">
+  <strong>AI / DL</strong>
+  <span>TVM, IREE, Triton…</span>
+  <span class="go">Open topic →</span>
+</a>
+<a class="bucket" href="topics/research.html">
+  <strong>Research</strong>
+  <span>arXiv</span>
+  <span class="go">Open topic →</span>
+</a></div>
       <section class="panel" aria-labelledby="recent-heading">
         <h2 id="recent-heading">Recent issues</h2>
-        <ul class="issue-list">
-          <li>
-          <span class="issue-date">2026-11-07</span>
-          <a class="title" href="issues/2026/2026-11-07.html">Weekly issue</a>
-          <span class="issue-window">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</span>
-        </li>
-        </ul>
+        <ul class="issue-list"><li>
+  <a class="issue-row" href="issues/2026/2026-11-07.html">
+    <span class="issue-date">2026-11-07</span>
+    <span class="title">Weekly issue</span>
+    <span class="issue-window">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</span>
+  </a>
+</li></ul>
       </section>
     </div>
   </main>
 
   <footer class="site-footer">
     <div class="wrap">
-      <div>© CompilerSutra · Apache-2.0 · Pages + GitHub; education site links out only</div>
+      <div>© CompilerSutra · Apache-2.0</div>
       <div>
         <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
