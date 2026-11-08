@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -12,16 +13,20 @@ import pytest
 FIX = Path(__file__).parent / "fixtures" / "tiny_repo"
 
 
-def _git(fix: Path, *args: str, env: dict | None = None) -> None:
+def _git(cwd: Path, *args: str, env: dict | None = None) -> None:
     base = {**os.environ, **(env or {})}
-    subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True, env=base)
+    subprocess.run(
+        ["git", *args],
+        cwd=cwd,
+        check=True,
+        capture_output=True,
+        env=base,
+    )
 
 
 @pytest.fixture(scope="session", autouse=True)
 def tiny_repo() -> Path:
     if FIX.exists():
-        import shutil
-
         shutil.rmtree(FIX)
     FIX.mkdir(parents=True)
     _git(FIX, "init", "-b", "main")
@@ -33,11 +38,16 @@ def tiny_repo() -> Path:
         file.parent.mkdir(parents=True, exist_ok=True)
         file.write_text(content, encoding="utf-8")
         _git(FIX, "add", path)
-        env = {
-            "GIT_AUTHOR_DATE": when,
-            "GIT_COMMITTER_DATE": when,
-        }
-        _git(FIX, "commit", "-m", message, env=env)
+        _git(
+            FIX,
+            "commit",
+            "-m",
+            message,
+            env={
+                "GIT_AUTHOR_DATE": when,
+                "GIT_COMMITTER_DATE": when,
+            },
+        )
 
     # chronological order matters for git log --since
     commit("llvm/Old.cpp", "d\n", "llvm: too old", "2026-10-20T12:00:00Z")
