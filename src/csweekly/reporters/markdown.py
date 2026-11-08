@@ -142,7 +142,7 @@ def render_markdown(issue: WeeklyIssue) -> str:
     lines: list[str] = [
         f"# CompilerSutra Weekly — #{num:03d}, {date_label}",
         "",
-        "**The compiler changes worth understanding.**",
+        "**What changed in compilers this week — selected, with context.**",
         "",
         f"Welcome to issue **#{num:03d}**. Not every commit — curated changes across "
         "LLVM, Clang, GCC, MLIR, GPU compilers, AI compilers, and research, with context "

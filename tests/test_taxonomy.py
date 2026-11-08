@@ -58,5 +58,5 @@ def test_report_groups_llvm_and_ai():
     issue = build_issue(window, stories)
     md = render_markdown(issue)
     assert "What changed" in md or "why it matters" in md.lower() or "Why it matters" in md
-    assert "The compiler changes worth understanding" in md
+    assert "What changed in compilers this week" in md
     assert any(h[0] == "LLVM" for h in SECTION_ORDER)

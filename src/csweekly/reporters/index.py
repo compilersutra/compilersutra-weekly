@@ -12,7 +12,17 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from csweekly.analyzers.taxonomy import DOMAINS, STAGES, TECH_AREAS
-from csweekly.brand import EDU_URL, PAGES_URL, PROJECT_NAME, REPO_URL
+from csweekly.brand import (
+    BRAND_TAG,
+    EDU_URL,
+    HERO_KICKER,
+    HERO_LEDE,
+    HERO_TITLE,
+    META_DESCRIPTION,
+    PAGES_URL,
+    PROJECT_NAME,
+    REPO_URL,
+)
 from csweekly.reporters.mdhtml import markdown_to_html
 
 TOPICS: list[dict[str, object]] = [
@@ -300,7 +310,7 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
             featured = f"""
       <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
         <p class="hero-kicker">Featured development</p>
-        <h2 id="featured-heading" class="section-label">A compiler change worth understanding</h2>
+        <h2 id="featured-heading" class="section-label">Featured this week</h2>
         <article class="feature-card">
           <h2>{html.escape((feat.get("title") or "")[:140])}</h2>
           <div class="badge-row">{badges}</div>
@@ -340,11 +350,9 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
   <main>
     <section class="hero">
       <div class="wrap">
-        <p class="hero-kicker">Compiler ecosystem intelligence</p>
-        <h1>The compiler changes worth understanding.</h1>
-        <p class="tagline">The compiler ecosystem, explained every week.</p>
-        <p class="lede">One weekly view of what is changing across compilers, runtimes,
-        hardware targets and research — selected and explained for engineers.</p>
+        <p class="hero-kicker">{html.escape(HERO_KICKER)}</p>
+        <h1>{html.escape(HERO_TITLE)}</h1>
+        <p class="lede">{html.escape(HERO_LEDE)}</p>
         {latest_block}
       </div>
     </section>
@@ -1180,7 +1188,7 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>{html.escape(title)}</title>
-  <meta name="description" content="The compiler ecosystem, explained every week — selected, organized, and contextualized."/>
+  <meta name="description" content="{html.escape(META_DESCRIPTION)}"/>
   <meta name="color-scheme" content="dark light"/>
   <script>
   (function(){{try{{var t=localStorage.getItem('csw-theme');
@@ -1197,7 +1205,7 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href="{home}">CompilerSutra <span>Weekly</span><span class="brand-tag">The compiler ecosystem, explained every week.</span></a>
+      <a class="brand" href="{home}">CompilerSutra <span>Weekly</span><span class="brand-tag">{html.escape(BRAND_TAG)}</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="{home}"{cur("home")}>Latest</a>
         <a href="{explore}"{" aria-current=\"page\"" if active=="explore" else ""}>Explore</a>

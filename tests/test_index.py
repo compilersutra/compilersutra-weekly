@@ -36,7 +36,7 @@ Because.
     assert (site / "explore" / "index.html").is_file()
     assert (site / "topics" / "llvm.html").is_file()
     home = (site / "index.html").read_text(encoding="utf-8")
-    assert "explained every week" in home.lower() or "worth understanding" in home.lower()
+    assert "what changed in compilers this week" in home.lower()
     assert "Read latest issue" in home
     assert ">Explore<" in home
     assert ">Topics<" in home
