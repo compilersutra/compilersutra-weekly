@@ -5,13 +5,11 @@ venv/
 dist/
 build/
 *.egg-info/
+src/*.egg-info/
 .pytest_cache/
 .ruff_cache/
 data/mirrors/
-data/last_collect.json
+data/*.json
 .DS_Store
 tests/fixtures/tiny_repo/
 site/reports/
-data/last_collect.json
-*.egg-info/
-src/*.egg-info/

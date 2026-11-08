@@ -4,8 +4,12 @@ from datetime import datetime, timezone
 from csweekly.analyzers.areas import classify_areas
 from csweekly.analyzers.importance import assign_importance
 from csweekly.models import EvidenceKind, Importance, Story
-from csweekly.processors.editorial import select_for_newsletter
+from csweekly.processors.editorial import (
+    editorial_sentence,
+    select_for_newsletter,
+)
 from csweekly.processors.group import group_stories
+from csweekly.models import ChangeGroup
 
 UTC = timezone.utc
 
@@ -42,7 +46,6 @@ def test_group_related_amdgpu():
         _story("b", "[AMDGPU] Fix prefetch policy", ["llvm/lib/Target/AMDGPU/AMDGPU.cpp"]),
     ]
     groups = group_stories(stories)
-    # same [AMDGPU] component + same path prefix → one group
     assert len(groups) == 1
     assert len(groups[0].stories) == 2
 
@@ -58,3 +61,24 @@ def test_select_prefers_highlights():
     selected = select_for_newsletter(groups)
     assert selected
     assert selected[0].importance in {Importance.HIGHLIGHT, Importance.NOTABLE}
+
+
+def test_editorial_sentence_reads_like_newsletter():
+    s = _story(
+        "x",
+        "[AMDGPU][GlobalISel] Fold unmasked signed byte loads into D16 high loads (#236136)",
+        ["llvm/lib/Target/AMDGPU/AMDGPUInstructionSelector.cpp"],
+    )
+    g = ChangeGroup(
+        id="g",
+        title=s.title,
+        category="llvm",
+        project="llvm",
+        areas=s.areas,
+        importance=s.importance,
+        stories=[s],
+    )
+    sentence = editorial_sentence(g)
+    assert sentence.endswith(".")
+    assert "Fold" in sentence or "fold" in sentence.lower() or "AMDGPU" in sentence
+    assert "(#236136)" not in sentence
