@@ -7,6 +7,7 @@ from pathlib import Path
 
 from csweekly.analyzers.areas import classify_areas
 from csweekly.analyzers.importance import assign_importance
+from csweekly.analyzers.taxonomy import classify_dimensions
 from csweekly.collectors.arxiv_api import collect_arxiv
 from csweekly.collectors.git_mirror import collect_git
 from csweekly.collectors.github_releases import collect_github_releases
@@ -14,6 +15,7 @@ from csweekly.collectors.rss_feed import collect_rss
 from csweekly.collectors.web_discovery import collect_web_discovery
 from csweekly.config import SourceConfig, load_sources
 from csweekly.models import CollectResult, Story, Window
+from csweekly.processors.explain import explain_story, make_story_id
 
 
 def collect_source(
@@ -52,6 +54,14 @@ def enrich_story(story: Story) -> Story:
     if not story.project:
         story.project = story.category
     story.importance = assign_importance(story)
+    stages, domains, tech, hardware = classify_dimensions(story)
+    story.stages = stages
+    story.domains = domains
+    story.technical_areas = tech
+    story.hardware_targets = hardware
+    if not story.story_id:
+        story.story_id = make_story_id(story)
+    explain_story(story)
     return story
 
 

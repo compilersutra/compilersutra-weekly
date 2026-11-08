@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>MLIR — CompilerSutra Weekly</title>
-  <meta name="description" content="What changed in compilers this week — LLVM, GCC, MLIR, AI and GPU compilers."/>
+  <meta name="description" content="The compiler changes worth understanding — with context."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
@@ -17,6 +17,7 @@
       <nav class="nav" aria-label="Primary">
         <a href="../index.html">Home</a>
         <a href="index.html" aria-current="page">Topics</a>
+        <a href="../explore/index.html">Explore</a>
         <a href="../archive.html">Archive</a>
         <a href="../changelog.html">Change log</a>
         <a href="../about.html">About</a>
@@ -28,7 +29,8 @@
   
   <div class="topic-bar">
     <div class="wrap" aria-label="Topics">
-      <a href="../topics/index.html">All topics</a>
+      <a href="../topics/index.html">Topics</a>
+      <a href="../explore/index.html">Explore</a>
       <a href="../topics/llvm.html">LLVM</a><a href="../topics/gcc.html">GCC</a><a href="../topics/mlir.html" aria-current="page">MLIR</a><a href="../topics/ai.html">AI Compilers</a><a href="../topics/gpu.html">GPU</a><a href="../topics/research.html">Research</a>
     </div>
   </div>
@@ -36,26 +38,15 @@
   <main class="wrap article-narrow">
     <p class="hero-kicker">Topic</p>
     <h1 class="page-title">MLIR</h1>
-    <p class="muted">Dialects &amp; infra</p>
-    <div class="cta-row" style="margin-bottom:1.75rem">
-      <a class="btn btn-primary" href="../issues/2026/2026-11-07.html">Jump in latest issue →</a>
-      <a class="btn btn-ghost" href="index.html">All topics</a>
-      <a class="btn btn-ghost" href="../archive.html">Archive</a>
-    </div>
+    <p class="muted">Dialects · transformations · infrastructure</p>
     <section class="topic-issue-block">
-  <h3><a href="../issues/2026/2026-11-07.html">#001 · 2026-11-07</a></h3>
-  <p class="muted">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
-  <div class="article" style="padding:0;width:auto;margin:0"><h2 id="mlir">MLIR</h2>
-<ul>
-<li>Nvvm.mulf Op was added. (3 related commits) <a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer"><code>aa1bf89</code></a>, <a href="https://github.com/llvm/llvm-project/commit/04e0db52562678dcd95d6a04af001c70780e9262" rel="noopener noreferrer"><code>04e0db5</code></a>, <a href="https://github.com/llvm/llvm-project/commit/0c0e3e79246e4c4a195d436b70373b1748725d05" rel="noopener noreferrer"><code>0c0e3e7</code></a>.</li>
-<li>IndirectAliased (byref) argument lowering was added. <a href="https://github.com/llvm/llvm-project/commit/dd05b6ce79289e8932e86e687e82cdcc5d2651b5" rel="noopener noreferrer"><code>dd05b6c</code></a>.</li>
-<li>Do not report a negative launch width as a size. (2 related commits) <a href="https://github.com/llvm/llvm-project/commit/b603a2c914fdac2b77ae464831af4c7487fbbc69" rel="noopener noreferrer"><code>b603a2c</code></a>, <a href="https://github.com/llvm/llvm-project/commit/9640b6a6cc9516095c37006f78438e6aa7fc7c05" rel="noopener noreferrer"><code>9640b6a</code></a>.</li>
-<li>Skip non-identity layouts in static memory planning. (2 related commits) <a href="https://github.com/llvm/llvm-project/commit/c389e88caf1c12fe4ab25d074eccc00a6679441a" rel="noopener noreferrer"><code>c389e88</code></a>, <a href="https://github.com/llvm/llvm-project/commit/78233779428032e599aff583384a2aead41d774d" rel="noopener noreferrer"><code>7823377</code></a>.</li>
-<li>Vector unrolling support for apply_scale was removed. <a href="https://github.com/llvm/llvm-project/commit/fd64c07f9ae1d32477849eb930379cf1222cb0d8" rel="noopener noreferrer"><code>fd64c07</code></a>.</li>
-<li>Dead values: don&#x27;t remove used symbols was removed. <a href="https://github.com/llvm/llvm-project/commit/305a2819de8cbbb32f9da466d286f44b065e24a6" rel="noopener noreferrer"><code>305a281</code></a>.</li>
-<li>Disallow pure reduction dims in vector.contract. <a href="https://github.com/llvm/llvm-project/commit/f17edbc5ae1d76326780be64e710c6476fcd95d2" rel="noopener noreferrer"><code>f17edbc</code></a>.</li>
-<li>Drop Linalg dependency from transfer full/partial split. <a href="https://github.com/llvm/llvm-project/commit/d6f914f06a18019d56f1e7899de9e1a0f666d0c3" rel="noopener noreferrer"><code>d6f914f</code></a>.</li>
-</ul></div>
+  <h3><a href="../issues/2026/2026-11-07.html">#001 · full issue</a></h3>
+  <p class="muted">What's moving · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+  <div class="story-grid"><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer">Add nvvm.mulf Op</a></h4>
+  <p>Affects automatic vectorization and SIMD code generation.</p>
+  <div class="meta">Backend · Middle-end / optimization developers, Runtime and toolchain developers, AI compiler developers, Performance engineers</div>
+</article></div>
 </section>
   </main>
 

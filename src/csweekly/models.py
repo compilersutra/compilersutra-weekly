@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Shared schemas. Factual fields vs analysis fields stay distinct."""
+"""Shared schemas. Facts vs editorial interpretation stay distinct."""
 
 from __future__ import annotations
 
@@ -21,9 +21,36 @@ class EvidenceKind(str, Enum):
 
 
 class Importance(str, Enum):
+    """Legacy ranking used by collectors/tests."""
+
     HIGHLIGHT = "highlight"
     NOTABLE = "notable"
     OTHER = "other"
+
+
+class SignalLevel(str, Enum):
+    """Editorial signal for the published newsletter."""
+
+    HIGH_SIGNAL = "high_signal"
+    WORTH_KNOWING = "worth_knowing"
+    DEEP_DIVE = "deep_dive"
+    SKIP = "skip"
+
+
+class ChangeType(str, Enum):
+    OPTIMIZATION = "Optimization"
+    NEW_CAPABILITY = "New capability"
+    BUG_FIX = "Bug fix"
+    BACKEND = "Backend"
+    FRONTEND = "Frontend"
+    IR = "IR"
+    CODEGEN = "Code generation"
+    RUNTIME = "Runtime"
+    TOOLING = "Tooling"
+    INFRASTRUCTURE = "Infrastructure"
+    PERFORMANCE = "Performance"
+    RESEARCH = "Research"
+    OTHER = "Other"
 
 
 class Story(BaseModel):
@@ -49,11 +76,25 @@ class Story(BaseModel):
     group_title: str | None = None
     author: str | None = None
     committer: str | None = None
+    # Editorial intelligence layer
+    story_id: str | None = None
+    what_changed: str | None = None
+    why_it_matters: str | None = None
+    who_should_care: list[str] = Field(default_factory=list)
+    change_type: str | None = None
+    signal: SignalLevel = SignalLevel.SKIP
+    stages: list[str] = Field(default_factory=list)
+    domains: list[str] = Field(default_factory=list)
+    technical_areas: list[str] = Field(default_factory=list)
+    hardware_targets: list[str] = Field(default_factory=list)
+    impact_uncertain: bool = False
     raw: dict[str, Any] = Field(default_factory=dict)
     analysis_generated: bool = False
 
 
 class ChangeGroup(BaseModel):
+    """Grouped commits forming one editorial story."""
+
     id: str
     title: str
     category: str
@@ -61,6 +102,17 @@ class ChangeGroup(BaseModel):
     areas: list[str] = Field(default_factory=list)
     importance: Importance = Importance.OTHER
     stories: list[Story] = Field(default_factory=list)
+    story_id: str | None = None
+    what_changed: str | None = None
+    why_it_matters: str | None = None
+    who_should_care: list[str] = Field(default_factory=list)
+    change_type: str | None = None
+    signal: SignalLevel = SignalLevel.SKIP
+    stages: list[str] = Field(default_factory=list)
+    domains: list[str] = Field(default_factory=list)
+    technical_areas: list[str] = Field(default_factory=list)
+    hardware_targets: list[str] = Field(default_factory=list)
+    impact_uncertain: bool = False
 
 
 class Window(BaseModel):
@@ -90,3 +142,8 @@ class WeeklyIssue(BaseModel):
     sections: dict[str, list[Story]] = Field(default_factory=dict)
     hotspots: dict[str, list[tuple[str, int]]] = Field(default_factory=dict)
     stats: dict[str, Any] = Field(default_factory=dict)
+    week_overview: list[str] = Field(default_factory=list)
+    high_signal: list[ChangeGroup] = Field(default_factory=list)
+    worth_knowing: list[ChangeGroup] = Field(default_factory=list)
+    deep_dive: ChangeGroup | None = None
+    moving_stories: dict[str, list[str]] = Field(default_factory=dict)

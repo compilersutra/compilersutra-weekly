@@ -10,6 +10,10 @@ from csweekly.analyzers.importance import assign_importance
 from csweekly.models import ChangeGroup, Importance, Story
 
 
+def subject_key(title: str) -> str:
+    return _subject_key(title)
+
+
 def _subject_key(title: str) -> str:
     m = re.match(r"^\[([^\]]+)\]\s*(.*)$", title.strip())
     if m:

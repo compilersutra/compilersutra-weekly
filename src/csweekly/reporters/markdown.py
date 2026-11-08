@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-"""Weekly newsletter Markdown — curated LLVM Weekly–style digest."""
+"""Weekly newsletter — high-signal compiler intelligence."""
 
 from __future__ import annotations
 
@@ -10,40 +10,43 @@ from pathlib import Path
 
 from csweekly.analyzers.hotspots import path_hotspots
 from csweekly.brand import EDU_URL, PAGES_URL, REPO_URL
-from csweekly.models import ChangeGroup, EvidenceKind, Importance, Story, WeeklyIssue, Window
+from csweekly.models import (
+    ChangeGroup,
+    EvidenceKind,
+    Importance,
+    SignalLevel,
+    Story,
+    WeeklyIssue,
+    Window,
+)
 from csweekly.processors.dedupe import dedupe_stories
 from csweekly.processors.editorial import (
-    editorial_sentence,
+    moving_story_lines,
     newsletter_bucket,
     select_for_newsletter,
     split_non_git,
+    week_overview_bullets,
 )
+from csweekly.processors.explain import explain_group
 from csweekly.processors.group import group_stories
 from csweekly.window import publish_saturday
 
-# Published section order for the editorial issue (not a dump of every category).
-SECTION_SPECS: list[tuple[str, list[str]]] = [
+SECTION_ORDER = [
     ("LLVM", ["llvm"]),
     ("Clang", ["clang"]),
     ("GCC", ["gcc"]),
     ("MLIR", ["mlir"]),
     ("AI Compilers", ["ai"]),
     ("GPU Compilers", ["gpu"]),
-    ("Other compiler projects", ["other"]),
+    ("Other Compiler Projects", ["other"]),
 ]
-
-# Back-compat for tests
-SECTION_ORDER = SECTION_SPECS
+SECTION_SPECS = SECTION_ORDER
 
 
 def issue_number(published_on, reports_dir: Path | None = None) -> int:
     if reports_dir and reports_dir.is_dir():
         dates = sorted(
-            {
-                p.stem
-                for p in reports_dir.glob("**/*.md")
-                if p.name != "README.md"
-            }
+            {p.stem for p in reports_dir.glob("**/*.md") if p.name != "README.md"}
             | {published_on.isoformat()}
         )
         try:
@@ -52,8 +55,7 @@ def issue_number(published_on, reports_dir: Path | None = None) -> int:
             return len(dates)
     from datetime import date
 
-    epoch = date(2026, 11, 7)
-    return max(0, (published_on - epoch).days // 7) + 1
+    return max(0, (published_on - date(2026, 11, 7)).days // 7) + 1
 
 
 def build_issue(
@@ -70,43 +72,46 @@ def build_issue(
             s.project = s.category
 
     git_stories = [s for s in unique if s.evidence_kind == EvidenceKind.GIT_COMMIT]
-    groups = group_stories(git_stories)
-    editorial_groups = select_for_newsletter(groups)
-    hot = path_hotspots(unique)
+    groups = [explain_group(g) for g in group_stories(git_stories)]
+    editorial = select_for_newsletter(groups)
+
+    high = [g for g in editorial if g.signal == SignalLevel.HIGH_SIGNAL]
+    worth = [g for g in editorial if g.signal == SignalLevel.WORTH_KNOWING]
+    deep = next((g for g in editorial if g.signal == SignalLevel.DEEP_DIVE), None)
+
     sections: dict[str, list[Story]] = defaultdict(list)
     for story in unique:
         sections[story.category].append(story)
+
     pub = publish_saturday(window)
     num = issue_number(pub, reports_dir)
     projects = sorted(
-        {
-            (s.project or s.category)
-            for s in unique
-            if s.evidence_kind == EvidenceKind.GIT_COMMIT
-        }
+        {(s.project or s.category) for s in unique if s.evidence_kind == EvidenceKind.GIT_COMMIT}
     )
     side = split_non_git(unique)
+    overview = week_overview_bullets(editorial)
+    moving = moving_story_lines(editorial)
+
     stats = {
         "issue_number": num,
         "total_stories": len(stories),
-        "unique_commits": sum(
-            1 for s in unique if s.evidence_kind == EvidenceKind.GIT_COMMIT
-        ),
+        "unique_commits": sum(1 for s in unique if s.evidence_kind == EvidenceKind.GIT_COMMIT),
         "unique_items": len(unique),
         "groups": len(groups),
-        "editorial_groups": len(editorial_groups),
-        "highlights": sum(
-            1 for g in editorial_groups if g.importance == Importance.HIGHLIGHT
-        ),
-        "notable": sum(
-            1 for g in editorial_groups if g.importance == Importance.NOTABLE
-        ),
+        "editorial_groups": len(editorial),
+        "high_signal": len(high) + (1 if deep else 0),
+        "worth_knowing": len(worth),
+        "highlights": sum(1 for g in editorial if g.importance == Importance.HIGHLIGHT),
+        "notable": sum(1 for g in editorial if g.importance == Importance.NOTABLE),
         "projects": projects,
         "projects_tracked": len(projects),
         "releases": len(side["releases"]),
         "research": len(side["research"]),
         "community": len(side["community"]),
         "errors": errors or [],
+        "by_domain": _count_labels(editorial, "domains"),
+        "by_stage": _count_labels(editorial, "stages"),
+        "by_area": _count_labels(editorial, "technical_areas"),
     }
     return WeeklyIssue(
         title=title
@@ -114,10 +119,15 @@ def build_issue(
         published_on=pub,
         window=window,
         stories=unique,
-        groups=editorial_groups,
+        groups=editorial,
         sections=dict(sections),
-        hotspots={"paths": hot},
+        hotspots={"paths": path_hotspots(unique)},
         stats=stats,
+        week_overview=overview,
+        high_signal=high,
+        worth_knowing=worth,
+        deep_dive=deep,
+        moving_stories=moving,
     )
 
 
@@ -129,132 +139,182 @@ def render_markdown(issue: WeeklyIssue) -> str:
         f"{issue.published_on.strftime('%B')} {issue.published_on.day} "
         f"{issue.published_on.year}"
     )
-
     lines: list[str] = [
         f"# CompilerSutra Weekly — #{num:03d}, {date_label}",
         "",
-        "**What changed in compilers this week.**",
+        "**The compiler changes worth understanding.**",
         "",
-        f"Welcome to issue **#{num:03d}** of CompilerSutra Weekly, a Saturday newsletter "
-        "covering developments across LLVM, Clang, GCC, MLIR, AI compilers, GPU compilers, "
-        "and related toolchains.",
+        f"Welcome to issue **#{num:03d}**. Not every commit — curated changes across "
+        "LLVM, Clang, GCC, MLIR, GPU compilers, AI compilers, and research, with context "
+        "on why they matter.",
         "",
-        f"**Reporting period:** {issue.window.label} ({issue.window.timezone}, Fri→Fri, end exclusive)  ",
+        f"**Reporting period:** {issue.window.label} (UTC, Fri→Fri, end exclusive)  ",
         f"**Published:** {issue.published_on.isoformat()}",
         "",
-        "Entries below are curated from repository activity and project announcements. "
-        "Each item is a short technical note with a link to the original source — not a "
-        "raw commit dump. Full collected data stays on the "
-        f"[complete change log]({PAGES_URL.rstrip('/')}/changelog.html).",
+        "## The week in compiler development",
         "",
     ]
+    for b in issue.week_overview:
+        lines.append(f"- {b}")
+    lines.append("")
 
-    # Bucket editorial groups the way LLVM Weekly splits LLVM / Clang / other
+    # HIGH SIGNAL
+    lines.append("## High signal")
+    lines.append("")
+    lines.append(
+        "Changes that affect compiler behavior, architecture support, or a clear "
+        "project direction. Investigate these first."
+    )
+    lines.append("")
+    signal_items = list(issue.high_signal)
+    if issue.deep_dive and issue.deep_dive not in signal_items:
+        # deep dive also listed in its section; include in high signal count display via card
+        pass
+    if not signal_items and issue.deep_dive:
+        signal_items = [issue.deep_dive]
+    if not signal_items:
+        lines.append("_No high-signal items this week._")
+        lines.append("")
+    else:
+        for i, g in enumerate(signal_items[:8], 1):
+            lines.extend(_story_card(g, index=i))
+
+    # WORTH KNOWING
+    lines.append("## Worth knowing")
+    lines.append("")
+    lines.append(
+        "Interesting technical changes for a subset of readers. Skip confidently if "
+        "the audience tags don't match your work."
+    )
+    lines.append("")
+    if not issue.worth_knowing:
+        lines.append("_No additional worth-knowing items selected._")
+        lines.append("")
+    else:
+        for i, g in enumerate(issue.worth_knowing[:12], 1):
+            lines.extend(_story_card(g, index=i, compact=True))
+
+    # MOVING STORIES
+    if issue.moving_stories:
+        lines.append("## Moving stories")
+        lines.append("")
+        lines.append("Themes active in this curated set (continuity for future issues).")
+        lines.append("")
+        for track, items in sorted(issue.moving_stories.items()):
+            lines.append(f"### {track}")
+            lines.append("")
+            for item in items:
+                lines.append(f"- {item}")
+            lines.append("")
+
+    # WORTH READING
+    research = _filter_compiler_research(side["research"])
+    if side["releases"] or side["community"] or research:
+        lines.append("## Worth reading")
+        lines.append("")
+        for s in side["releases"][:6]:
+            lines.append(f"### Release — {s.title}")
+            lines.append("")
+            lines.append(_plain_note(s.summary or s.title, 220))
+            lines.append("")
+            lines.append(f"**Source:** [release]({s.source_url})")
+            lines.append("")
+        for s in side["community"][:6]:
+            lines.append(f"### Discussion — {s.title}")
+            lines.append("")
+            note = _plain_note(s.summary or "", 260)
+            lines.append(note if note else "Community discussion / RFC.")
+            lines.append("")
+            lines.append(f"**Source:** [discussion]({s.source_url})")
+            lines.append("")
+        for s in research[:5]:
+            lines.append(f"### Paper — {s.title}")
+            lines.append("")
+            lines.append(
+                _plain_note(s.summary or "Compiler-relevant research paper.", 260)
+            )
+            lines.append("")
+            lines.append(f"**Source:** [paper]({s.source_url})")
+            lines.append("")
+
+    # DEEP DIVE
+    if issue.deep_dive:
+        g = issue.deep_dive
+        lines.append("## Deep dive")
+        lines.append("")
+        lines.append(f"### {g.title}")
+        lines.append("")
+        lines.append("**Old context → problem → change → expected effect**")
+        lines.append("")
+        lines.append(
+            f"- **What changed:** {g.what_changed or 'See source commits.'}"
+        )
+        lines.append(
+            f"- **Why it matters:** {g.why_it_matters or 'Impact not yet clear from the source alone.'}"
+        )
+        lines.append(
+            f"- **Who should care:** {', '.join(g.who_should_care) if g.who_should_care else 'Compiler engineers'}"
+        )
+        lines.append(
+            f"- **Relevant area:** {', '.join((g.stages or []) + (g.technical_areas or [])[:3]) or '—'}"
+        )
+        lines.append("")
+        lines.append("**Sources:**")
+        lines.append("")
+        for s in g.stories[:6]:
+            sha = (s.related_ref or "")[:8]
+            lines.append(f"- [`{sha}`]({s.source_url}) — {s.summary[:120]}")
+        lines.append("")
+
+    # BY TOPIC
+    lines.append("## By topic")
+    lines.append("")
     buckets: dict[str, list[ChangeGroup]] = defaultdict(list)
     for g in issue.groups:
         buckets[newsletter_bucket(g.stories[0])].append(g)
 
-    def emit_bullets(heading: str, groups: list[ChangeGroup]) -> None:
+    def emit_topic(name: str, groups: list[ChangeGroup]) -> None:
         if not groups:
             return
-        lines.append(f"## {heading}")
+        lines.append(f"### {name}")
         lines.append("")
-        for g in groups:
-            lines.append(_bullet(g))
-        lines.append("")
-
-    emit_bullets("LLVM", buckets.get("llvm", []))
-    emit_bullets("Clang", buckets.get("clang", []))
-    emit_bullets("GCC", [g for g in issue.groups if g.category == "gcc"])
-    emit_bullets("MLIR", [g for g in issue.groups if g.category == "mlir"])
-
-    # AI / GPU / other: subgroup by project when useful
-    for heading, cats in (
-        ("AI Compilers", ["ai"]),
-        ("GPU Compilers", ["gpu"]),
-        ("Other compiler projects", ["other"]),
-    ):
-        groups = [g for g in issue.groups if g.category in cats]
-        # include other-llvm under Other compiler projects
-        if heading.startswith("Other"):
-            groups = list(groups) + list(buckets.get("other-llvm", []))
-        if not groups:
-            continue
-        lines.append(f"## {heading}")
-        lines.append("")
-        by_proj: dict[str, list[ChangeGroup]] = defaultdict(list)
-        for g in groups:
-            by_proj[g.project or g.category].append(g)
-        if len(by_proj) > 1:
-            for proj, pgroups in sorted(by_proj.items(), key=lambda x: x[0]):
-                lines.append(f"### {proj}")
-                lines.append("")
-                for g in pgroups:
-                    lines.append(_bullet(g))
-                lines.append("")
-        else:
-            for g in groups:
-                lines.append(_bullet(g))
-            lines.append("")
-
-    if side["releases"]:
-        lines.append("## Releases and announcements")
-        lines.append("")
-        for s in sorted(side["releases"], key=lambda x: x.title.lower())[:12]:
-            lines.append(f"- **{s.title}** — [release]({s.source_url})")
-            note = (s.summary or "").strip()
-            if note and note != s.title:
-                lines.append(f"  {note[:220]}")
+        for g in groups[:8]:
+            ctype = g.change_type or "Other"
+            why = g.why_it_matters or "Impact not yet clear."
+            sha = (g.stories[0].related_ref or "")[:7]
+            lines.append(
+                f"- **{g.title[:100]}** — {why} "
+                f"*({ctype})* [`{sha}`]({g.stories[0].source_url})"
+            )
         lines.append("")
 
-    if side["community"]:
-        lines.append("## Articles and community discussions")
-        lines.append("")
-        for s in side["community"][:12]:
-            lines.append(f"- **{s.title}** — [source]({s.source_url})")
-            note = (s.summary or "").strip()
-            if note and note != s.title:
-                lines.append(f"  {note[:220]}")
-        lines.append("")
-
-    research = _filter_compiler_research(side["research"])
-    if research:
-        lines.append("## Research papers")
-        lines.append("")
-        lines.append(
-            "Compiler-relevant papers from arXiv this window (not Git commits)."
-        )
-        lines.append("")
-        for s in research[:8]:
-            lines.append(f"- **{s.title}** — [paper]({s.source_url})")
-            if s.summary:
-                lines.append(f"  {s.summary[:260]}")
-        lines.append("")
-
-    errs = stats.get("errors") or []
-    if errs:
-        lines.append("## Collection notes")
-        lines.append("")
-        for e in errs[:12]:
-            lines.append(f"- {e}")
-        lines.append("")
+    emit_topic("LLVM", buckets.get("llvm", []))
+    emit_topic("Clang", buckets.get("clang", []))
+    emit_topic("GCC", [g for g in issue.groups if g.category == "gcc"])
+    emit_topic("MLIR", [g for g in issue.groups if g.category == "mlir"])
+    emit_topic("AI Compilers", [g for g in issue.groups if g.category == "ai"])
+    emit_topic("GPU Compilers", [g for g in issue.groups if g.category == "gpu"])
+    emit_topic(
+        "Other",
+        [g for g in issue.groups if g.category == "other"] + buckets.get("other-llvm", []),
+    )
 
     lines.extend(
         [
             "## Further reading",
             "",
-            f"- Browse every collected change in the "
-            f"[complete change log]({PAGES_URL.rstrip('/')}/changelog.html) "
-            f"(search GlobalISel, AMDGPU, Triton, GCC, …).",
-            f"- Machine-readable data: "
-            f"`reports/{issue.published_on.year}/{issue.published_on.isoformat()}.changelog.json`",
+            f"- Complete collected dataset (searchable): "
+            f"[{PAGES_URL.rstrip('/')}/changelog.html]({PAGES_URL.rstrip('/')}/changelog.html)",
+            f"- Explore by stage / domain / area: "
+            f"[{PAGES_URL.rstrip('/')}/topics/index.html]({PAGES_URL.rstrip('/')}/topics/index.html)",
             f"- Source & collectors: [{REPO_URL}]({REPO_URL})",
             f"- Learn compilers: [{EDU_URL}]({EDU_URL})",
             "",
             "---",
             "",
-            "CompilerSutra Weekly selects developments that matter for compiler engineers. "
-            "We do not invent impact, performance numbers, or completion status.",
+            "CompilerSutra Weekly explains *why you should care* — we do not invent "
+            "benchmarks, performance numbers, or completion status. When impact is unclear, "
+            "we say so.",
             "",
         ]
     )
@@ -273,48 +333,84 @@ def write_issue(issue: WeeklyIssue, reports_dir: Path) -> Path:
         "published_on": issue.published_on.isoformat(),
         "window": issue.window.model_dump(mode="json"),
         "stats": {k: v for k, v in issue.stats.items() if k != "errors"},
+        "week_overview": issue.week_overview,
         "stories": [s.model_dump(mode="json") for s in issue.stories],
         "groups": [g.model_dump(mode="json") for g in issue.groups],
+        "high_signal": [g.model_dump(mode="json") for g in issue.high_signal],
+        "worth_knowing": [g.model_dump(mode="json") for g in issue.worth_knowing],
+        "deep_dive": issue.deep_dive.model_dump(mode="json") if issue.deep_dive else None,
+        "moving_stories": issue.moving_stories,
     }
     data_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     return path
 
 
+def _story_card(group: ChangeGroup, *, index: int, compact: bool = False) -> list[str]:
+    proj = (group.project or group.category or "compiler").upper()
+    title = group.title[:120]
+    what = group.what_changed or title
+    why = group.why_it_matters or "The practical impact is not yet clear from the commit message alone."
+    who = ", ".join(group.who_should_care) if group.who_should_care else "Compiler engineers"
+    ctype = group.change_type or "Other"
+    stage = ", ".join(group.stages[:2]) if group.stages else "—"
+    domain = ", ".join(group.domains[:2]) if group.domains else "—"
+    sha = (group.stories[0].related_ref or "")[:8]
+    url = group.stories[0].source_url
+    lines = [
+        f"### {index}. [{proj}] {title}",
+        "",
+        f"**What changed**  ",
+        what,
+        "",
+        f"**Why it matters**  ",
+        why,
+        "",
+    ]
+    if not compact:
+        lines.extend(
+            [
+                f"**Who should care**  ",
+                who,
+                "",
+                f"**Type:** {ctype} · **Stage:** {stage} · **Domain:** {domain}",
+                "",
+            ]
+        )
+    else:
+        lines.append(f"**Who:** {who} · **Type:** {ctype}")
+        lines.append("")
+    if len(group.stories) == 1:
+        lines.append(f"**Source:** [`{sha}`]({url})")
+    else:
+        links = ", ".join(
+            f"[`{(s.related_ref or '')[:7]}`]({s.source_url})" for s in group.stories[:4]
+        )
+        extra = f" (+{len(group.stories) - 4})" if len(group.stories) > 4 else ""
+        lines.append(f"**Source:** {links}{extra}")
+    lines.append("")
+    return lines
+
+
+def _count_labels(groups: list[ChangeGroup], attr: str) -> dict[str, int]:
+    counts: dict[str, int] = defaultdict(int)
+    for g in groups:
+        for label in getattr(g, attr, []) or []:
+            counts[label] += 1
+    return dict(counts)
+
+
 _COMPILER_RESEARCH = re.compile(
-    r"(?i)\b("
-    r"compiler|compilation|llvm|clang|gcc|mlir|codegen|code generation|"
-    r"vectoriz|register alloc|instruction select|gpu|cuda|rocm|sycl|"
-    r"triton|xla|tvm|iree|optimization pass|intermediate representation|"
-    r"wasm|webassembly|jit|aot\b|backend|frontend|gimple|rtl\b"
-    r")\b"
+    r"(?i)\b(compiler|compilation|llvm|clang|gcc|mlir|codegen|vectoriz|"
+    r"register alloc|gpu|cuda|rocm|triton|xla|tvm|iree|wasm|jit|backend|frontend)\b"
 )
 
 
 def _filter_compiler_research(stories: list[Story]) -> list[Story]:
-    out = []
-    for s in stories:
-        blob = f"{s.title}\n{s.summary}"
-        if _COMPILER_RESEARCH.search(blob):
-            out.append(s)
-    return out
+    return [s for s in stories if _COMPILER_RESEARCH.search(f"{s.title}\n{s.summary}")]
 
 
-def _bullet(group: ChangeGroup) -> str:
-    """One LLVM Weekly–style bullet: sentence + linked SHA(s)."""
-    sentence = editorial_sentence(group)
-    if len(group.stories) == 1:
-        s = group.stories[0]
-        sha = (s.related_ref or "")[:7]
-        return f"- {sentence} [`{sha}`]({s.source_url})."
-    # Grouped: list a few SHAs like LLVM Weekly libc example
-    links = []
-    for s in group.stories[:4]:
-        sha = (s.related_ref or "")[:7]
-        links.append(f"[`{sha}`]({s.source_url})")
-    extra = f", +{len(group.stories) - 4} more" if len(group.stories) > 4 else ""
-    return f"- {sentence} {', '.join(links)}{extra}."
-
-
-def _slug(heading: str) -> str:
-    s = heading.lower().strip()
-    return re.sub(r"[^a-z0-9]+", "-", s).strip("-")
+def _plain_note(text: str, limit: int) -> str:
+    """Strip markdown headings so release notes don't pollute the issue TOC."""
+    cleaned = re.sub(r"(?m)^#{1,6}\s*", "", text or "")
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned[:limit]

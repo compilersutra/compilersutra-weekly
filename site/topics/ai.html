@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>AI Compilers — CompilerSutra Weekly</title>
-  <meta name="description" content="What changed in compilers this week — LLVM, GCC, MLIR, AI and GPU compilers."/>
+  <meta name="description" content="The compiler changes worth understanding — with context."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
@@ -17,6 +17,7 @@
       <nav class="nav" aria-label="Primary">
         <a href="../index.html">Home</a>
         <a href="index.html" aria-current="page">Topics</a>
+        <a href="../explore/index.html">Explore</a>
         <a href="../archive.html">Archive</a>
         <a href="../changelog.html">Change log</a>
         <a href="../about.html">About</a>
@@ -28,7 +29,8 @@
   
   <div class="topic-bar">
     <div class="wrap" aria-label="Topics">
-      <a href="../topics/index.html">All topics</a>
+      <a href="../topics/index.html">Topics</a>
+      <a href="../explore/index.html">Explore</a>
       <a href="../topics/llvm.html">LLVM</a><a href="../topics/gcc.html">GCC</a><a href="../topics/mlir.html">MLIR</a><a href="../topics/ai.html" aria-current="page">AI Compilers</a><a href="../topics/gpu.html">GPU</a><a href="../topics/research.html">Research</a>
     </div>
   </div>
@@ -36,13 +38,16 @@
   <main class="wrap article-narrow">
     <p class="hero-kicker">Topic</p>
     <h1 class="page-title">AI Compilers</h1>
-    <p class="muted">Triton, XLA, IREE, TVM</p>
-    <div class="cta-row" style="margin-bottom:1.75rem">
-      <a class="btn btn-primary" href="../issues/2026/2026-11-07.html">Jump in latest issue →</a>
-      <a class="btn btn-ghost" href="index.html">All topics</a>
-      <a class="btn btn-ghost" href="../archive.html">Archive</a>
-    </div>
-    <p class="topic-empty">No stories in this topic for published issues yet.</p>
+    <p class="muted">Triton · XLA · IREE · TVM · MLIR</p>
+    <section class="topic-issue-block">
+  <h3><a href="../issues/2026/2026-11-07.html">#001 · full issue</a></h3>
+  <p class="muted">What's moving · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+  <div class="story-grid"><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer">Add nvvm.mulf Op</a></h4>
+  <p>Affects automatic vectorization and SIMD code generation.</p>
+  <div class="meta">Backend · Middle-end / optimization developers, Runtime and toolchain developers, AI compiler developers, Performance engineers</div>
+</article></div>
+</section>
   </main>
 
   <footer class="site-footer">

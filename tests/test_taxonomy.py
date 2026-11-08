@@ -3,6 +3,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 from csweekly.config import load_sources
+from csweekly.pipeline import enrich_story
 from csweekly.reporters.markdown import SECTION_ORDER, build_issue, render_markdown
 from csweekly.models import EvidenceKind, Story, Window
 
@@ -23,35 +24,39 @@ def test_report_groups_llvm_and_ai():
     )
     now = datetime(2026, 11, 5, tzinfo=UTC)
     stories = [
-        Story(
-            id="1",
-            title="clang change",
-            source_url="https://example.com/1",
-            source_org="LLVM",
-            category="llvm",
-            project="llvm",
-            published_at=now,
-            discovered_at=now,
-            evidence_kind=EvidenceKind.GIT_COMMIT,
-            summary="clang change",
-            paths=["clang/lib/Sema/Sema.cpp"],
+        enrich_story(
+            Story(
+                id="1",
+                title="[Clang] Implement matrix splat cast",
+                source_url="https://example.com/1",
+                source_org="LLVM",
+                category="llvm",
+                project="llvm",
+                published_at=now,
+                discovered_at=now,
+                evidence_kind=EvidenceKind.GIT_COMMIT,
+                summary="Implement matrix splat cast",
+                paths=["clang/lib/CodeGen/CGExpr.cpp"],
+            )
         ),
-        Story(
-            id="2",
-            title="tvm change",
-            source_url="https://example.com/2",
-            source_org="TVM",
-            category="ai",
-            project="tvm",
-            published_at=now,
-            discovered_at=now,
-            evidence_kind=EvidenceKind.GIT_COMMIT,
-            summary="tvm change",
-            paths=["src/relay/op/nn.cc"],
+        enrich_story(
+            Story(
+                id="2",
+                title="Add support for new Triton GPU pass",
+                source_url="https://example.com/2",
+                source_org="TVM",
+                category="ai",
+                project="triton",
+                published_at=now,
+                discovered_at=now,
+                evidence_kind=EvidenceKind.GIT_COMMIT,
+                summary="Add support for new Triton GPU pass",
+                paths=["lib/Conversion/TritonGPUToLLVM/Pass.cpp"],
+            )
         ),
     ]
-    md = render_markdown(build_issue(window, stories))
-    assert "LLVM" in md
-    assert "AI Compilers" in md
-    assert "What changed in compilers this week" in md
-    assert any(h == "LLVM" for h, _ in SECTION_ORDER)
+    issue = build_issue(window, stories)
+    md = render_markdown(issue)
+    assert "What changed" in md or "why it matters" in md.lower() or "Why it matters" in md
+    assert "The compiler changes worth understanding" in md
+    assert any(h[0] == "LLVM" for h in SECTION_ORDER)

@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>GCC — CompilerSutra Weekly</title>
-  <meta name="description" content="What changed in compilers this week — LLVM, GCC, MLIR, AI and GPU compilers."/>
+  <meta name="description" content="The compiler changes worth understanding — with context."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
@@ -17,6 +17,7 @@
       <nav class="nav" aria-label="Primary">
         <a href="../index.html">Home</a>
         <a href="index.html" aria-current="page">Topics</a>
+        <a href="../explore/index.html">Explore</a>
         <a href="../archive.html">Archive</a>
         <a href="../changelog.html">Change log</a>
         <a href="../about.html">About</a>
@@ -28,7 +29,8 @@
   
   <div class="topic-bar">
     <div class="wrap" aria-label="Topics">
-      <a href="../topics/index.html">All topics</a>
+      <a href="../topics/index.html">Topics</a>
+      <a href="../explore/index.html">Explore</a>
       <a href="../topics/llvm.html">LLVM</a><a href="../topics/gcc.html" aria-current="page">GCC</a><a href="../topics/mlir.html">MLIR</a><a href="../topics/ai.html">AI Compilers</a><a href="../topics/gpu.html">GPU</a><a href="../topics/research.html">Research</a>
     </div>
   </div>
@@ -36,28 +38,51 @@
   <main class="wrap article-narrow">
     <p class="hero-kicker">Topic</p>
     <h1 class="page-title">GCC</h1>
-    <p class="muted">GIMPLE, RTL, targets</p>
-    <div class="cta-row" style="margin-bottom:1.75rem">
-      <a class="btn btn-primary" href="../issues/2026/2026-11-07.html">Jump in latest issue →</a>
-      <a class="btn btn-ghost" href="index.html">All topics</a>
-      <a class="btn btn-ghost" href="../archive.html">Archive</a>
-    </div>
+    <p class="muted">GIMPLE · RTL · middle-end · targets</p>
     <section class="topic-issue-block">
-  <h3><a href="../issues/2026/2026-11-07.html">#001 · 2026-11-07</a></h3>
-  <p class="muted">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
-  <div class="article" style="padding:0;width:auto;margin:0"><h2 id="gcc">GCC</h2>
-<ul>
-<li>Robin Dapp: RISC-V: Extract subvectors via vec_perm_const. (10 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91" rel="noopener noreferrer"><code>8ce5e39</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/78873c4dcee4b92347501b898f426d4302e374c0" rel="noopener noreferrer"><code>78873c4</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/fa20d1603db32449ffe51e54849f6d67eb7c7965" rel="noopener noreferrer"><code>fa20d16</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/b95850f0c0df9e90f7a5bad61f76627bff5501c9" rel="noopener noreferrer"><code>b95850f</code></a>, +6 more.</li>
-<li>ICE on enum struct-variant patterns was fixed. (7 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/054a9dd079f2bdb30343fbc3db38cdf6fedbe701" rel="noopener noreferrer"><code>054a9dd</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/8a764a40ba2b1ea3be68e0501c846ca740a282e2" rel="noopener noreferrer"><code>8a764a4</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/00ea483ff42ab7e83d93d72569a5bb269f021a29" rel="noopener noreferrer"><code>00ea483</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/f9aee05451e5b36402e39cc9ed1f44a723d4edd6" rel="noopener noreferrer"><code>f9aee05</code></a>, +3 more.</li>
-<li>Intrinsics: Add no-ops for prefetch_{read, write}_instruction. (4 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/f967d8baaa63beb26b626c6badd7f405bb47c33b" rel="noopener noreferrer"><code>f967d8b</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/af127ef229af58393efe0b3b77687445cb09ae28" rel="noopener noreferrer"><code>af127ef</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/441900d63a2ef6bef7f58ae88544c88e4fa1d099" rel="noopener noreferrer"><code>441900d</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/8c999b73f08e8909a47768796017f1175969ac6b" rel="noopener noreferrer"><code>8c999b7</code></a>.</li>
-<li>Initial work landed for support for AVX10V1AUX. <a href="https://github.com/gcc-mirror/gcc/commit/eb352436b3116f978adc3adc20f7759ce8f2b482" rel="noopener noreferrer"><code>eb35243</code></a>.</li>
-<li>AVX512BMM bitreverse lowering was added. (8 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/6783b7375fff65e917637e86688918e808682f14" rel="noopener noreferrer"><code>6783b73</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/55559303b9a6ecaf370e6edf6854c3e747f19a28" rel="noopener noreferrer"><code>5555930</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/0841d1b8c9e0dd9f3caa0806146dffc9369e25f1" rel="noopener noreferrer"><code>0841d1b</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/18d2e513be7832fb08df59a5a1ee8dd6dadd2bd2" rel="noopener noreferrer"><code>18d2e51</code></a>, +4 more.</li>
-<li>Port vabd and vaba intrinscs to pragma-based framework. (7 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/a364d69a3241c689dfc6b1c68269223986916831" rel="noopener noreferrer"><code>a364d69</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/7d2496170af17d46323445ea4832e6c098977869" rel="noopener noreferrer"><code>7d24961</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/89a7b7de039c4b8e687d63f6680b936e85df4a53" rel="noopener noreferrer"><code>89a7b7d</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/da3cb0e3d6cfe703d2991eb9080ef19884266df4" rel="noopener noreferrer"><code>da3cb0e</code></a>, +3 more.</li>
-<li>Check CF_RETURN bit in ix86_expand_epilogue. (5 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/ea93a47f579607698186dbced583ad1729f4ccb8" rel="noopener noreferrer"><code>ea93a47</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/8855f0622a8491b40deb79d29fcd8739c9287562" rel="noopener noreferrer"><code>8855f06</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/f2de25778e41d2a6451c798e58e0a6bb5af70765" rel="noopener noreferrer"><code>f2de257</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/07b484c2683b2e95c38fc28aabe239d5601d462c" rel="noopener noreferrer"><code>07b484c</code></a>, +1 more.</li>
-<li>Throw an error when a global path starts with crate. (4 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/9ff8f5a9643ee608990bac9a19a4be73cbee18df" rel="noopener noreferrer"><code>9ff8f5a</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/cfe4e50a944a44253767d9a06f62eb64ef9f6b2d" rel="noopener noreferrer"><code>cfe4e50</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/e00493f8d6e30496d5873aa1f321cc9f95fb6a44" rel="noopener noreferrer"><code>e00493f</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/42b194aa24523b709249984d938a84a52d6208d2" rel="noopener noreferrer"><code>42b194a</code></a>.</li>
-<li>Andrew Stubbs: amdgcn: Fix stack size calculation overflow. (2 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/adc647aa9e6aaea6799032f76524543b5336af80" rel="noopener noreferrer"><code>adc647a</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/ef10d5597438a6839702e4e75ae4a32a55dde041" rel="noopener noreferrer"><code>ef10d55</code></a>.</li>
-<li>Igor Shevlyakov: match.pd: Fold same-width signed vector averages. (2 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/f088a08addbb4d50ca88d64a7fd94234054f2f47" rel="noopener noreferrer"><code>f088a08</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/8835caacb1b5d929b9df3ec873570b73e41a6847" rel="noopener noreferrer"><code>8835caa</code></a>.</li>
-</ul></div>
+  <h3><a href="../issues/2026/2026-11-07.html">#001 · full issue</a></h3>
+  <p class="muted">What's moving · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+  <div class="story-grid"><article class="story-card">
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91" rel="noopener noreferrer">Extract subvectors via vec_perm_const</a></h4>
+  <p>Affects automatic vectorization and SIMD code generation.</p>
+  <div class="meta">Backend · Backend developers, Middle-end / optimization developers, CPU compiler developers, Performance engineers, CodeGen develo</div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer">Implement support for matrix splat cast</a></h4>
+  <p>Affects automatic vectorization and SIMD code generation.</p>
+  <div class="meta">New capability · Frontend / Clang developers, Runtime and toolchain developers, CPU compiler developers, Middle-end / optimization develo</div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer">Add RISCVABI helper functions for single/doubleFP and purecap</a></h4>
+  <p>Touches register allocation — impacts backend quality and spill behavior.</p>
+  <div class="meta">Code generation · Backend developers, CPU compiler developers, CodeGen developers, RISC-V developers, Runtime and toolchain developers</div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer">Added support for functions to DWARFASTParserFortran</a></h4>
+  <p>Affects debug information or debugger experience.</p>
+  <div class="meta">Frontend · Runtime and toolchain developers, CPU compiler developers, Debugger / debug-info developers</div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/6783b7375fff65e917637e86688918e808682f14" rel="noopener noreferrer">Add AVX512BMM bitreverse lowering</a></h4>
+  <p>Touches register allocation — impacts backend quality and spill behavior.</p>
+  <div class="meta">Backend · Backend developers, CPU compiler developers, CodeGen developers</div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/5bbc49f5d844871eadce3e06926dbd4cf538e180" rel="noopener noreferrer">Fix advancing past the end of an empty macro fusion list</a></h4>
+  <p>Correctness fix — prevents miscompile or compiler crash (per commit subject).</p>
+  <div class="meta">Bug fix · Middle-end / optimization developers, CPU compiler developers, Backend developers, Runtime and toolchain developers</div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/2853de0422d2fd02dca9c4cc89a6def2a3794198" rel="noopener noreferrer">Add signatures for the divrem libcalls</a></h4>
+  <p>Affects automatic vectorization and SIMD code generation.</p>
+  <div class="meta">IR · Runtime and toolchain developers, CPU compiler developers, Middle-end / optimization developers, Performance engineers, </div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/a364d69a3241c689dfc6b1c68269223986916831" rel="noopener noreferrer">Port vabd and vaba intrinscs to pragma-based framework</a></h4>
+  <p>Correctness fix — prevents miscompile or compiler crash (per commit subject).</p>
+  <div class="meta">Backend · Backend developers, CPU compiler developers, CodeGen developers, AArch64 developers</div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/65166e24ae3499f143ea9d8581e544c37b1977a7" rel="noopener noreferrer">Add signatures for size returning new and GPU profiling</a></h4>
+  <p>Touches GPU/offloading code generation or runtime.</p>
+  <div class="meta">IR · Middle-end / optimization developers, GPU compiler developers, Runtime and toolchain developers, CPU compiler developers</div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/76ded34e479dbe2f022ec1e021ee36a6f4f4331f" rel="noopener noreferrer">Port MulMulBugFixPass to NewPM</a></h4>
+  <p>Correctness fix — prevents miscompile or compiler crash (per commit subject).</p>
+  <div class="meta">Bug fix · Backend developers, Runtime and toolchain developers, CPU compiler developers, CodeGen developers</div>
+</article></div>
 </section>
   </main>
 

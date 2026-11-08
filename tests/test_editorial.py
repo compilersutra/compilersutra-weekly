@@ -51,16 +51,18 @@ def test_group_related_amdgpu():
 
 
 def test_select_prefers_highlights():
+    from csweekly.processors.explain import explain_group
+
     stories = [
         _story("1", "Add support for new backend", ["llvm/lib/Target/Foo/Foo.cpp"]),
         _story("2", "typo in docs", ["docs/Foo.rst"]),
     ]
     for s in stories:
         s.importance = assign_importance(s)
-    groups = group_stories(stories)
+    groups = [explain_group(g) for g in group_stories(stories)]
     selected = select_for_newsletter(groups)
     assert selected
-    assert selected[0].importance in {Importance.HIGHLIGHT, Importance.NOTABLE}
+    assert selected[0].signal.value in {"high_signal", "worth_knowing", "deep_dive"}
 
 
 def test_editorial_sentence_reads_like_newsletter():
@@ -82,3 +84,17 @@ def test_editorial_sentence_reads_like_newsletter():
     assert sentence.endswith(".")
     assert "Fold" in sentence or "fold" in sentence.lower() or "AMDGPU" in sentence
     assert "(#236136)" not in sentence
+
+
+def test_explain_has_why_and_who():
+    from csweekly.pipeline import enrich_story
+    s = enrich_story(_story(
+        "z",
+        "[AMDGPU][GlobalISel] Fold unmasked signed byte loads",
+        ["llvm/lib/Target/AMDGPU/AMDGPUInstructionSelector.cpp"],
+    ))
+    assert s.what_changed
+    assert s.why_it_matters
+    assert s.who_should_care
+    assert s.stages
+    assert s.domains

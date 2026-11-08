@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>CompilerSutra Weekly</title>
-  <meta name="description" content="What changed in compilers this week — LLVM, GCC, MLIR, AI and GPU compilers."/>
+  <meta name="description" content="The compiler changes worth understanding — with context."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
@@ -17,6 +17,7 @@
       <nav class="nav" aria-label="Primary">
         <a href="index.html" aria-current="page">Home</a>
         <a href="topics/index.html">Topics</a>
+        <a href="explore/index.html">Explore</a>
         <a href="archive.html">Archive</a>
         <a href="changelog.html">Change log</a>
         <a href="about.html">About</a>
@@ -28,7 +29,8 @@
   
   <div class="topic-bar">
     <div class="wrap" aria-label="Topics">
-      <a href="topics/index.html">All topics</a>
+      <a href="topics/index.html">Topics</a>
+      <a href="explore/index.html">Explore</a>
       <a href="topics/llvm.html">LLVM</a><a href="topics/gcc.html">GCC</a><a href="topics/mlir.html">MLIR</a><a href="topics/ai.html">AI Compilers</a><a href="topics/gpu.html">GPU</a><a href="topics/research.html">Research</a>
     </div>
   </div>
@@ -37,30 +39,69 @@
     <section class="hero">
       <div class="wrap">
         <h1>CompilerSutra Weekly</h1>
-        <p class="tagline">What changed in compilers this week.</p>
-        <p class="lede">LLVM · GCC · MLIR · AI Compilers · GPU Compilers · Toolchains · Research</p>
+        <p class="tagline">The compiler changes worth understanding.</p>
+        <p class="lede">A weekly signal from LLVM, GCC, MLIR, GPU compilers, AI compilers, and research.
+        Not every commit — just the changes worth knowing, with context.</p>
         
         <div class="latest-card">
           <p class="hero-kicker">Latest issue</p>
           <h2>Issue #001</h2>
           <p class="latest-meta">2026-11-07 · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
-          <p class="latest-cover">gcc · llvm · mlir</p>
+          <p class="latest-cover">9 high signal · 12 worth knowing</p>
+          <ul class='overview-list'><li>CPU work appears across 15 curated developments this week.</li><li>Code generation remains active in this week&#x27;s curated set (11 items).</li><li>GPU work appears across 8 curated developments this week.</li><li>Tooling shows up in 6 curated changes.</li><li>Languages work appears across 5 curated developments this week.</li></ul>
           <div class="cta-row">
             <a class="btn btn-primary" href="issues/2026/2026-11-07.html">Read latest issue →</a>
             <a class="btn btn-ghost" href="archive.html">Archive</a>
-            <a class="btn btn-ghost" href="changelog.html">Complete change log</a>
+            <a class="btn btn-ghost" href="explore/index.html">Explore</a>
           </div>
         </div>
 
       </div>
     </section>
     <div class="wrap">
+      <h2 class="section-label">Follow a track</h2>
+      <div class="buckets"><a class="bucket" href="topics/llvm.html">
+  <strong>LLVM</strong>
+  <span>Optimization · IR · CodeGen · Clang · backends</span>
+  <span class="go">Open →</span>
+</a>
+<a class="bucket" href="topics/gcc.html">
+  <strong>GCC</strong>
+  <span>GIMPLE · RTL · middle-end · targets</span>
+  <span class="go">Open →</span>
+</a>
+<a class="bucket" href="topics/mlir.html">
+  <strong>MLIR</strong>
+  <span>Dialects · transformations · infrastructure</span>
+  <span class="go">Open →</span>
+</a>
+<a class="bucket" href="topics/ai.html">
+  <strong>AI Compilers</strong>
+  <span>Triton · XLA · IREE · TVM · MLIR</span>
+  <span class="go">Open →</span>
+</a>
+<a class="bucket" href="topics/gpu.html">
+  <strong>GPU</strong>
+  <span>AMDGPU · NVPTX · SPIR-V · offloading</span>
+  <span class="go">Open →</span>
+</a>
+<a class="bucket" href="topics/research.html">
+  <strong>Research</strong>
+  <span>Papers, benchmarks, technical notes</span>
+  <span class="go">Open →</span>
+</a></div>
+      <h2 class="section-label">Discover by dimension</h2>
+      <div class="dim-row">
+        <a href="explore/index.html#stages">By compiler stage</a>
+        <a href="explore/index.html#domains">By domain / hardware</a>
+        <a href="explore/index.html#areas">By technical area</a>
+      </div>
       <section class="panel" aria-labelledby="archive-heading">
         <h2 id="archive-heading">Previous issues</h2>
         <ul class="issue-list"><li>
   <a class="issue-row" href="issues/2026/2026-11-07.html">
     <span class="issue-date">2026-11-07</span>
-    <span class="title">#001</span>
+    <span class="title">#001 · 9 high signal</span>
     <span class="issue-window">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</span>
   </a>
 </li></ul>

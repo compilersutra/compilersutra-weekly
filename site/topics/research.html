@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Research — CompilerSutra Weekly</title>
-  <meta name="description" content="What changed in compilers this week — LLVM, GCC, MLIR, AI and GPU compilers."/>
+  <meta name="description" content="The compiler changes worth understanding — with context."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
@@ -17,6 +17,7 @@
       <nav class="nav" aria-label="Primary">
         <a href="../index.html">Home</a>
         <a href="index.html" aria-current="page">Topics</a>
+        <a href="../explore/index.html">Explore</a>
         <a href="../archive.html">Archive</a>
         <a href="../changelog.html">Change log</a>
         <a href="../about.html">About</a>
@@ -28,7 +29,8 @@
   
   <div class="topic-bar">
     <div class="wrap" aria-label="Topics">
-      <a href="../topics/index.html">All topics</a>
+      <a href="../topics/index.html">Topics</a>
+      <a href="../explore/index.html">Explore</a>
       <a href="../topics/llvm.html">LLVM</a><a href="../topics/gcc.html">GCC</a><a href="../topics/mlir.html">MLIR</a><a href="../topics/ai.html">AI Compilers</a><a href="../topics/gpu.html">GPU</a><a href="../topics/research.html" aria-current="page">Research</a>
     </div>
   </div>
@@ -36,66 +38,65 @@
   <main class="wrap article-narrow">
     <p class="hero-kicker">Topic</p>
     <h1 class="page-title">Research</h1>
-    <p class="muted">Papers &amp; notes</p>
-    <div class="cta-row" style="margin-bottom:1.75rem">
-      <a class="btn btn-primary" href="../issues/2026/2026-11-07.html">Jump in latest issue →</a>
-      <a class="btn btn-ghost" href="index.html">All topics</a>
-      <a class="btn btn-ghost" href="../archive.html">Archive</a>
-    </div>
+    <p class="muted">Papers, benchmarks, technical notes</p>
     <section class="topic-issue-block">
-  <h3><a href="../issues/2026/2026-11-07.html">#001 · 2026-11-07</a></h3>
-  <p class="muted">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
-  <div class="article" style="padding:0;width:auto;margin:0"><h2 id="research-papers">Research papers</h2>
+  <h3><a href="../issues/2026/2026-11-07.html">#001</a></h3>
+  <div class="article" style="padding:0;width:auto;margin:0"><h2 id="worth-reading">Worth reading</h2>
+<h3>Release — Release LLVM 23.1.5</h3>
 <p>
-Compiler-relevant papers from arXiv this window (not Git commits).
+LLVM 23.1.5 Release
 </p>
-<ul>
-<li><strong>OpenRDMA: A GPU-Native Multi-Path Reliable RDMA Transport Architecture</strong> — <a href="https://arxiv.org/abs/2611.07559v1" rel="noopener noreferrer">paper</a></li>
-</ul>
 <p>
-  As the computing power density of large-scale AI clusters rises, network communication increasingly limits system performance. GPU-initiated communication requires low-overhead request submission to overlap communication with computation. However, GPUDirect RD
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/releases/tag/llvmorg-23.1.5" rel="noopener noreferrer">release</a>
 </p>
-<ul>
-<li><strong>NUMA-Torch: Compiler-Driven NUMA-Aware LLM Prefill on Multi-Socket CPUs</strong> — <a href="https://arxiv.org/abs/2611.07105v1" rel="noopener noreferrer">paper</a></li>
-</ul>
+<h3>Discussion — Settings for lldb&#x27;s DataFileCache, as I add new things in there</h3>
 <p>
-  For sufficiently large transformer-based Large Language Models (LLMs), whose parameters cannot be retained in on-chip caches, prefill throughput on multi-socket CPUs is often limited by sustainable DRAM bandwidth rather than peak floating-point throughput. In
+I’ve been looking at using DataFileCache for some additional use cases, and I don’t think I’m doing a great job of making the settings understandable. I wanted to see what anyone (Greg especially) might think. Today we have these settings for the DataFileCache
 </p>
-<ul>
-<li><strong>TauLang: A Language and Compiler for Space-Time Programming on Statically Scheduled Accelerators</strong> — <a href="https://arxiv.org/abs/2611.06079v2" rel="noopener noreferrer">paper</a></li>
-</ul>
 <p>
-  Statically scheduled accelerators such as Groq&#x27;s Tensor Streaming Processor (TSP) achieve low-latency large language model inference by stripping dynamic synchronization hardware from the chip. With no caches, arbiters, or hardware schedulers, the compiler mus
+<strong>Source:</strong> <a href="https://discourse.llvm.org/t/settings-for-lldbs-datafilecache-as-i-add-new-things-in-there/92701" rel="noopener noreferrer">discussion</a>
 </p>
-<ul>
-<li><strong>CHARM+: Cross-Hardware Attention with Re-Merge Multistream Mechanism</strong> — <a href="https://arxiv.org/abs/2611.05906v1" rel="noopener noreferrer">paper</a></li>
-</ul>
+<h3>Discussion — [RFC][lldb-dap] DAP extension to support breakpoint locations</h3>
 <p>
-  As sequence lengths continue to grow, distributed attention based on sequence parallel (e.g., Ring-Attention) has become a mainstream solution for large language models (LLMs). Nevertheless, inherent communication dependencies limit computation-communication o
+Summary A single breakpoint can resolve to several locations in a program. For example, a function breakpoint can match several overloads, and a line breakpoint in a template function can hit several specialisations. The Breakpoint type in the Debug Adapter Pr
 </p>
-<ul>
-<li><strong>Scheduling Data to Compute: Hierarchical Data Pipelining for LLM Training on AMD GPUs</strong> — <a href="https://arxiv.org/abs/2611.05751v1" rel="noopener noreferrer">paper</a></li>
-</ul>
 <p>
-  Large language models (LLM) have been the key focus of recent machine learning breakthroughs. As the model size grows exponentially, the computation needed for training is astronomical. A GPU can do a huge amount of arithmetic. However, the data its compute un
+<strong>Source:</strong> <a href="https://discourse.llvm.org/t/rfc-lldb-dap-dap-extension-to-support-breakpoint-locations/92693" rel="noopener noreferrer">discussion</a>
 </p>
-<ul>
-<li><strong>An Investigation on Numerical Bugs in GPU Programs Towards Automated Bug Detection</strong> — <a href="https://arxiv.org/abs/2611.05121v1" rel="noopener noreferrer">paper</a></li>
-</ul>
+<h3>Paper — OpenRDMA: A GPU-Native Multi-Path Reliable RDMA Transport Architecture</h3>
 <p>
-  General-purpose graphics processing unit (GPU) computing has emerged as a leading parallel computing paradigm, offering significant performance gains in various domains such as scientific computing and deep learning. However, GPU programs are susceptible to nu
+As the computing power density of large-scale AI clusters rises, network communication increasingly limits system performance. GPU-initiated communication requires low-overhead request submission to overlap communication with computation. However, GPUDirect RD
 </p>
-<ul>
-<li><strong>Linking as Evaluation: Correct Separate Compilation via First-Class Environments</strong> — <a href="https://arxiv.org/abs/2611.04993v1" rel="noopener noreferrer">paper</a></li>
-</ul>
 <p>
-  Separate compilation is central to modular software: components are compiled independently and linked into an executable. Separate compilation is correct when a linked program behaves like the program formed by merging its sources. This property is less routin
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.07559v1" rel="noopener noreferrer">paper</a>
 </p>
-<ul>
-<li><strong>Properly defining Erlang lists</strong> — <a href="https://arxiv.org/abs/2611.04929v1" rel="noopener noreferrer">paper</a></li>
-</ul>
+<h3>Paper — NUMA-Torch: Compiler-Driven NUMA-Aware LLM Prefill on Multi-Socket CPUs</h3>
 <p>
-  We define list types, distinguishing proper lists, which end in the empty list, from improper lists, which may end in any value. Both are encoded as recursive types of cons cells, implemented in etylizer. This work found one OTP compiler bug. We propose a one-
+For sufficiently large transformer-based Large Language Models (LLMs), whose parameters cannot be retained in on-chip caches, prefill throughput on multi-socket CPUs is often limited by sustainable DRAM bandwidth rather than peak floating-point throughput. In
+</p>
+<p>
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.07105v1" rel="noopener noreferrer">paper</a>
+</p>
+<h3>Paper — TauLang: A Language and Compiler for Space-Time Programming on Statically Scheduled Accelerators</h3>
+<p>
+Statically scheduled accelerators such as Groq&#x27;s Tensor Streaming Processor (TSP) achieve low-latency large language model inference by stripping dynamic synchronization hardware from the chip. With no caches, arbiters, or hardware schedulers, the compiler mus
+</p>
+<p>
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.06079v2" rel="noopener noreferrer">paper</a>
+</p>
+<h3>Paper — CHARM+: Cross-Hardware Attention with Re-Merge Multistream Mechanism</h3>
+<p>
+As sequence lengths continue to grow, distributed attention based on sequence parallel (e.g., Ring-Attention) has become a mainstream solution for large language models (LLMs). Nevertheless, inherent communication dependencies limit computation-communication o
+</p>
+<p>
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.05906v1" rel="noopener noreferrer">paper</a>
+</p>
+<h3>Paper — Scheduling Data to Compute: Hierarchical Data Pipelining for LLM Training on AMD GPUs</h3>
+<p>
+Large language models (LLM) have been the key focus of recent machine learning breakthroughs. As the model size grows exponentially, the computation needed for training is astronomical. A GPU can do a huge amount of arithmetic. However, the data its compute un
+</p>
+<p>
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.05751v1" rel="noopener noreferrer">paper</a>
 </p></div>
 </section>
   </main>

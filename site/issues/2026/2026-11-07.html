@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>#001 — CompilerSutra Weekly</title>
-  <meta name="description" content="What changed in compilers this week — LLVM, GCC, MLIR, AI and GPU compilers."/>
+  <meta name="description" content="The compiler changes worth understanding — with context."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet"/>
@@ -17,6 +17,7 @@
       <nav class="nav" aria-label="Primary">
         <a href="../../index.html">Home</a>
         <a href="../../topics/index.html">Topics</a>
+        <a href="../../explore/index.html">Explore</a>
         <a href="../../archive.html" aria-current="page">Archive</a>
         <a href="../../changelog.html">Change log</a>
         <a href="../../about.html">About</a>
@@ -28,7 +29,8 @@
   
   <div class="topic-bar">
     <div class="wrap" aria-label="Topics">
-      <a href="../../topics/index.html">All topics</a>
+      <a href="../../topics/index.html">Topics</a>
+      <a href="../../explore/index.html">Explore</a>
       <a href="../../topics/llvm.html">LLVM</a><a href="../../topics/gcc.html">GCC</a><a href="../../topics/mlir.html">MLIR</a><a href="../../topics/ai.html">AI Compilers</a><a href="../../topics/gpu.html">GPU</a><a href="../../topics/research.html">Research</a>
     </div>
   </div>
@@ -36,167 +38,567 @@
   <article class="article">
     <div class="issue-nav"><a class="back" href="../../archive.html">← Archive</a></div>
     <p class="hero-kicker">Issue #001</p>
-    <nav class="toc" aria-label="On this page"><a href="#llvm">LLVM</a><a href="#clang">Clang</a><a href="#gcc">GCC</a><a href="#mlir">MLIR</a><a href="#other-compiler-projects">Other compiler projects</a><a href="#releases-and-announcements">Releases and announcements</a><a href="#articles-and-community-discussions">Articles and community discussions</a><a href="#research-papers">Research papers</a><a href="#further-reading">Further reading</a></nav>
+    <nav class="toc" aria-label="On this page"><a href="#the-week-in-compiler-development">The week in compiler development</a><a href="#high-signal">High signal</a><a href="#worth-knowing">Worth knowing</a><a href="#moving-stories">Moving stories</a><a href="#worth-reading">Worth reading</a><a href="#deep-dive">Deep dive</a><a href="#by-topic">By topic</a><a href="#further-reading">Further reading</a></nav>
     <h1>CompilerSutra Weekly — #001, November 7 2026</h1>
 <p>
-<strong>What changed in compilers this week.</strong>
+<strong>The compiler changes worth understanding.</strong>
 </p>
 <p>
-Welcome to issue <strong>#001</strong> of CompilerSutra Weekly, a Saturday newsletter covering developments across LLVM, Clang, GCC, MLIR, AI compilers, GPU compilers, and related toolchains.
+Welcome to issue <strong>#001</strong>. Not every commit — curated changes across LLVM, Clang, GCC, MLIR, GPU compilers, AI compilers, and research, with context on why they matter.
 </p>
 <p>
 <strong>Reporting period:</strong> 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)
 <br/>
 <strong>Published:</strong> 2026-11-07
 </p>
+<h2 id="the-week-in-compiler-development">The week in compiler development</h2>
+<ul>
+<li>CPU work appears across 15 curated developments this week.</li>
+<li>Code generation remains active in this week&#x27;s curated set (11 items).</li>
+<li>GPU work appears across 8 curated developments this week.</li>
+<li>Tooling shows up in 6 curated changes.</li>
+<li>Languages work appears across 5 curated developments this week.</li>
+</ul>
+<h2 id="high-signal">High signal</h2>
 <p>
-Entries below are curated from repository activity and project announcements. Each item is a short technical note with a link to the original source — not a raw commit dump. Full collected data stays on the <a href="https://compilersutra.github.io/compilersutra-weekly/changelog.html" rel="noopener noreferrer">complete change log</a>.
+Changes that affect compiler behavior, architecture support, or a clear project direction. Investigate these first.
 </p>
-<h2 id="llvm">LLVM</h2>
-<ul>
-<li>Use runCodeGenPipeline in SPIRVTranslate. (3 related commits) <a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer"><code>e5a911f</code></a>, <a href="https://github.com/llvm/llvm-project/commit/930f2d2cfa1e33b6786e351f32833968295e373a" rel="noopener noreferrer"><code>930f2d2</code></a>, <a href="https://github.com/llvm/llvm-project/commit/30a475d9ca714102d31ed7ab5217ab5233ecb720" rel="noopener noreferrer"><code>30a475d</code></a>.</li>
-<li>Fold unmasked signed byte loads into D16 high loads. (2 related commits) <a href="https://github.com/llvm/llvm-project/commit/6e37cd2cc855cd23aa30705a2cde4e3bb646624a" rel="noopener noreferrer"><code>6e37cd2</code></a>, <a href="https://github.com/llvm/llvm-project/commit/06f4a14f71edc0dd3cf6032cbb1b853e01f9e1fa" rel="noopener noreferrer"><code>06f4a14</code></a>.</li>
-<li>Clear NoPHIs after SIFixSGPRCopies under the new pass manager. (2 related commits) <a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer"><code>e2e487d</code></a>, <a href="https://github.com/llvm/llvm-project/commit/73fd9cd9a94de9f524125481bc24883c1f9390a0" rel="noopener noreferrer"><code>73fd9cd</code></a>.</li>
-<li>Make m_OneUse ignore debug uses; remove m_OneNonDBGUse. <a href="https://github.com/llvm/llvm-project/commit/070b1933da67313f5a205bd3582a71b03b61e437" rel="noopener noreferrer"><code>070b193</code></a>.</li>
-<li>Inserting a &lt;1 x Ty&gt; into a &lt;1 x Ty&gt; vector was fixed. <a href="https://github.com/llvm/llvm-project/commit/5040db9fa02795153a43e0f905abc080a06407a8" rel="noopener noreferrer"><code>5040db9</code></a>.</li>
-<li>Documentation about ABI occupancy was added. <a href="https://github.com/llvm/llvm-project/commit/c5b99ea2731d7d1cd3a851c1fc306bacb630020b" rel="noopener noreferrer"><code>c5b99ea</code></a>.</li>
-<li>Libsycl: property_list for sycl::queue was implemented. <a href="https://github.com/llvm/llvm-project/commit/3b2fe02fbb264b12d28c08a0c4d523d71d33f1f3" rel="noopener noreferrer"><code>3b2fe02</code></a>.</li>
-<li>Compute known bits for llvm.amdgcn.mul.u24/i24. <a href="https://github.com/llvm/llvm-project/commit/60e151dae52bd722c574f9e89a040c77dd2a934e" rel="noopener noreferrer"><code>60e151d</code></a>.</li>
-<li>Combine shifted power-of-two division and nonnegative signed div/rem. <a href="https://github.com/llvm/llvm-project/commit/6e5a44fb059d5b49862e3e6eeb14c4b0a8c20901" rel="noopener noreferrer"><code>6e5a44f</code></a>.</li>
-<li>Compare element sizes in minScalarSameAs/maxScalarSameAs. <a href="https://github.com/llvm/llvm-project/commit/f5eb672ca0a7675674542f569c515c37073646e7" rel="noopener noreferrer"><code>f5eb672</code></a>.</li>
-<li>Do not attach instruction metadata to debug instructions. <a href="https://github.com/llvm/llvm-project/commit/ffc837621043197c56b9f213f58da9ebcc6aa962" rel="noopener noreferrer"><code>ffc8376</code></a>.</li>
-<li>Don&#x27;t assert on tied multi-register inline asm inputs. <a href="https://github.com/llvm/llvm-project/commit/16f7571293199bae6af10c676d5003fda774930d" rel="noopener noreferrer"><code>16f7571</code></a>.</li>
-<li>Expand sdiv/srem by constant when G_SMULH splits into legal pieces. <a href="https://github.com/llvm/llvm-project/commit/1843ebb1825dab9ea56ae7503ace52d97ceaab76" rel="noopener noreferrer"><code>1843ebb</code></a>.</li>
-<li>Dominance when legalizing PHI for results of invoke was fixed. <a href="https://github.com/llvm/llvm-project/commit/459cd1ebd58b3f6e9aad2d6b6b3776ffa4e25799" rel="noopener noreferrer"><code>459cd1e</code></a>.</li>
-</ul>
-<h2 id="clang">Clang</h2>
-<ul>
-<li>Support for matrix splat cast was implemented. (5 related commits) <a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer"><code>6fff663</code></a>, <a href="https://github.com/llvm/llvm-project/commit/191ca4ec5bb4b394810c3e11e57b125770050a07" rel="noopener noreferrer"><code>191ca4e</code></a>, <a href="https://github.com/llvm/llvm-project/commit/3c4aa885091c12572281a7117dd254907d8cd732" rel="noopener noreferrer"><code>3c4aa88</code></a>, <a href="https://github.com/llvm/llvm-project/commit/446cfbe6f546780f933048016ad342ac278657ff" rel="noopener noreferrer"><code>446cfbe</code></a>, +1 more.</li>
-<li>SPIR-V target ABI classifier to the LLVM ABI library was added. <a href="https://github.com/llvm/llvm-project/commit/12e5222ba347887b916be9162bc02affb1b85414" rel="noopener noreferrer"><code>12e5222</code></a>.</li>
-<li>Local &#x27;cleanup&#x27; attribute was implemented. <a href="https://github.com/llvm/llvm-project/commit/56f7848ba9705153682da7a1377ae8b12473634f" rel="noopener noreferrer"><code>56f7848</code></a>.</li>
-<li>MS ABI with deleted template constructor was fixed. <a href="https://github.com/llvm/llvm-project/commit/2abfa104dc091113f844d252b4df2a22e800e4b8" rel="noopener noreferrer"><code>2abfa10</code></a>.</li>
-<li>Pick the default ABI of environment-less triples from the architecture. <a href="https://github.com/llvm/llvm-project/commit/80542d2d0068ab6d7c041672fc4e73f0876e7636" rel="noopener noreferrer"><code>80542d2</code></a>.</li>
-<li>Matrix support for the <code>step</code> intrinsic was implemented. <a href="https://github.com/llvm/llvm-project/commit/e2e1703c2143de0d5dd4eaf26b8ac1a4daad8800" rel="noopener noreferrer"><code>e2e1703</code></a>.</li>
-<li>Support for the Zyhybrid extension was introduced. <a href="https://github.com/llvm/llvm-project/commit/743905e1f847704358d93bb06faf8c018ebdeb32" rel="noopener noreferrer"><code>743905e</code></a>.</li>
-<li>Attach a single callgraph type identifier to function definitions. (5 related commits) <a href="https://github.com/llvm/llvm-project/commit/c1498de98d839e25c4c020a5bdc4f390464c2930" rel="noopener noreferrer"><code>c1498de</code></a>, <a href="https://github.com/llvm/llvm-project/commit/8c8f266745dec9cb3c6446c2c56d955158f1c13f" rel="noopener noreferrer"><code>8c8f266</code></a>, <a href="https://github.com/llvm/llvm-project/commit/791b53ca6f4e7e9ddc7a4f768f6dcae3c43ba700" rel="noopener noreferrer"><code>791b53c</code></a>, <a href="https://github.com/llvm/llvm-project/commit/df987794f9d7788e4cd06bf582a323b3c5ad7ad1" rel="noopener noreferrer"><code>df98779</code></a>, +1 more.</li>
-</ul>
-<h2 id="gcc">GCC</h2>
-<ul>
-<li>Robin Dapp: RISC-V: Extract subvectors via vec_perm_const. (10 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91" rel="noopener noreferrer"><code>8ce5e39</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/78873c4dcee4b92347501b898f426d4302e374c0" rel="noopener noreferrer"><code>78873c4</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/fa20d1603db32449ffe51e54849f6d67eb7c7965" rel="noopener noreferrer"><code>fa20d16</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/b95850f0c0df9e90f7a5bad61f76627bff5501c9" rel="noopener noreferrer"><code>b95850f</code></a>, +6 more.</li>
-<li>ICE on enum struct-variant patterns was fixed. (7 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/054a9dd079f2bdb30343fbc3db38cdf6fedbe701" rel="noopener noreferrer"><code>054a9dd</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/8a764a40ba2b1ea3be68e0501c846ca740a282e2" rel="noopener noreferrer"><code>8a764a4</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/00ea483ff42ab7e83d93d72569a5bb269f021a29" rel="noopener noreferrer"><code>00ea483</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/f9aee05451e5b36402e39cc9ed1f44a723d4edd6" rel="noopener noreferrer"><code>f9aee05</code></a>, +3 more.</li>
-<li>Intrinsics: Add no-ops for prefetch_{read, write}_instruction. (4 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/f967d8baaa63beb26b626c6badd7f405bb47c33b" rel="noopener noreferrer"><code>f967d8b</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/af127ef229af58393efe0b3b77687445cb09ae28" rel="noopener noreferrer"><code>af127ef</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/441900d63a2ef6bef7f58ae88544c88e4fa1d099" rel="noopener noreferrer"><code>441900d</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/8c999b73f08e8909a47768796017f1175969ac6b" rel="noopener noreferrer"><code>8c999b7</code></a>.</li>
-<li>Initial work landed for support for AVX10V1AUX. <a href="https://github.com/gcc-mirror/gcc/commit/eb352436b3116f978adc3adc20f7759ce8f2b482" rel="noopener noreferrer"><code>eb35243</code></a>.</li>
-<li>AVX512BMM bitreverse lowering was added. (8 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/6783b7375fff65e917637e86688918e808682f14" rel="noopener noreferrer"><code>6783b73</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/55559303b9a6ecaf370e6edf6854c3e747f19a28" rel="noopener noreferrer"><code>5555930</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/0841d1b8c9e0dd9f3caa0806146dffc9369e25f1" rel="noopener noreferrer"><code>0841d1b</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/18d2e513be7832fb08df59a5a1ee8dd6dadd2bd2" rel="noopener noreferrer"><code>18d2e51</code></a>, +4 more.</li>
-<li>Port vabd and vaba intrinscs to pragma-based framework. (7 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/a364d69a3241c689dfc6b1c68269223986916831" rel="noopener noreferrer"><code>a364d69</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/7d2496170af17d46323445ea4832e6c098977869" rel="noopener noreferrer"><code>7d24961</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/89a7b7de039c4b8e687d63f6680b936e85df4a53" rel="noopener noreferrer"><code>89a7b7d</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/da3cb0e3d6cfe703d2991eb9080ef19884266df4" rel="noopener noreferrer"><code>da3cb0e</code></a>, +3 more.</li>
-<li>Check CF_RETURN bit in ix86_expand_epilogue. (5 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/ea93a47f579607698186dbced583ad1729f4ccb8" rel="noopener noreferrer"><code>ea93a47</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/8855f0622a8491b40deb79d29fcd8739c9287562" rel="noopener noreferrer"><code>8855f06</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/f2de25778e41d2a6451c798e58e0a6bb5af70765" rel="noopener noreferrer"><code>f2de257</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/07b484c2683b2e95c38fc28aabe239d5601d462c" rel="noopener noreferrer"><code>07b484c</code></a>, +1 more.</li>
-<li>Throw an error when a global path starts with crate. (4 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/9ff8f5a9643ee608990bac9a19a4be73cbee18df" rel="noopener noreferrer"><code>9ff8f5a</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/cfe4e50a944a44253767d9a06f62eb64ef9f6b2d" rel="noopener noreferrer"><code>cfe4e50</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/e00493f8d6e30496d5873aa1f321cc9f95fb6a44" rel="noopener noreferrer"><code>e00493f</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/42b194aa24523b709249984d938a84a52d6208d2" rel="noopener noreferrer"><code>42b194a</code></a>.</li>
-<li>Andrew Stubbs: amdgcn: Fix stack size calculation overflow. (2 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/adc647aa9e6aaea6799032f76524543b5336af80" rel="noopener noreferrer"><code>adc647a</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/ef10d5597438a6839702e4e75ae4a32a55dde041" rel="noopener noreferrer"><code>ef10d55</code></a>.</li>
-<li>Igor Shevlyakov: match.pd: Fold same-width signed vector averages. (2 related commits) <a href="https://github.com/gcc-mirror/gcc/commit/f088a08addbb4d50ca88d64a7fd94234054f2f47" rel="noopener noreferrer"><code>f088a08</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/8835caacb1b5d929b9df3ec873570b73e41a6847" rel="noopener noreferrer"><code>8835caa</code></a>.</li>
-</ul>
-<h2 id="mlir">MLIR</h2>
-<ul>
-<li>Nvvm.mulf Op was added. (3 related commits) <a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer"><code>aa1bf89</code></a>, <a href="https://github.com/llvm/llvm-project/commit/04e0db52562678dcd95d6a04af001c70780e9262" rel="noopener noreferrer"><code>04e0db5</code></a>, <a href="https://github.com/llvm/llvm-project/commit/0c0e3e79246e4c4a195d436b70373b1748725d05" rel="noopener noreferrer"><code>0c0e3e7</code></a>.</li>
-<li>IndirectAliased (byref) argument lowering was added. <a href="https://github.com/llvm/llvm-project/commit/dd05b6ce79289e8932e86e687e82cdcc5d2651b5" rel="noopener noreferrer"><code>dd05b6c</code></a>.</li>
-<li>Do not report a negative launch width as a size. (2 related commits) <a href="https://github.com/llvm/llvm-project/commit/b603a2c914fdac2b77ae464831af4c7487fbbc69" rel="noopener noreferrer"><code>b603a2c</code></a>, <a href="https://github.com/llvm/llvm-project/commit/9640b6a6cc9516095c37006f78438e6aa7fc7c05" rel="noopener noreferrer"><code>9640b6a</code></a>.</li>
-<li>Skip non-identity layouts in static memory planning. (2 related commits) <a href="https://github.com/llvm/llvm-project/commit/c389e88caf1c12fe4ab25d074eccc00a6679441a" rel="noopener noreferrer"><code>c389e88</code></a>, <a href="https://github.com/llvm/llvm-project/commit/78233779428032e599aff583384a2aead41d774d" rel="noopener noreferrer"><code>7823377</code></a>.</li>
-<li>Vector unrolling support for apply_scale was removed. <a href="https://github.com/llvm/llvm-project/commit/fd64c07f9ae1d32477849eb930379cf1222cb0d8" rel="noopener noreferrer"><code>fd64c07</code></a>.</li>
-<li>Dead values: don&#x27;t remove used symbols was removed. <a href="https://github.com/llvm/llvm-project/commit/305a2819de8cbbb32f9da466d286f44b065e24a6" rel="noopener noreferrer"><code>305a281</code></a>.</li>
-<li>Disallow pure reduction dims in vector.contract. <a href="https://github.com/llvm/llvm-project/commit/f17edbc5ae1d76326780be64e710c6476fcd95d2" rel="noopener noreferrer"><code>f17edbc</code></a>.</li>
-<li>Drop Linalg dependency from transfer full/partial split. <a href="https://github.com/llvm/llvm-project/commit/d6f914f06a18019d56f1e7899de9e1a0f666d0c3" rel="noopener noreferrer"><code>d6f914f</code></a>.</li>
-</ul>
-<h2 id="other-compiler-projects">Other compiler projects</h2>
-<ul>
-<li>LLDB: support for functions to DWARFASTParserFortran was added. (2 related commits) <a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer"><code>e799d5c</code></a>, <a href="https://github.com/llvm/llvm-project/commit/52247d54bb7ce5bc5e336652dde72876727903c6" rel="noopener noreferrer"><code>52247d5</code></a>.</li>
-<li>Flang-rt: support to build temporary-stack was added. <a href="https://github.com/llvm/llvm-project/commit/6273f264aa88c8fc55d3fec231f80638bca1de13" rel="noopener noreferrer"><code>6273f26</code></a>.</li>
-<li>Libc++: lWG3601: <code>common_iterator</code>&#x27;s postfix-proxy needs <code>indirectly_readable</code> was implemented. <a href="https://github.com/llvm/llvm-project/commit/eca43cccbe0eb9477a658b6c64f47a6fc5e79a29" rel="noopener noreferrer"><code>eca43cc</code></a>.</li>
-<li>Libc++: lWG4294: bitset(const CharT*) constructor needs to be constrained was implemented. <a href="https://github.com/llvm/llvm-project/commit/da922a4d85be38a0a0f5615756bd685327d88eeb" rel="noopener noreferrer"><code>da922a4</code></a>.</li>
-<li>Libc++abi: split strcmp and non-strcmp dynamic_casts. <a href="https://github.com/llvm/llvm-project/commit/ca0405897f139d34565f92066c3148a36372d882" rel="noopener noreferrer"><code>ca04058</code></a>.</li>
-<li>Libc: close_range in unistd was implemented. <a href="https://github.com/llvm/llvm-project/commit/69b3a4f9a1fea599a2adecfd82be2088e6e6af90" rel="noopener noreferrer"><code>69b3a4f</code></a>.</li>
-<li>Libc: copy_file_range in unistd was implemented. <a href="https://github.com/llvm/llvm-project/commit/860204dbcede865d9f3bde2f047d40e4c58ce76a" rel="noopener noreferrer"><code>860204d</code></a>.</li>
-<li>Libc: killpg was implemented. <a href="https://github.com/llvm/llvm-project/commit/e170a4aa5e0f63f7a83139901ac41a7154c5c5eb" rel="noopener noreferrer"><code>e170a4a</code></a>.</li>
-</ul>
-<h2 id="releases-and-announcements">Releases and announcements</h2>
-<ul>
-<li><strong>Release LLVM 23.1.5</strong> — <a href="https://github.com/llvm/llvm-project/releases/tag/llvmorg-23.1.5" rel="noopener noreferrer">release</a></li>
-</ul>
+<h3>1. [LLVM] Implement support for matrix splat cast</h3>
 <p>
-  ## LLVM 23.1.5 Release
-</p>
-<h2 id="articles-and-community-discussions">Articles and community discussions</h2>
-<ul>
-<li><strong>Settings for lldb&#x27;s DataFileCache, as I add new things in there</strong> — <a href="https://discourse.llvm.org/t/settings-for-lldbs-datafilecache-as-i-add-new-things-in-there/92701" rel="noopener noreferrer">source</a></li>
-</ul>
-<p>
-  I’ve been looking at using DataFileCache for some additional use cases, and I don’t think I’m doing a great job of making the settings understandable.  I wanted to see what anyone (Greg especially) might think.
+<strong>What changed</strong>
 <br/>
-Today we
+Support for matrix splat cast was implemented. (5 related commits) This groups 5 related commits as one development theme.
 </p>
-<ul>
-<li><strong>[RFC][lldb-dap] DAP extension to support breakpoint locations</strong> — <a href="https://discourse.llvm.org/t/rfc-lldb-dap-dap-extension-to-support-breakpoint-locations/92693" rel="noopener noreferrer">source</a></li>
-</ul>
 <p>
-  Summary
+<strong>Why it matters</strong>
 <br/>
-A single breakpoint can resolve to several locations in a program. For example, a function breakpoint can match several overloads, and a line breakpoint in a template function can hit several specialisations.
+Affects automatic vectorization and SIMD code generation.
+</p>
+<p>
+<strong>Who should care</strong>
 <br/>
-The
+Frontend / Clang developers, Runtime and toolchain developers, CPU compiler developers, Middle-end / optimization developers, Performance engineers
 </p>
-<h2 id="research-papers">Research papers</h2>
 <p>
-Compiler-relevant papers from arXiv this window (not Git commits).
+<strong>Type:</strong> New capability · <strong>Stage:</strong> Frontend, Runtime &amp; Toolchain · <strong>Domain:</strong> Languages, CPU
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer"><code>6fff663</code></a>, <a href="https://github.com/llvm/llvm-project/commit/191ca4ec5bb4b394810c3e11e57b125770050a07" rel="noopener noreferrer"><code>191ca4e</code></a>, <a href="https://github.com/llvm/llvm-project/commit/3c4aa885091c12572281a7117dd254907d8cd732" rel="noopener noreferrer"><code>3c4aa88</code></a>, <a href="https://github.com/llvm/llvm-project/commit/446cfbe6f546780f933048016ad342ac278657ff" rel="noopener noreferrer"><code>446cfbe</code></a> (+1)
+</p>
+<h3>2. [LLVM] Add RISCVABI helper functions for single/doubleFP and purecap</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+RISCVABI helper functions for single/doubleFP and purecap was added. (4 related commits) This groups 4 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches register allocation — impacts backend quality and spill behavior.
+</p>
+<p>
+<strong>Who should care</strong>
+<br/>
+Backend developers, CPU compiler developers, CodeGen developers, RISC-V developers, Runtime and toolchain developers
+</p>
+<p>
+<strong>Type:</strong> Code generation · <strong>Stage:</strong> Backend, Runtime &amp; Toolchain · <strong>Domain:</strong> CPU
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer"><code>1507a9b</code></a>, <a href="https://github.com/llvm/llvm-project/commit/36ec9db5e53721aec34b2536261f1fe11ea4a3f1" rel="noopener noreferrer"><code>36ec9db</code></a>, <a href="https://github.com/llvm/llvm-project/commit/cd7965e32bbc27b45b2a10e1f5ce89844b0e1938" rel="noopener noreferrer"><code>cd7965e</code></a>, <a href="https://github.com/llvm/llvm-project/commit/90f7f03e6dae5f1b9aec07b61a5986b741a0105f" rel="noopener noreferrer"><code>90f7f03</code></a>
+</p>
+<h3>3. [MLIR] Add nvvm.mulf Op</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Nvvm.mulf Op was added. (3 related commits) This groups 3 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Affects automatic vectorization and SIMD code generation.
+</p>
+<p>
+<strong>Who should care</strong>
+<br/>
+Middle-end / optimization developers, Runtime and toolchain developers, AI compiler developers, Performance engineers
+</p>
+<p>
+<strong>Type:</strong> Backend · <strong>Stage:</strong> Middle-end, Runtime &amp; Toolchain · <strong>Domain:</strong> AI / ML
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer"><code>aa1bf89</code></a>, <a href="https://github.com/llvm/llvm-project/commit/04e0db52562678dcd95d6a04af001c70780e9262" rel="noopener noreferrer"><code>04e0db5</code></a>, <a href="https://github.com/llvm/llvm-project/commit/0c0e3e79246e4c4a195d436b70373b1748725d05" rel="noopener noreferrer"><code>0c0e3e7</code></a>
+</p>
+<h3>4. [LLVM] Use runCodeGenPipeline in SPIRVTranslate</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Use runCodeGenPipeline in SPIRVTranslate. (3 related commits) This groups 3 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches GPU/offloading code generation or runtime.
+</p>
+<p>
+<strong>Who should care</strong>
+<br/>
+Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, SPIR-V developers
+</p>
+<p>
+<strong>Type:</strong> Code generation · <strong>Stage:</strong> Backend, Runtime &amp; Toolchain · <strong>Domain:</strong> GPU
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer"><code>e5a911f</code></a>, <a href="https://github.com/llvm/llvm-project/commit/930f2d2cfa1e33b6786e351f32833968295e373a" rel="noopener noreferrer"><code>930f2d2</code></a>, <a href="https://github.com/llvm/llvm-project/commit/30a475d9ca714102d31ed7ab5217ab5233ecb720" rel="noopener noreferrer"><code>30a475d</code></a>
+</p>
+<h3>5. [LLVM] Added support for functions to DWARFASTParserFortran</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+LLDB: support for functions to DWARFASTParserFortran was added. (2 related commits) This groups 2 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Affects debug information or debugger experience.
+</p>
+<p>
+<strong>Who should care</strong>
+<br/>
+Runtime and toolchain developers, CPU compiler developers, Debugger / debug-info developers
+</p>
+<p>
+<strong>Type:</strong> Frontend · <strong>Stage:</strong> Runtime &amp; Toolchain · <strong>Domain:</strong> Languages, CPU
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer"><code>e799d5c</code></a>, <a href="https://github.com/llvm/llvm-project/commit/52247d54bb7ce5bc5e336652dde72876727903c6" rel="noopener noreferrer"><code>52247d5</code></a>
+</p>
+<h3>6. [LLVM] Clear NoPHIs after SIFixSGPRCopies under the new pass manager</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Clear NoPHIs after SIFixSGPRCopies under the new pass manager. (2 related commits) This groups 2 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches GPU/offloading code generation or runtime.
+</p>
+<p>
+<strong>Who should care</strong>
+<br/>
+Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, AMDGPU developers
+</p>
+<p>
+<strong>Type:</strong> Bug fix · <strong>Stage:</strong> Backend, Runtime &amp; Toolchain · <strong>Domain:</strong> GPU
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer"><code>e2e487d</code></a>, <a href="https://github.com/llvm/llvm-project/commit/73fd9cd9a94de9f524125481bc24883c1f9390a0" rel="noopener noreferrer"><code>73fd9cd</code></a>
+</p>
+<h3>7. [LLVM] Fold unmasked signed byte loads into D16 high loads</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Fold unmasked signed byte loads into D16 high loads. (2 related commits) This groups 2 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Changes instruction selection — how IR becomes machine instructions.
+</p>
+<p>
+<strong>Who should care</strong>
+<br/>
+Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, AMDGPU developers
+</p>
+<p>
+<strong>Type:</strong> Code generation · <strong>Stage:</strong> Backend, Runtime &amp; Toolchain · <strong>Domain:</strong> GPU
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/6e37cd2cc855cd23aa30705a2cde4e3bb646624a" rel="noopener noreferrer"><code>6e37cd2</code></a>, <a href="https://github.com/llvm/llvm-project/commit/06f4a14f71edc0dd3cf6032cbb1b853e01f9e1fa" rel="noopener noreferrer"><code>06f4a14</code></a>
+</p>
+<h3>8. [LLVM] Add documentation about ABI occupancy</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Documentation about ABI occupancy was added.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches ABI / calling-convention behavior — can affect interoperability.
+</p>
+<p>
+<strong>Who should care</strong>
+<br/>
+Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, AMDGPU developers
+</p>
+<p>
+<strong>Type:</strong> Backend · <strong>Stage:</strong> Backend, Runtime &amp; Toolchain · <strong>Domain:</strong> GPU
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/c5b99ea2731d7d1cd3a851c1fc306bacb630020b" rel="noopener noreferrer"><code>c5b99ea2</code></a>
+</p>
+<h2 id="worth-knowing">Worth knowing</h2>
+<p>
+Interesting technical changes for a subset of readers. Skip confidently if the audience tags don&#x27;t match your work.
+</p>
+<h3>1. [GCC] Add AVX512BMM bitreverse lowering</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+AVX512BMM bitreverse lowering was added. (8 related commits) This groups 8 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches register allocation — impacts backend quality and spill behavior.
+</p>
+<p>
+<strong>Who:</strong> Backend developers, CPU compiler developers, CodeGen developers · <strong>Type:</strong> Backend
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/gcc-mirror/gcc/commit/6783b7375fff65e917637e86688918e808682f14" rel="noopener noreferrer"><code>6783b73</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/55559303b9a6ecaf370e6edf6854c3e747f19a28" rel="noopener noreferrer"><code>5555930</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/0841d1b8c9e0dd9f3caa0806146dffc9369e25f1" rel="noopener noreferrer"><code>0841d1b</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/18d2e513be7832fb08df59a5a1ee8dd6dadd2bd2" rel="noopener noreferrer"><code>18d2e51</code></a> (+4)
+</p>
+<h3>2. [LLVM] Fix advancing past the end of an empty macro fusion list</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Matt Arsenault: TableGen: Fix advancing past the end of an empty macro fusion list. (8 related commits) This groups 8 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Correctness fix — prevents miscompile or compiler crash (per commit subject).
+</p>
+<p>
+<strong>Who:</strong> Middle-end / optimization developers, CPU compiler developers, Backend developers, Runtime and toolchain developers · <strong>Type:</strong> Bug fix
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/5bbc49f5d844871eadce3e06926dbd4cf538e180" rel="noopener noreferrer"><code>5bbc49f</code></a>, <a href="https://github.com/llvm/llvm-project/commit/97abc067db4c51817e27c47707b71ecbeb2ee237" rel="noopener noreferrer"><code>97abc06</code></a>, <a href="https://github.com/llvm/llvm-project/commit/88bd907d7478c91ff034f7b2edf4dce2fde95489" rel="noopener noreferrer"><code>88bd907</code></a>, <a href="https://github.com/llvm/llvm-project/commit/c3316b41be3425e271a11417833f27d45d555580" rel="noopener noreferrer"><code>c3316b4</code></a> (+4)
+</p>
+<h3>3. [LLVM] Add signatures for the divrem libcalls</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Matt Arsenault: RuntimeLibcalls: Add signatures for the divrem libcalls. (7 related commits) This groups 7 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Affects automatic vectorization and SIMD code generation.
+</p>
+<p>
+<strong>Who:</strong> Runtime and toolchain developers, CPU compiler developers, Middle-end / optimization developers, Performance engineers, Backend developers · <strong>Type:</strong> IR
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/2853de0422d2fd02dca9c4cc89a6def2a3794198" rel="noopener noreferrer"><code>2853de0</code></a>, <a href="https://github.com/llvm/llvm-project/commit/1c4ccccefdab30d294d3dc5778c49a7b07fc4379" rel="noopener noreferrer"><code>1c4cccc</code></a>, <a href="https://github.com/llvm/llvm-project/commit/762bb48c07b736e21e6a9f176f76e59c8785d01d" rel="noopener noreferrer"><code>762bb48</code></a>, <a href="https://github.com/llvm/llvm-project/commit/8ef60d37281cd9ff595898ae58601b896530bf59" rel="noopener noreferrer"><code>8ef60d3</code></a> (+3)
+</p>
+<h3>4. [GCC] Port vabd and vaba intrinscs to pragma-based framework</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Port vabd and vaba intrinscs to pragma-based framework. (7 related commits) This groups 7 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Correctness fix — prevents miscompile or compiler crash (per commit subject).
+</p>
+<p>
+<strong>Who:</strong> Backend developers, CPU compiler developers, CodeGen developers, AArch64 developers · <strong>Type:</strong> Backend
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/gcc-mirror/gcc/commit/a364d69a3241c689dfc6b1c68269223986916831" rel="noopener noreferrer"><code>a364d69</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/7d2496170af17d46323445ea4832e6c098977869" rel="noopener noreferrer"><code>7d24961</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/89a7b7de039c4b8e687d63f6680b936e85df4a53" rel="noopener noreferrer"><code>89a7b7d</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/da3cb0e3d6cfe703d2991eb9080ef19884266df4" rel="noopener noreferrer"><code>da3cb0e</code></a> (+3)
+</p>
+<h3>5. [LLVM] Add signatures for size returning new and GPU profiling</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Matt Arsenault: RuntimeLibcalls: Add signatures for size returning new and GPU profiling. (6 related commits) This groups 6 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches GPU/offloading code generation or runtime.
+</p>
+<p>
+<strong>Who:</strong> Middle-end / optimization developers, GPU compiler developers, Runtime and toolchain developers, CPU compiler developers, Performance engineers · <strong>Type:</strong> IR
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/65166e24ae3499f143ea9d8581e544c37b1977a7" rel="noopener noreferrer"><code>65166e2</code></a>, <a href="https://github.com/llvm/llvm-project/commit/a44284d636607a3ee6cd4f79134730de339a5de9" rel="noopener noreferrer"><code>a44284d</code></a>, <a href="https://github.com/llvm/llvm-project/commit/1087db09497370a892a0586ffa1e5827ab9b1c4f" rel="noopener noreferrer"><code>1087db0</code></a>, <a href="https://github.com/llvm/llvm-project/commit/a5f319da163a3a635df721923d9c8986f69ef7d5" rel="noopener noreferrer"><code>a5f319d</code></a> (+2)
+</p>
+<h3>6. [LLVM] Port MulMulBugFixPass to NewPM</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Port MulMulBugFixPass to NewPM. (6 related commits) This groups 6 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Correctness fix — prevents miscompile or compiler crash (per commit subject).
+</p>
+<p>
+<strong>Who:</strong> Backend developers, Runtime and toolchain developers, CPU compiler developers, CodeGen developers · <strong>Type:</strong> Bug fix
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/76ded34e479dbe2f022ec1e021ee36a6f4f4331f" rel="noopener noreferrer"><code>76ded34</code></a>, <a href="https://github.com/llvm/llvm-project/commit/ec7e0753a87a30c645a65ab7ccd85f3c027ae1a4" rel="noopener noreferrer"><code>ec7e075</code></a>, <a href="https://github.com/llvm/llvm-project/commit/1bb8be8688f2c1dec3195bdf8925779152a8a34e" rel="noopener noreferrer"><code>1bb8be8</code></a>, <a href="https://github.com/llvm/llvm-project/commit/e75c14a99104bed5ab2b5a8f6a0abdc6c39d3eee" rel="noopener noreferrer"><code>e75c14a</code></a> (+2)
+</p>
+<h3>7. [LLVM] Remove kill flags on virtual registers from MIR tests</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Matt Arsenault: CodeGen: Remove kill flags on virtual registers from MIR tests. (6 related commits) This groups 6 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches register allocation — impacts backend quality and spill behavior.
+</p>
+<p>
+<strong>Who:</strong> Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers, NVPTX developers · <strong>Type:</strong> Bug fix
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/df3e0f8afb48090bf6441c4031ab0c366972424d" rel="noopener noreferrer"><code>df3e0f8</code></a>, <a href="https://github.com/llvm/llvm-project/commit/64bf9aaab697df60864fa97ad909b94b9b8004cb" rel="noopener noreferrer"><code>64bf9aa</code></a>, <a href="https://github.com/llvm/llvm-project/commit/d3946e87d48a755ebb8af2e37f26a29d82df3a29" rel="noopener noreferrer"><code>d3946e8</code></a>, <a href="https://github.com/llvm/llvm-project/commit/4654bf801ee35b51ef7972075b253db98d668ca8" rel="noopener noreferrer"><code>4654bf8</code></a> (+2)
+</p>
+<h3>8. [LLVM] Attach a single callgraph type identifier to function definitions</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Attach a single callgraph type identifier to function definitions. (5 related commits) This groups 5 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches register allocation — impacts backend quality and spill behavior.
+</p>
+<p>
+<strong>Who:</strong> Frontend / Clang developers, Runtime and toolchain developers, CPU compiler developers, Backend developers, X86 developers · <strong>Type:</strong> Code generation
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/c1498de98d839e25c4c020a5bdc4f390464c2930" rel="noopener noreferrer"><code>c1498de</code></a>, <a href="https://github.com/llvm/llvm-project/commit/8c8f266745dec9cb3c6446c2c56d955158f1c13f" rel="noopener noreferrer"><code>8c8f266</code></a>, <a href="https://github.com/llvm/llvm-project/commit/791b53ca6f4e7e9ddc7a4f768f6dcae3c43ba700" rel="noopener noreferrer"><code>791b53c</code></a>, <a href="https://github.com/llvm/llvm-project/commit/df987794f9d7788e4cd06bf582a323b3c5ad7ad1" rel="noopener noreferrer"><code>df98779</code></a> (+1)
+</p>
+<h3>9. [GCC] Check CF_RETURN bit in ix86_expand_epilogue</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Check CF_RETURN bit in ix86_expand_epilogue. (5 related commits) This groups 5 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+The practical impact is not yet clear from the commit message alone.
+</p>
+<p>
+<strong>Who:</strong> Backend developers, CPU compiler developers, CodeGen developers, X86 developers · <strong>Type:</strong> Backend
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/gcc-mirror/gcc/commit/ea93a47f579607698186dbced583ad1729f4ccb8" rel="noopener noreferrer"><code>ea93a47</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/8855f0622a8491b40deb79d29fcd8739c9287562" rel="noopener noreferrer"><code>8855f06</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/f2de25778e41d2a6451c798e58e0a6bb5af70765" rel="noopener noreferrer"><code>f2de257</code></a>, <a href="https://github.com/gcc-mirror/gcc/commit/07b484c2683b2e95c38fc28aabe239d5601d462c" rel="noopener noreferrer"><code>07b484c</code></a> (+1)
+</p>
+<h3>10. [LLVM] Add WaveMultiPrefixBitOr</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+WaveMultiPrefixBitOr was added. (4 related commits) This groups 4 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches GPU/offloading code generation or runtime.
+</p>
+<p>
+<strong>Who:</strong> Frontend / Clang developers, Backend developers, Runtime and toolchain developers, GPU compiler developers, CodeGen developers · <strong>Type:</strong> Bug fix
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/625076dcb75c435a6ac4ef8ce432ed2d219be4ba" rel="noopener noreferrer"><code>625076d</code></a>, <a href="https://github.com/llvm/llvm-project/commit/b34ea7bb151c24c011fed910b53ba48e9d7ba6e7" rel="noopener noreferrer"><code>b34ea7b</code></a>, <a href="https://github.com/llvm/llvm-project/commit/a7bdff39bbbccdd0d8d388961aa03d83e0e231ff" rel="noopener noreferrer"><code>a7bdff3</code></a>, <a href="https://github.com/llvm/llvm-project/commit/6c4b35aa3841163a189bd52a51eb474c3a872e53" rel="noopener noreferrer"><code>6c4b35a</code></a>
+</p>
+<h3>11. [LLVM] Delete &#x27;types&#x27; test</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+LLDB: delete &#x27;types&#x27; test. (4 related commits) This groups 4 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Affects debug information or debugger experience.
+</p>
+<p>
+<strong>Who:</strong> Runtime and toolchain developers, CPU compiler developers, Debugger / debug-info developers, Backend developers, AArch64 developers · <strong>Type:</strong> Other
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/a48ee445b24b544bb13ca0f57041f76d2e0bb4ac" rel="noopener noreferrer"><code>a48ee44</code></a>, <a href="https://github.com/llvm/llvm-project/commit/b4460b0a5760b65ffbc9d8868e15466af0912458" rel="noopener noreferrer"><code>b4460b0</code></a>, <a href="https://github.com/llvm/llvm-project/commit/91661434f5bdad827118c6c7da82b6bf74b0a1ca" rel="noopener noreferrer"><code>9166143</code></a>, <a href="https://github.com/llvm/llvm-project/commit/8c23cf497201c85bd49ab09f3eee2acef445510e" rel="noopener noreferrer"><code>8c23cf4</code></a>
+</p>
+<h3>12. [LLVM] Disable sycl-system-arch.cpp on macOS</h3>
+<p>
+<strong>What changed</strong>
+<br/>
+Disable sycl-system-arch.cpp on macOS. (4 related commits) This groups 4 related commits as one development theme.
+</p>
+<p>
+<strong>Why it matters</strong>
+<br/>
+Touches GPU/offloading code generation or runtime.
+</p>
+<p>
+<strong>Who:</strong> Frontend / Clang developers, Runtime and toolchain developers, CPU compiler developers, GPU compiler developers, SPIR-V developers · <strong>Type:</strong> Frontend
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/commit/9e0f0ee64b41e1c74871b9685fdb25f16b800866" rel="noopener noreferrer"><code>9e0f0ee</code></a>, <a href="https://github.com/llvm/llvm-project/commit/8bcd8528b2e26d897c27305ef69dfcaf01f46b85" rel="noopener noreferrer"><code>8bcd852</code></a>, <a href="https://github.com/llvm/llvm-project/commit/921fdd3ec5c0e4510e8f8c7473630dae7dbc54b7" rel="noopener noreferrer"><code>921fdd3</code></a>, <a href="https://github.com/llvm/llvm-project/commit/5845c25b47c8ab32a7db408335b5a42634621220" rel="noopener noreferrer"><code>5845c25</code></a>
+</p>
+<h2 id="moving-stories">Moving stories</h2>
+<p>
+Themes active in this curated set (continuity for future issues).
+</p>
+<h3>Clang</h3>
+<ul>
+<li>Implement support for matrix splat cast</li>
+<li>Attach a single callgraph type identifier to function definitions (X86)</li>
+<li>Add WaveMultiPrefixBitOr (SPIR-V)</li>
+<li>Disable sycl-system-arch.cpp on macOS (SPIR-V)</li>
+</ul>
+<h3>GCC</h3>
+<ul>
+<li>Extract subvectors via vec_perm_const (RISC-V)</li>
+<li>Add AVX512BMM bitreverse lowering</li>
+<li>Port vabd and vaba intrinscs to pragma-based framework (AArch64)</li>
+<li>Check CF_RETURN bit in ix86_expand_epilogue (X86)</li>
+</ul>
+<h3>LLVM</h3>
+<ul>
+<li>Add RISCVABI helper functions for single/doubleFP and purecap (RISC-V)</li>
+<li>Use runCodeGenPipeline in SPIRVTranslate (SPIR-V)</li>
+<li>Clear NoPHIs after SIFixSGPRCopies under the new pass manager (AMDGPU)</li>
+<li>Fold unmasked signed byte loads into D16 high loads (AMDGPU)</li>
+</ul>
+<h3>LLVM tooling/runtime</h3>
+<ul>
+<li>Added support for functions to DWARFASTParserFortran</li>
+<li>Delete &#x27;types&#x27; test (AArch64, X86)</li>
+</ul>
+<h3>MLIR</h3>
+<ul>
+<li>Add nvvm.mulf Op</li>
+</ul>
+<h2 id="worth-reading">Worth reading</h2>
+<h3>Release — Release LLVM 23.1.5</h3>
+<p>
+LLVM 23.1.5 Release
+</p>
+<p>
+<strong>Source:</strong> <a href="https://github.com/llvm/llvm-project/releases/tag/llvmorg-23.1.5" rel="noopener noreferrer">release</a>
+</p>
+<h3>Discussion — Settings for lldb&#x27;s DataFileCache, as I add new things in there</h3>
+<p>
+I’ve been looking at using DataFileCache for some additional use cases, and I don’t think I’m doing a great job of making the settings understandable. I wanted to see what anyone (Greg especially) might think. Today we have these settings for the DataFileCache
+</p>
+<p>
+<strong>Source:</strong> <a href="https://discourse.llvm.org/t/settings-for-lldbs-datafilecache-as-i-add-new-things-in-there/92701" rel="noopener noreferrer">discussion</a>
+</p>
+<h3>Discussion — [RFC][lldb-dap] DAP extension to support breakpoint locations</h3>
+<p>
+Summary A single breakpoint can resolve to several locations in a program. For example, a function breakpoint can match several overloads, and a line breakpoint in a template function can hit several specialisations. The Breakpoint type in the Debug Adapter Pr
+</p>
+<p>
+<strong>Source:</strong> <a href="https://discourse.llvm.org/t/rfc-lldb-dap-dap-extension-to-support-breakpoint-locations/92693" rel="noopener noreferrer">discussion</a>
+</p>
+<h3>Paper — OpenRDMA: A GPU-Native Multi-Path Reliable RDMA Transport Architecture</h3>
+<p>
+As the computing power density of large-scale AI clusters rises, network communication increasingly limits system performance. GPU-initiated communication requires low-overhead request submission to overlap communication with computation. However, GPUDirect RD
+</p>
+<p>
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.07559v1" rel="noopener noreferrer">paper</a>
+</p>
+<h3>Paper — NUMA-Torch: Compiler-Driven NUMA-Aware LLM Prefill on Multi-Socket CPUs</h3>
+<p>
+For sufficiently large transformer-based Large Language Models (LLMs), whose parameters cannot be retained in on-chip caches, prefill throughput on multi-socket CPUs is often limited by sustainable DRAM bandwidth rather than peak floating-point throughput. In
+</p>
+<p>
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.07105v1" rel="noopener noreferrer">paper</a>
+</p>
+<h3>Paper — TauLang: A Language and Compiler for Space-Time Programming on Statically Scheduled Accelerators</h3>
+<p>
+Statically scheduled accelerators such as Groq&#x27;s Tensor Streaming Processor (TSP) achieve low-latency large language model inference by stripping dynamic synchronization hardware from the chip. With no caches, arbiters, or hardware schedulers, the compiler mus
+</p>
+<p>
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.06079v2" rel="noopener noreferrer">paper</a>
+</p>
+<h3>Paper — CHARM+: Cross-Hardware Attention with Re-Merge Multistream Mechanism</h3>
+<p>
+As sequence lengths continue to grow, distributed attention based on sequence parallel (e.g., Ring-Attention) has become a mainstream solution for large language models (LLMs). Nevertheless, inherent communication dependencies limit computation-communication o
+</p>
+<p>
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.05906v1" rel="noopener noreferrer">paper</a>
+</p>
+<h3>Paper — Scheduling Data to Compute: Hierarchical Data Pipelining for LLM Training on AMD GPUs</h3>
+<p>
+Large language models (LLM) have been the key focus of recent machine learning breakthroughs. As the model size grows exponentially, the computation needed for training is astronomical. A GPU can do a huge amount of arithmetic. However, the data its compute un
+</p>
+<p>
+<strong>Source:</strong> <a href="https://arxiv.org/abs/2611.05751v1" rel="noopener noreferrer">paper</a>
+</p>
+<h2 id="deep-dive">Deep dive</h2>
+<h3>Extract subvectors via vec_perm_const</h3>
+<p>
+<strong>Old context → problem → change → expected effect</strong>
 </p>
 <ul>
-<li><strong>OpenRDMA: A GPU-Native Multi-Path Reliable RDMA Transport Architecture</strong> — <a href="https://arxiv.org/abs/2611.07559v1" rel="noopener noreferrer">paper</a></li>
+<li><strong>What changed:</strong> Robin Dapp: RISC-V: Extract subvectors via vec_perm_const. (10 related commits) This groups 10 related commits as one development theme.</li>
+<li><strong>Why it matters:</strong> Affects automatic vectorization and SIMD code generation.</li>
+<li><strong>Who should care:</strong> Backend developers, Middle-end / optimization developers, CPU compiler developers, Performance engineers, CodeGen developers</li>
+<li><strong>Relevant area:</strong> Backend, Middle-end, Vectorization, Code generation, Register allocation</li>
 </ul>
 <p>
-  As the computing power density of large-scale AI clusters rises, network communication increasingly limits system performance. GPU-initiated communication requires low-overhead request submission to overlap communication with computation. However, GPUDirect RD
+<strong>Sources:</strong>
 </p>
 <ul>
-<li><strong>NUMA-Torch: Compiler-Driven NUMA-Aware LLM Prefill on Multi-Socket CPUs</strong> — <a href="https://arxiv.org/abs/2611.07105v1" rel="noopener noreferrer">paper</a></li>
+<li><a href="https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91" rel="noopener noreferrer"><code>8ce5e390</code></a> — Robin Dapp: RISC-V: Extract subvectors via vec_perm_const.</li>
+<li><a href="https://github.com/gcc-mirror/gcc/commit/78873c4dcee4b92347501b898f426d4302e374c0" rel="noopener noreferrer"><code>78873c4d</code></a> — Zhongyao Chen: RISC-V: Remove redundant VLA niters check in better_main_loop_than_p</li>
+<li><a href="https://github.com/gcc-mirror/gcc/commit/fa20d1603db32449ffe51e54849f6d67eb7c7965" rel="noopener noreferrer"><code>fa20d160</code></a> — Zhongyao Chen: RISC-V: Support per-LMUL vector permute cost</li>
+<li><a href="https://github.com/gcc-mirror/gcc/commit/b95850f0c0df9e90f7a5bad61f76627bff5501c9" rel="noopener noreferrer"><code>b95850f0</code></a> — Pan Li: RISC-V: Fix reg overlap for vs1 of the widening float reduction</li>
+<li><a href="https://github.com/gcc-mirror/gcc/commit/b88c2821e219244d18df873b0bfb344d3dc0b2a7" rel="noopener noreferrer"><code>b88c2821</code></a> — Loeka Rogge: RISC-V: Add ARC-V RPX-100 series pipeline description</li>
+<li><a href="https://github.com/gcc-mirror/gcc/commit/d3726407bde51b93deef248863192b3c9e09c9ae" rel="noopener noreferrer"><code>d3726407</code></a> — Kito Cheng: RISC-V: Mangle the ABI tag of a standard calling convention variant</li>
 </ul>
-<p>
-  For sufficiently large transformer-based Large Language Models (LLMs), whose parameters cannot be retained in on-chip caches, prefill throughput on multi-socket CPUs is often limited by sustainable DRAM bandwidth rather than peak floating-point throughput. In
-</p>
+<h2 id="by-topic">By topic</h2>
+<h3>LLVM</h3>
 <ul>
-<li><strong>TauLang: A Language and Compiler for Space-Time Programming on Statically Scheduled Accelerators</strong> — <a href="https://arxiv.org/abs/2611.06079v2" rel="noopener noreferrer">paper</a></li>
+<li><strong>Add RISCVABI helper functions for single/doubleFP and purecap</strong> — Touches register allocation — impacts backend quality and spill behavior. *(Code generation)* <a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer"><code>1507a9b</code></a></li>
+<li><strong>Use runCodeGenPipeline in SPIRVTranslate</strong> — Touches GPU/offloading code generation or runtime. *(Code generation)* <a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer"><code>e5a911f</code></a></li>
+<li><strong>Clear NoPHIs after SIFixSGPRCopies under the new pass manager</strong> — Touches GPU/offloading code generation or runtime. *(Bug fix)* <a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer"><code>e2e487d</code></a></li>
+<li><strong>Fold unmasked signed byte loads into D16 high loads</strong> — Changes instruction selection — how IR becomes machine instructions. *(Code generation)* <a href="https://github.com/llvm/llvm-project/commit/6e37cd2cc855cd23aa30705a2cde4e3bb646624a" rel="noopener noreferrer"><code>6e37cd2</code></a></li>
+<li><strong>Add documentation about ABI occupancy</strong> — Touches ABI / calling-convention behavior — can affect interoperability. *(Backend)* <a href="https://github.com/llvm/llvm-project/commit/c5b99ea2731d7d1cd3a851c1fc306bacb630020b" rel="noopener noreferrer"><code>c5b99ea</code></a></li>
+<li><strong>Fix advancing past the end of an empty macro fusion list</strong> — Correctness fix — prevents miscompile or compiler crash (per commit subject). *(Bug fix)* <a href="https://github.com/llvm/llvm-project/commit/5bbc49f5d844871eadce3e06926dbd4cf538e180" rel="noopener noreferrer"><code>5bbc49f</code></a></li>
+<li><strong>Add signatures for the divrem libcalls</strong> — Affects automatic vectorization and SIMD code generation. *(IR)* <a href="https://github.com/llvm/llvm-project/commit/2853de0422d2fd02dca9c4cc89a6def2a3794198" rel="noopener noreferrer"><code>2853de0</code></a></li>
+<li><strong>Add signatures for size returning new and GPU profiling</strong> — Touches GPU/offloading code generation or runtime. *(IR)* <a href="https://github.com/llvm/llvm-project/commit/65166e24ae3499f143ea9d8581e544c37b1977a7" rel="noopener noreferrer"><code>65166e2</code></a></li>
 </ul>
-<p>
-  Statically scheduled accelerators such as Groq&#x27;s Tensor Streaming Processor (TSP) achieve low-latency large language model inference by stripping dynamic synchronization hardware from the chip. With no caches, arbiters, or hardware schedulers, the compiler mus
-</p>
+<h3>Clang</h3>
 <ul>
-<li><strong>CHARM+: Cross-Hardware Attention with Re-Merge Multistream Mechanism</strong> — <a href="https://arxiv.org/abs/2611.05906v1" rel="noopener noreferrer">paper</a></li>
+<li><strong>Implement support for matrix splat cast</strong> — Affects automatic vectorization and SIMD code generation. *(New capability)* <a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer"><code>6fff663</code></a></li>
+<li><strong>Attach a single callgraph type identifier to function definitions</strong> — Touches register allocation — impacts backend quality and spill behavior. *(Code generation)* <a href="https://github.com/llvm/llvm-project/commit/c1498de98d839e25c4c020a5bdc4f390464c2930" rel="noopener noreferrer"><code>c1498de</code></a></li>
+<li><strong>Add WaveMultiPrefixBitOr</strong> — Touches GPU/offloading code generation or runtime. *(Bug fix)* <a href="https://github.com/llvm/llvm-project/commit/625076dcb75c435a6ac4ef8ce432ed2d219be4ba" rel="noopener noreferrer"><code>625076d</code></a></li>
+<li><strong>Disable sycl-system-arch.cpp on macOS</strong> — Touches GPU/offloading code generation or runtime. *(Frontend)* <a href="https://github.com/llvm/llvm-project/commit/9e0f0ee64b41e1c74871b9685fdb25f16b800866" rel="noopener noreferrer"><code>9e0f0ee</code></a></li>
 </ul>
-<p>
-  As sequence lengths continue to grow, distributed attention based on sequence parallel (e.g., Ring-Attention) has become a mainstream solution for large language models (LLMs). Nevertheless, inherent communication dependencies limit computation-communication o
-</p>
+<h3>GCC</h3>
 <ul>
-<li><strong>Scheduling Data to Compute: Hierarchical Data Pipelining for LLM Training on AMD GPUs</strong> — <a href="https://arxiv.org/abs/2611.05751v1" rel="noopener noreferrer">paper</a></li>
+<li><strong>Extract subvectors via vec_perm_const</strong> — Affects automatic vectorization and SIMD code generation. *(Backend)* <a href="https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91" rel="noopener noreferrer"><code>8ce5e39</code></a></li>
+<li><strong>Add AVX512BMM bitreverse lowering</strong> — Touches register allocation — impacts backend quality and spill behavior. *(Backend)* <a href="https://github.com/gcc-mirror/gcc/commit/6783b7375fff65e917637e86688918e808682f14" rel="noopener noreferrer"><code>6783b73</code></a></li>
+<li><strong>Port vabd and vaba intrinscs to pragma-based framework</strong> — Correctness fix — prevents miscompile or compiler crash (per commit subject). *(Backend)* <a href="https://github.com/gcc-mirror/gcc/commit/a364d69a3241c689dfc6b1c68269223986916831" rel="noopener noreferrer"><code>a364d69</code></a></li>
+<li><strong>Check CF_RETURN bit in ix86_expand_epilogue</strong> — The practical impact is not yet clear from the commit message alone. *(Backend)* <a href="https://github.com/gcc-mirror/gcc/commit/ea93a47f579607698186dbced583ad1729f4ccb8" rel="noopener noreferrer"><code>ea93a47</code></a></li>
 </ul>
-<p>
-  Large language models (LLM) have been the key focus of recent machine learning breakthroughs. As the model size grows exponentially, the computation needed for training is astronomical. A GPU can do a huge amount of arithmetic. However, the data its compute un
-</p>
+<h3>MLIR</h3>
 <ul>
-<li><strong>An Investigation on Numerical Bugs in GPU Programs Towards Automated Bug Detection</strong> — <a href="https://arxiv.org/abs/2611.05121v1" rel="noopener noreferrer">paper</a></li>
+<li><strong>Add nvvm.mulf Op</strong> — Affects automatic vectorization and SIMD code generation. *(Backend)* <a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer"><code>aa1bf89</code></a></li>
 </ul>
-<p>
-  General-purpose graphics processing unit (GPU) computing has emerged as a leading parallel computing paradigm, offering significant performance gains in various domains such as scientific computing and deep learning. However, GPU programs are susceptible to nu
-</p>
+<h3>Other</h3>
 <ul>
-<li><strong>Linking as Evaluation: Correct Separate Compilation via First-Class Environments</strong> — <a href="https://arxiv.org/abs/2611.04993v1" rel="noopener noreferrer">paper</a></li>
+<li><strong>Added support for functions to DWARFASTParserFortran</strong> — Affects debug information or debugger experience. *(Frontend)* <a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer"><code>e799d5c</code></a></li>
+<li><strong>Delete &#x27;types&#x27; test</strong> — Affects debug information or debugger experience. *(Other)* <a href="https://github.com/llvm/llvm-project/commit/a48ee445b24b544bb13ca0f57041f76d2e0bb4ac" rel="noopener noreferrer"><code>a48ee44</code></a></li>
 </ul>
-<p>
-  Separate compilation is central to modular software: components are compiled independently and linked into an executable. Separate compilation is correct when a linked program behaves like the program formed by merging its sources. This property is less routin
-</p>
-<ul>
-<li><strong>Properly defining Erlang lists</strong> — <a href="https://arxiv.org/abs/2611.04929v1" rel="noopener noreferrer">paper</a></li>
-</ul>
-<p>
-  We define list types, distinguishing proper lists, which end in the empty list, from improper lists, which may end in any value. Both are encoded as recursive types of cons cells, implemented in etylizer. This work found one OTP compiler bug. We propose a one-
-</p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
-<li>Browse every collected change in the <a href="https://compilersutra.github.io/compilersutra-weekly/changelog.html" rel="noopener noreferrer">complete change log</a> (search GlobalISel, AMDGPU, Triton, GCC, …).</li>
-<li>Machine-readable data: <code>reports/2026/2026-11-07.changelog.json</code></li>
+<li>Complete collected dataset (searchable): <a href="https://compilersutra.github.io/compilersutra-weekly/changelog.html" rel="noopener noreferrer">https://compilersutra.github.io/compilersutra-weekly/changelog.html</a></li>
+<li>Explore by stage / domain / area: <a href="https://compilersutra.github.io/compilersutra-weekly/topics/index.html" rel="noopener noreferrer">https://compilersutra.github.io/compilersutra-weekly/topics/index.html</a></li>
 <li>Source &amp; collectors: <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">https://github.com/compilersutra/compilersutra-weekly</a></li>
 <li>Learn compilers: <a href="https://www.compilersutra.com/" rel="noopener noreferrer">https://www.compilersutra.com/</a></li>
 </ul>
@@ -204,13 +606,8 @@ Compiler-relevant papers from arXiv this window (not Git commits).
 ---
 </p>
 <p>
-CompilerSutra Weekly selects developments that matter for compiler engineers. We do not invent impact, performance numbers, or completion status.
+CompilerSutra Weekly explains *why you should care* — we do not invent benchmarks, performance numbers, or completion status. When impact is unclear, we say so.
 </p>
-    <p class="muted" style="margin-top:2rem">
-      <a href="../../changelog.html">Complete change log</a> ·
-      <a href="../../archive.html">Archive</a> ·
-      <a href="../../subscribe.html">Subscribe</a>
-    </p>
   </article>
 
   <footer class="site-footer">
