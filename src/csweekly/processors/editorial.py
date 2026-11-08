@@ -85,15 +85,15 @@ def select_for_newsletter(groups: list[ChangeGroup]) -> list[ChangeGroup]:
         )
 
     selected: list[ChangeGroup] = []
-    # Prefer deep dive pick from high signal first
-    deep_candidates = sorted(
-        by_signal.get(SignalLevel.HIGH_SIGNAL, [])
-        + by_signal.get(SignalLevel.WORTH_KNOWING, []),
-        key=lambda g: (-len(g.stories), 0 if not g.impact_uncertain else 1, g.title.lower()),
+    deep_candidates = list(by_signal.get(SignalLevel.HIGH_SIGNAL, [])) + list(
+        by_signal.get(SignalLevel.WORTH_KNOWING, [])
     )
-    if deep_candidates:
-        dive = deep_candidates[0]
+    dive = pick_deep_dive(deep_candidates)
+    if dive:
+        from csweekly.processors.explain import build_deep_dive_notes
+
         dive.signal = SignalLevel.DEEP_DIVE
+        build_deep_dive_notes(dive)
         selected.append(dive)
 
     for level in (SignalLevel.HIGH_SIGNAL, SignalLevel.WORTH_KNOWING):
@@ -205,31 +205,37 @@ def editorial_blurb(story: Story) -> str:
 
 
 def week_overview_bullets(groups: list[ChangeGroup]) -> list[str]:
-    """Derive 3–5 big-picture bullets from selected groups only."""
-    themes: dict[str, int] = defaultdict(int)
-    for g in groups:
-        for d in g.domains or [g.category]:
-            themes[d] += 1
-        for t in g.technical_areas[:2]:
-            themes[t] += 1
-        for h in g.hardware_targets[:1]:
-            themes[h] += 1
-    if not themes:
+    """Five-minute briefing: named developments, not domain counts."""
+    ranked = sorted(
+        [
+            g
+            for g in groups
+            if g.signal
+            in {SignalLevel.HIGH_SIGNAL, SignalLevel.DEEP_DIVE, SignalLevel.WORTH_KNOWING}
+        ],
+        key=lambda g: (
+            0 if g.signal == SignalLevel.DEEP_DIVE else 1 if g.signal == SignalLevel.HIGH_SIGNAL else 2,
+            0 if not g.impact_uncertain else 1,
+            -len(g.stories),
+        ),
+    )
+    bullets: list[str] = []
+    for g in ranked[:5]:
+        stage = (g.stages or ["—"])[0]
+        domain = (g.domains or ["—"])[0]
+        why = (g.why_it_matters or "Impact not yet clear.")[:140]
+        bullets.append(f"{g.title[:90]} — {why} ({stage} · {domain})")
+    if not bullets:
         return ["Quiet week in the tracked sources — no high-signal themes stood out."]
-    top = sorted(themes.items(), key=lambda x: -x[1])[:5]
-    bullets = []
-    for name, count in top:
-        if name in {"CPU", "GPU", "AI / ML", "Languages", "Research"}:
-            bullets.append(f"{name} work appears across {count} curated developments this week.")
-        elif name in {"Optimization", "Vectorization", "Code generation", "IR"}:
-            bullets.append(f"{name} remains active in this week's curated set ({count} items).")
-        else:
-            bullets.append(f"{name} shows up in {count} curated changes.")
-    return bullets[:5]
+    return bullets
 
 
 def moving_story_lines(groups: list[ChangeGroup]) -> dict[str, list[str]]:
-    """Continuity themes for this week (story_id based)."""
+    """Themes this week as compact index lines (anchor-friendly titles).
+
+    True cross-issue continuity requires prior issues; until then this is a
+    theme index, not invented history.
+    """
     by_track: dict[str, list[str]] = defaultdict(list)
     for g in groups:
         track = g.category if g.category != "llvm" else newsletter_bucket(g.stories[0])
@@ -243,11 +249,28 @@ def moving_story_lines(groups: list[ChangeGroup]) -> dict[str, list[str]]:
             "other": "Other",
             "other-llvm": "LLVM tooling/runtime",
         }.get(track, track)
-        hw = f" ({', '.join(g.hardware_targets[:2])})" if g.hardware_targets else ""
-        line = f"{g.title[:90]}{hw}"
+        sid = g.story_id or g.id
+        hw = f" · {', '.join(g.hardware_targets[:2])}" if g.hardware_targets else ""
+        line = f"{g.title[:90]}{hw} [[story:{sid}]]"
         if line not in by_track[label]:
             by_track[label].append(line)
-    return {k: v[:4] for k, v in by_track.items() if v}
+    return {k: v[:6] for k, v in by_track.items() if v}
+
+
+def pick_deep_dive(candidates: list[ChangeGroup]) -> ChangeGroup | None:
+    """Prefer multi-commit themes with a subject-grounded why; else None."""
+    ranked = sorted(
+        candidates,
+        key=lambda g: (
+            0 if not g.impact_uncertain else 1,
+            -len(g.stories),
+            g.title.lower(),
+        ),
+    )
+    for g in ranked:
+        if len(g.stories) >= 3 and g.why_it_matters:
+            return g
+    return ranked[0] if ranked else None
 
 
 def _component_hint(story: Story) -> str:

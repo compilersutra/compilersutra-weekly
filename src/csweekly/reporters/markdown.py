@@ -194,44 +194,67 @@ def render_markdown(issue: WeeklyIssue) -> str:
         for i, g in enumerate(issue.worth_knowing[:12], 1):
             lines.extend(_story_card(g, index=i, compact=True))
 
-    # MOVING STORIES
+    # THEMES THIS WEEK (not invented cross-issue history)
     if issue.moving_stories:
-        lines.append("## Moving stories")
+        lines.append("## Themes this week")
         lines.append("")
-        lines.append("Themes active in this curated set (continuity for future issues).")
+        lines.append(
+            "Theme index for this issue. Cross-issue continuity links appear once "
+            "prior issues cover the same story_id."
+        )
         lines.append("")
         for track, items in sorted(issue.moving_stories.items()):
             lines.append(f"### {track}")
             lines.append("")
             for item in items:
-                lines.append(f"- {item}")
+                # Strip internal [[story:id]] markers for Markdown readers
+                visible = re.sub(r"\s*\[\[story:[^\]]+\]\]", "", item)
+                lines.append(f"- {visible}")
             lines.append("")
 
     # WORTH READING
     research = _filter_compiler_research(side["research"])
     if side["releases"] or side["community"] or research:
-        lines.append("## Worth reading")
+        lines.append("## Research and reading")
         lines.append("")
         for s in side["releases"][:6]:
             lines.append(f"### Release — {s.title}")
             lines.append("")
-            lines.append(_plain_note(s.summary or s.title, 220))
+            lines.append(f"**What it is.** {_plain_note(s.summary or s.title, 180)}")
+            lines.append("")
+            lines.append(
+                "**Why compiler engineers might care.** Official release notes for a "
+                "tracked toolchain — scan for ABI, backend, and diagnostics changes."
+            )
             lines.append("")
             lines.append(f"**Source:** [release]({s.source_url})")
             lines.append("")
         for s in side["community"][:6]:
             lines.append(f"### Discussion — {s.title}")
             lines.append("")
-            note = _plain_note(s.summary or "", 260)
-            lines.append(note if note else "Community discussion / RFC.")
+            note = _plain_note(s.summary or "", 200)
+            lines.append(f"**What is being discussed.** {note if note else 'Community discussion / RFC.'}")
+            lines.append("")
+            lines.append(
+                "**Why it matters.** Early design signal — not an accepted change unless "
+                "the thread says so."
+            )
             lines.append("")
             lines.append(f"**Source:** [discussion]({s.source_url})")
             lines.append("")
         for s in research[:5]:
             lines.append(f"### Paper — {s.title}")
             lines.append("")
+            abstract = _plain_note(s.summary or "", 220)
             lines.append(
-                _plain_note(s.summary or "Compiler-relevant research paper.", 260)
+                f"**Research problem / contribution (from abstract).** {abstract}"
+                if abstract
+                else "**Research problem / contribution.** See the paper abstract."
+            )
+            lines.append("")
+            lines.append(
+                "**Relevance.** Selected as compiler-adjacent research this week — "
+                "read the paper before assuming production impact."
             )
             lines.append("")
             lines.append(f"**Source:** [paper]({s.source_url})")
@@ -239,7 +262,10 @@ def render_markdown(issue: WeeklyIssue) -> str:
 
     # DEEP DIVE
     if issue.deep_dive:
+        from csweekly.processors.explain import build_deep_dive_notes
+
         g = issue.deep_dive
+        notes = g.deep_dive_notes or build_deep_dive_notes(g)
         lines.append("## Deep dive")
         lines.append("")
         lines.append(f"### {g.title}")
@@ -249,28 +275,13 @@ def render_markdown(issue: WeeklyIssue) -> str:
             "Claims stay tied to evidence; unknowns are marked."
         )
         lines.append("")
-        lines.append("1. **Background** — related work clustered as one development theme this week.")
-        lines.append(
-            f"2. **What changed** — {g.what_changed or 'See source commits.'}"
-        )
-        uncertain = (
-            " Impact is not fully clear from commit subjects alone."
-            if g.impact_uncertain
-            else ""
-        )
-        lines.append(
-            f"3. **Why it matters** — {g.why_it_matters or 'Impact not yet clear from the source alone.'}{uncertain}"
-        )
-        lines.append(
-            f"4. **Compiler stage** — {', '.join(g.stages) or 'unclassified'}"
-        )
-        lines.append(
-            f"5. **Domain / targets** — {', '.join((g.domains or []) + (g.hardware_targets or [])[:3]) or 'unclassified'}"
-        )
-        lines.append(
-            f"6. **Who should investigate next** — "
-            f"{', '.join(g.who_should_care) if g.who_should_care else 'Compiler engineers'}"
-        )
+        lines.append(f"1. **Background** — {notes.get('background', '')}")
+        lines.append(f"2. **Previous behavior** — {notes.get('previous_behavior', '')}")
+        lines.append(f"3. **Problem** — {notes.get('problem', '')}")
+        lines.append(f"4. **Implementation** — {notes.get('implementation', '')}")
+        lines.append(f"5. **Example** — {notes.get('example', '')}")
+        lines.append(f"6. **Implications** — {notes.get('implications', '')}")
+        lines.append(f"7. **Limits / uncertainty** — {notes.get('limits', '')}")
         lines.append("")
         lines.append("**Evidence (sources):**")
         lines.append("")
@@ -279,8 +290,12 @@ def render_markdown(issue: WeeklyIssue) -> str:
             lines.append(f"- [`{sha}`]({s.source_url}) — {s.summary[:120]}")
         lines.append("")
 
-    # BY TOPIC
-    lines.append("## By topic")
+    # BY TOPIC — compact index (no full why reprints)
+    lines.append("## Topic index")
+    lines.append("")
+    lines.append(
+        "Compact links to canonical stories in this issue. Full explanations live above."
+    )
     lines.append("")
     buckets: dict[str, list[ChangeGroup]] = defaultdict(list)
     for g in issue.groups:
@@ -292,12 +307,13 @@ def render_markdown(issue: WeeklyIssue) -> str:
         lines.append(f"### {name}")
         lines.append("")
         for g in groups[:8]:
-            ctype = g.change_type or "Other"
-            why = g.why_it_matters or "Impact not yet clear."
+            stage = ", ".join((g.stages or [])[:2]) or "—"
+            domain = ", ".join((g.domains or [])[:2]) or "—"
             sha = (g.stories[0].related_ref or "")[:7]
+            sid = g.story_id or g.id
             lines.append(
-                f"- **{g.title[:100]}** — {why} "
-                f"*({ctype})* [`{sha}`]({g.stories[0].source_url})"
+                f"- [{g.title[:100]}](#{sid}) · {stage} · {domain} · "
+                f"[`{sha}`]({g.stories[0].source_url})"
             )
         lines.append("")
 
@@ -311,6 +327,9 @@ def render_markdown(issue: WeeklyIssue) -> str:
         "Other",
         [g for g in issue.groups if g.category == "other"] + buckets.get("other-llvm", []),
     )
+
+    # Rename moving stories heading in MD
+    # (rendered from issue.moving_stories earlier as "Moving stories")
 
     lines.extend(
         [

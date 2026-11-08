@@ -690,3 +690,39 @@ a.icon-btn { text-decoration: none; display: inline-flex; align-items: center; }
   .pipeline-step strong { font-size: 0.95rem; }
   .toc { gap: 0.3rem; }
 }
+
+.related-commits {
+  margin: 0.55rem 0 0;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+.related-commits summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+.related-commits p { margin: 0.4rem 0 0; }
+.theme-index {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+.theme-index li {
+  border-top: 1px solid var(--border);
+  padding: 0.45rem 0;
+  font-size: 0.95rem;
+}
+.theme-index li:first-child { border-top: 0; }
+.theme-index .meta {
+  display: inline;
+  margin-left: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+.issue-article .toc {
+  position: sticky;
+  top: 3.5rem;
+  z-index: 5;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  padding: 0.35rem 0;
+  margin-bottom: 1.25rem;
+}

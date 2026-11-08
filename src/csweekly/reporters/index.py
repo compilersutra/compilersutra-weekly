@@ -827,13 +827,13 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
     if payload.get("high_signal") or payload.get("groups"):
         content = _render_issue_html(meta, payload)
         toc_ids = [
-            ("week-overview", "This week"),
-            ("high-signal", "High signal"),
+            ("briefing", "Five-minute briefing"),
+            ("featured", "Featured"),
             ("worth-knowing", "Worth knowing"),
-            ("moving-stories", "Moving stories"),
-            ("worth-reading", "Worth reading"),
+            ("themes", "Themes"),
+            ("worth-reading", "Research"),
             ("deep-dive", "Deep dive"),
-            ("by-topic", "By topic"),
+            ("topic-index", "Topic index"),
         ]
         toc_links = "".join(f'<a href="#{i}">{html.escape(l)}</a>' for i, l in toc_ids)
         toc = f'<nav class="toc" aria-label="On this page">{toc_links}</nav>'
@@ -873,27 +873,36 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
     if overview:
         items = "".join(f"<li>{html.escape(b)}</li>" for b in overview)
         parts.append(
-            f'<section id="week-overview" class="issue-section">'
-            f'<h2>The week in compiler development</h2>'
+            f'<section id="briefing" class="issue-section">'
+            f"<h2>Five-minute briefing</h2>"
+            f'<p class="muted">The developments worth understanding first — not a commit census.</p>'
             f'<ul class="overview-list">{items}</ul></section>'
         )
 
     high = payload.get("high_signal") or []
-    if high:
-        cards = "".join(_issue_story_card(g, prominent=True) for g in high)
+    deep = payload.get("deep_dive")
+    featured = list(high[:4])
+    if deep and not any((g.get("story_id") or g.get("id")) == (deep.get("story_id") or deep.get("id")) for g in featured):
+        featured = [deep] + featured[:3]
+    if featured:
+        cards = "".join(_issue_story_card(g, prominent=True) for g in featured)
         parts.append(
-            f'<section id="high-signal" class="issue-section">'
-            f"<h2>High signal</h2>"
-            f"<p class=\"muted\">Changes that affect behavior, architecture support, or direction.</p>"
+            f'<section id="featured" class="issue-section">'
+            f"<h2>Featured developments</h2>"
+            f'<p class="muted">Source-grounded explanations. Open the primary source for the full diff.</p>'
             f'<div class="story-stack">{cards}</div></section>'
         )
 
     worth = payload.get("worth_knowing") or []
+    # Avoid reprinting featured IDs
+    feat_ids = {(g.get("story_id") or g.get("id")) for g in featured}
+    worth = [g for g in worth if (g.get("story_id") or g.get("id")) not in feat_ids]
     if worth:
         rows = "".join(_issue_story_card(g, prominent=False) for g in worth)
         parts.append(
             f'<section id="worth-knowing" class="issue-section">'
             f"<h2>Worth knowing</h2>"
+            f'<p class="muted">Compact entries — one canonical explanation each.</p>'
             f'<div class="story-stack compact">{rows}</div></section>'
         )
 
@@ -901,114 +910,211 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
     if moving:
         blocks = []
         for track, items in sorted(moving.items()):
-            lis = "".join(f"<li>{html.escape(str(i))}</li>" for i in items)
-            blocks.append(f"<h3>{html.escape(str(track))}</h3><ul>{lis}</ul>")
+            lis_parts = []
+            for raw in items:
+                m = re.search(r"\[\[story:([^\]]+)\]\]", str(raw))
+                visible = re.sub(r"\s*\[\[story:[^\]]+\]\]", "", str(raw)).strip()
+                if m:
+                    lis_parts.append(
+                        f'<li><a href="#{html.escape(m.group(1))}">{html.escape(visible)}</a></li>'
+                    )
+                else:
+                    lis_parts.append(f"<li>{html.escape(visible)}</li>")
+            blocks.append(
+                f"<h3>{html.escape(str(track))}</h3><ul class='theme-index'>{''.join(lis_parts)}</ul>"
+            )
         parts.append(
-            f'<section id="moving-stories" class="issue-section">'
-            f"<h2>Moving stories</h2>{''.join(blocks)}</section>"
+            f'<section id="themes" class="issue-section">'
+            f"<h2>Themes this week</h2>"
+            f'<p class="muted">Index into canonical stories above — not a second full reprint. '
+            f"Cross-issue history appears when the same story_id recurs.</p>"
+            f"{''.join(blocks)}</section>"
         )
 
-    # Worth reading from markdown section when present
-    reading = _extract_section(meta.md, "Worth reading")
+    reading = _extract_section(meta.md, "Research and reading") or _extract_section(
+        meta.md, "Worth reading"
+    )
     if reading:
         parts.append(
             f'<section id="worth-reading" class="issue-section">'
-            f"<h2>Worth reading</h2>"
+            f"<h2>Research and reading</h2>"
             f"{markdown_to_html(reading)}</section>"
         )
 
-    deep = payload.get("deep_dive")
     if deep:
         parts.append(_deep_dive_html(deep))
 
-    by_topic = _extract_section(meta.md, "By topic")
-    if by_topic:
-        parts.append(
-            f'<section id="by-topic" class="issue-section">'
-            f"<h2>By topic</h2>"
-            f"{markdown_to_html(by_topic)}</section>"
-        )
+    # Topic index from groups — compact, link to anchors
+    groups = payload.get("groups") or payload.get("high_signal") or []
+    if groups:
+        parts.append(_topic_index_html(groups))
 
     parts.append(
-        '<p class="muted" style="margin-top:2rem">CompilerSutra Weekly explains '
+        '<section id="further" class="issue-section">'
+        "<h2>Further reading</h2>"
+        '<ul class="overview-list">'
+        '<li><a href="../../changelog.html">Complete collected dataset</a></li>'
+        '<li><a href="../../explore/index.html">Explore by stage / domain / area</a></li>'
+        '<li><a href="../../topics/index.html">Topic pages</a></li>'
+        '<li><a href="../../archive.html">Archive</a></li>'
+        "</ul>"
+        '<p class="muted" style="margin-top:1.5rem">CompilerSutra Weekly explains '
         "<em>why you should care</em> — we do not invent benchmarks or completion status.</p>"
+        "</section>"
     )
     return "\n".join(parts)
 
 
+def _story_anchor(g: dict) -> str:
+    sid = g.get("story_id") or g.get("id") or _slug(g.get("title") or "story")
+    return re.sub(r"[^a-zA-Z0-9_-]+", "-", str(sid))[:80]
+
+
 def _issue_story_card(g: dict, *, prominent: bool) -> str:
+    anchor = _story_anchor(g)
     title = html.escape((g.get("title") or "")[:140])
     proj = html.escape((g.get("project") or g.get("category") or "").upper())
     what = html.escape(g.get("what_changed") or "")
+    ctx = html.escape(g.get("technical_context") or "")
     why = html.escape(g.get("why_it_matters") or "Impact not yet clear from the source alone.")
     who = html.escape(", ".join(g.get("who_should_care") or []) or "Compiler engineers")
+    uncertain = html.escape(g.get("uncertainty_note") or "")
     ctype = html.escape(g.get("change_type") or "Other")
-    stages = html.escape(", ".join(g.get("stages") or []) or "—")
-    domains = html.escape(", ".join(g.get("domains") or []) or "—")
+    meta_bits = []
+    if g.get("stages"):
+        meta_bits.append("Stage: " + html.escape(", ".join(g["stages"][:2])))
+    if g.get("domains"):
+        meta_bits.append("Domain: " + html.escape(", ".join(g["domains"][:2])))
+    if g.get("hardware_targets"):
+        meta_bits.append("HW: " + html.escape(", ".join(g["hardware_targets"][:2])))
+    if g.get("technical_areas"):
+        meta_bits.append("Area: " + html.escape(", ".join(g["technical_areas"][:2])))
+    meta_bits.append("Type: " + ctype)
     badges = "".join(
         f'<span class="badge">{html.escape(str(b))}</span>'
-        for b in (g.get("stages") or [])[:2] + (g.get("domains") or [])[:2]
+        for b in (g.get("stages") or [])[:2] + (g.get("domains") or [])[:2] + (g.get("hardware_targets") or [])[:1]
         if b
     )
-    sources = []
-    for s in (g.get("stories") or [])[:5]:
+    stories = g.get("stories") or []
+    primary = stories[0] if stories else {}
+    primary_url = html.escape(primary.get("source_url") or "#")
+    primary_sha = html.escape((primary.get("related_ref") or "")[:8])
+    related = []
+    for s in stories[1:6]:
         sha = html.escape((s.get("related_ref") or "")[:8])
         url = html.escape(s.get("source_url") or "#")
-        sources.append(f'<a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a>')
-    extra = ""
-    n = len(g.get("stories") or [])
-    if n > 5:
-        extra = f" <span class='muted'>(+{n - 5})</span>"
+        related.append(f'<a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a>')
+    related_block = ""
+    if related:
+        related_block = (
+            f'<details class="related-commits"><summary>Related commits '
+            f"({len(stories) - 1})</summary><p>{' · '.join(related)}</p></details>"
+        )
     cls = "story-card issue-story" if prominent else "story-row"
-    return f"""<article class="{cls}">
-  <h3>{f'[{proj}] ' if proj else ''}{title}</h3>
-  <div class="badge-row">{badges}</div>
-  <p><strong>What changed.</strong> {what}</p>
+    ctx_p = f'<p class="muted"><strong>Context.</strong> {ctx}</p>' if ctx and prominent else ""
+    unc_p = (
+        f'<p class="muted"><em>Uncertainty.</em> {uncertain}</p>'
+        if uncertain and (prominent or g.get("impact_uncertain"))
+        else ""
+    )
+    if prominent:
+        body = f"""  <p><strong>What changed.</strong> {what}</p>
+  {ctx_p}
   <p><strong>Why it matters.</strong> {why}</p>
   <p class="muted"><strong>Who should care.</strong> {who}</p>
-  <p class="meta">Type: {ctype} · Stage: {stages} · Domain: {domains}</p>
-  <p class="meta">Source: {" · ".join(sources)}{extra}</p>
+  {unc_p}"""
+    else:
+        body = f"""  <p class="secondary">{why}</p>
+  {unc_p if g.get("impact_uncertain") else ""}"""
+    return f"""<article class="{cls}" id="{html.escape(anchor)}">
+  <h3>{f'[{proj}] ' if proj else ''}{title}</h3>
+  <div class="badge-row">{badges}</div>
+{body}
+  <p class="meta">{' · '.join(meta_bits)}</p>
+  <p class="meta">Primary source: <a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a></p>
+  {related_block}
 </article>"""
 
 
 def _deep_dive_html(g: dict) -> str:
+    notes = g.get("deep_dive_notes") or {}
     title = html.escape((g.get("title") or "")[:160])
-    what = html.escape(g.get("what_changed") or "See source commits.")
-    why = html.escape(g.get("why_it_matters") or "Impact not yet clear.")
-    who = html.escape(", ".join(g.get("who_should_care") or []) or "Compiler engineers")
-    stages = html.escape(", ".join(g.get("stages") or []) or "unclassified")
-    domains = html.escape(
-        ", ".join((g.get("domains") or []) + (g.get("hardware_targets") or [])[:3])
-        or "unclassified"
-    )
-    uncertain = (
-        "<p class='muted'><em>Impact is not fully clear from commit subjects alone.</em></p>"
-        if g.get("impact_uncertain")
-        else ""
-    )
+    anchor = _story_anchor(g)
+
+    def n(key: str, fallback: str = "") -> str:
+        return html.escape(notes.get(key) or fallback)
+
     sources = []
     for s in (g.get("stories") or [])[:8]:
         sha = html.escape((s.get("related_ref") or "")[:8])
         url = html.escape(s.get("source_url") or "#")
         summary = html.escape((s.get("summary") or "")[:120])
-        sources.append(f'<li><a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a> — {summary}</li>')
+        sources.append(
+            f'<li><a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a> — {summary}</li>'
+        )
     return f"""<section id="deep-dive" class="issue-section deep-dive">
   <h2>Deep dive</h2>
-  <article class="feature-card">
+  <article class="feature-card" id="{html.escape(anchor)}-dive">
     <h3>{title}</h3>
     <ol class="deep-list">
-      <li><strong>Background</strong> — related work clustered as one development theme this week.</li>
-      <li><strong>What changed</strong> — {what}</li>
-      <li><strong>Why it matters</strong> — {why}</li>
-      <li><strong>Compiler stage</strong> — {stages}</li>
-      <li><strong>Domain / targets</strong> — {domains}</li>
-      <li><strong>Who should investigate next</strong> — {who}</li>
+      <li><strong>Background</strong> — {n("background", "Related commits clustered as one theme.")}</li>
+      <li><strong>Previous behavior</strong> — {n("previous_behavior")}</li>
+      <li><strong>Problem</strong> — {n("problem")}</li>
+      <li><strong>Implementation</strong> — {n("implementation", g.get("what_changed") or "")}</li>
+      <li><strong>Example</strong> — {n("example")}</li>
+      <li><strong>Implications</strong> — {n("implications", g.get("why_it_matters") or "")}</li>
+      <li><strong>Limits / uncertainty</strong> — {n("limits", g.get("uncertainty_note") or "")}</li>
     </ol>
-    {uncertain}
     <h4>Evidence</h4>
     <ul>{''.join(sources)}</ul>
   </article>
 </section>"""
+
+
+def _topic_index_html(groups: list[dict]) -> str:
+    buckets: dict[str, list[dict]] = defaultdict(list)
+    for g in groups:
+        cat = (g.get("category") or "other").lower()
+        if cat == "llvm":
+            paths = " ".join(
+                " ".join(s.get("paths") or []) for s in (g.get("stories") or [])[:1]
+            )
+            if "clang/" in paths:
+                cat = "clang"
+        buckets[cat].append(g)
+    order = [
+        ("llvm", "LLVM"),
+        ("clang", "Clang"),
+        ("gcc", "GCC"),
+        ("mlir", "MLIR"),
+        ("ai", "AI Compilers"),
+        ("gpu", "GPU"),
+        ("other", "Other"),
+    ]
+    blocks = []
+    for key, label in order:
+        items = buckets.get(key) or []
+        if not items:
+            continue
+        lis = []
+        for g in items[:8]:
+            anchor = _story_anchor(g)
+            title = html.escape((g.get("title") or "")[:100])
+            stage = html.escape(", ".join((g.get("stages") or [])[:2]) or "—")
+            domain = html.escape(", ".join((g.get("domains") or [])[:2]) or "—")
+            lis.append(
+                f'<li><a href="#{anchor}">{title}</a> '
+                f'<span class="meta">{stage} · {domain}</span></li>'
+            )
+        blocks.append(f"<h3>{label}</h3><ul class='theme-index'>{''.join(lis)}</ul>")
+    if not blocks:
+        return ""
+    return (
+        f'<section id="topic-index" class="issue-section">'
+        f"<h2>Topic index</h2>"
+        f'<p class="muted">Jump to the canonical story — explanations are not repeated here.</p>'
+        f"{''.join(blocks)}</section>"
+    )
 
 
 def _issue_rows(metas: list[IssueMeta], *, depth: int) -> str:

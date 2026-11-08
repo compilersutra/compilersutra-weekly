@@ -79,8 +79,10 @@ class Story(BaseModel):
     # Editorial intelligence layer
     story_id: str | None = None
     what_changed: str | None = None
+    technical_context: str | None = None
     why_it_matters: str | None = None
     who_should_care: list[str] = Field(default_factory=list)
+    uncertainty_note: str | None = None
     change_type: str | None = None
     signal: SignalLevel = SignalLevel.SKIP
     stages: list[str] = Field(default_factory=list)
@@ -93,7 +95,7 @@ class Story(BaseModel):
 
 
 class ChangeGroup(BaseModel):
-    """Grouped commits forming one editorial story."""
+    """Grouped commits forming one editorial story (canonical unit)."""
 
     id: str
     title: str
@@ -104,8 +106,10 @@ class ChangeGroup(BaseModel):
     stories: list[Story] = Field(default_factory=list)
     story_id: str | None = None
     what_changed: str | None = None
+    technical_context: str | None = None
     why_it_matters: str | None = None
     who_should_care: list[str] = Field(default_factory=list)
+    uncertainty_note: str | None = None
     change_type: str | None = None
     signal: SignalLevel = SignalLevel.SKIP
     stages: list[str] = Field(default_factory=list)
@@ -113,6 +117,7 @@ class ChangeGroup(BaseModel):
     technical_areas: list[str] = Field(default_factory=list)
     hardware_targets: list[str] = Field(default_factory=list)
     impact_uncertain: bool = False
+    deep_dive_notes: dict[str, str] = Field(default_factory=dict)
 
 
 class Window(BaseModel):
