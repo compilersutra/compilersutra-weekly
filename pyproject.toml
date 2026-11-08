@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 CompilerSutra
+
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "compilersutra-weekly"
+version = "0.1.0"
+description = "Open-source compiler ecosystem research and weekly intelligence (LLVM, MLIR, GCC, …)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [
+  { name = "CompilerSutra", email = "osc@compilersutra.com" },
+]
+keywords = ["llvm", "mlir", "gcc", "compilers", "weekly", "research"]
+dependencies = [
+  "pydantic>=2.0",
+  "pyyaml>=6.0",
+  "requests>=2.31",
+  "feedparser>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+csweekly = "csweekly.main:main"
+
+[project.urls]
+Homepage = "https://www.compilersutra.com/"
+Repository = "https://github.com/aabhinavg1/compilersutra-weekly"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

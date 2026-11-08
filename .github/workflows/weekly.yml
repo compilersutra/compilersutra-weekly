@@ -1,0 +1,37 @@
+name: Weekly report
+on:
+  schedule:
+    # Saturday 03:00 UTC — after Friday window closes
+    - cron: "0 3 * * 6"
+  workflow_dispatch:
+    inputs:
+      as_of:
+        description: "UTC date YYYY-MM-DD (default: today)"
+        required: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e .
+      - name: Generate (fixture demo on GitHub-hosted runners)
+        env:
+          AS_OF: ${{ inputs.as_of }}
+        run: |
+          AS_OF_ARG=""
+          if [ -n "$AS_OF" ]; then AS_OF_ARG="--as-of $AS_OF"; fi
+          # Hosted runners: fixture until a self-hosted mirror cache exists.
+          bash scripts/make_fixture_repo.sh
+          csweekly collect $AS_OF_ARG --no-fetch \
+            --repo tests/fixtures/tiny_repo --source llvm \
+            --out data/last_collect.json
+          csweekly report --in data/last_collect.json --reports-dir reports
+      - uses: actions/upload-artifact@v4
+        with:
+          name: weekly-report
+          path: reports/

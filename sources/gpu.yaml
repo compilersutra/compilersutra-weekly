@@ -1,0 +1,12 @@
+id: gpu
+name: GPU compilers (placeholder)
+org: various
+category: gpu
+kind: git
+enabled: false
+url: https://github.com/ROCm/llvm-project.git
+github_repo: ROCm/llvm-project
+default_branch: amd-staging
+mirror_dirname: rocm-llvm
+max_commits: 300
+notes: Add AMDGPU/ROCm/CUDA-related mirrors as separate yaml files; keep this as a catalogue stub.
