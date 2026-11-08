@@ -88,31 +88,31 @@
   <h4><a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer">Add nvvm.mulf Op</a></h4>
   <div class="badge-row"><span class="badge">Middle-end</span><span class="badge">Backend</span><span class="badge">GPU</span></div>
   <p class="secondary"><strong>What.</strong> Nvvm.mulf Op was added. (3 related commits) Cluster of 3 related commits treated as one development.</p>
-  <p><strong>Why.</strong> Adds or extends an NVVM dialect operation (Add nvvm.mulf Op). This widens NVIDIA GPU IR available when MLIR lowers to LLVM IR — not a claim about kernel runtime performance.</p>
+  <p><strong>Why.</strong> Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change, not a measured performance improvement.</p>
   <div class="meta">Backend · Middle-end / optimization developers, Backend developers, GPU compiler developers, NVPTX developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer">Use runCodeGenPipeline in SPIRVTranslate</a></h4>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
   <p class="secondary"><strong>What.</strong> Use runCodeGenPipeline in SPIRVTranslate. (3 related commits) Cluster of 3 related commits treated as one development.</p>
-  <p><strong>Why.</strong> SPIR-V translation / tooling change (Use runCodeGenPipeline in SPIRVTranslate). Affects portable GPU / offload stacks that consume SPIR-V, not CPU backends.</p>
+  <p><strong>Why.</strong> SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU backends.</p>
   <div class="meta">Code generation · Backend developers, GPU compiler developers, SPIR-V developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer">Clear NoPHIs after SIFixSGPRCopies under the new pass manager</a></h4>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
   <p class="secondary"><strong>What.</strong> Clear NoPHIs after SIFixSGPRCopies under the new pass manager. (2 related commits) Cluster of 2 related commits treated as one development.</p>
-  <p><strong>Why.</strong> AMDGPU backend change (Clear NoPHIs after SIFixSGPRCopies under the new pass manager). Likely instruction selection, SGPR/VGPR handling, or ABI occupancy — verify in the linked diffs.</p>
+  <p><strong>Why.</strong> AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
   <div class="meta">Bug fix · Backend developers, GPU compiler developers, AMDGPU developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/6e37cd2cc855cd23aa30705a2cde4e3bb646624a" rel="noopener noreferrer">Fold unmasked signed byte loads into D16 high loads</a></h4>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
   <p class="secondary"><strong>What.</strong> Fold unmasked signed byte loads into D16 high loads. (2 related commits) Cluster of 2 related commits treated as one development.</p>
-  <p><strong>Why.</strong> AMDGPU backend change (Fold unmasked signed byte loads into D16 high loads). Likely instruction selection, SGPR/VGPR handling, or ABI occupancy — verify in the linked diffs.</p>
+  <p><strong>Why.</strong> AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
   <div class="meta">Code generation · Backend developers, GPU compiler developers, AMDGPU developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/c5b99ea2731d7d1cd3a851c1fc306bacb630020b" rel="noopener noreferrer">Add documentation about ABI occupancy</a></h4>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
   <p class="secondary"><strong>What.</strong> Documentation about ABI occupancy was added.</p>
-  <p><strong>Why.</strong> Touches ABI / calling-convention helpers (Add documentation about ABI occupancy). Wrong ABI lowers can break interoperability; this is not automatically a register-allocator change.</p>
+  <p><strong>Why.</strong> Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator change.</p>
   <div class="meta">Backend · Backend developers, GPU compiler developers, AMDGPU developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/df3e0f8afb48090bf6441c4031ab0c366972424d" rel="noopener noreferrer">Remove kill flags on virtual registers from MIR tests</a></h4>
@@ -124,7 +124,7 @@
   <h4><a href="https://github.com/llvm/llvm-project/commit/9e0f0ee64b41e1c74871b9685fdb25f16b800866" rel="noopener noreferrer">Disable sycl-system-arch.cpp on macOS</a></h4>
   <div class="badge-row"><span class="badge">Frontend</span><span class="badge">Languages</span><span class="badge">CPU</span></div>
   <p class="secondary"><strong>What.</strong> Disable sycl-system-arch.cpp on macOS. (4 related commits) Cluster of 4 related commits treated as one development.</p>
-  <p><strong>Why.</strong> SPIR-V translation / tooling change (Reject an unknown offload architecture on a SPIR-V target). Affects portable GPU / offload stacks that consume SPIR-V, not CPU backends.</p>
+  <p><strong>Why.</strong> SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU backends.</p>
   <div class="meta">Frontend · Frontend / Clang developers, Language frontend developers, CPU compiler developers, SPIR-V developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/335885a5efe003e2f098d1588da34650bf38e3d3" rel="noopener noreferrer">Port commits</a></h4>

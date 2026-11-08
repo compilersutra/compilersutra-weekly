@@ -10,74 +10,68 @@ from csweekly.processors.editorial import clean_subject, editorial_sentence, is_
 
 # Specific (pattern, template). Templates may use {subject}, {component}, {hw}.
 # Only fire when the subject/title (not test paths) establish the mechanism.
+# Specific (pattern, message, uncertain). Match against cleaned subject/title only.
 _WHY_SPECIFIC: list[tuple[re.Pattern[str], str, bool]] = [
     (
         re.compile(r"(?i)\bnvvm\.?\w*|add nvvm"),
-        "Adds or extends an NVVM dialect operation ({subject}). "
-        "This widens NVIDIA GPU IR available when MLIR lowers to LLVM IR — "
-        "not a claim about kernel runtime performance.",
+        "Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. "
+        "This is an IR/target-op change, not a measured performance improvement.",
         False,
     ),
     (
-        re.compile(r"(?i)matrix splat|CIR.*splat|\bCIR\b.*matrix"),
-        "Extends Clang IR (CIR) coverage for matrix splat casts ({subject}). "
-        "This is frontend/CIR codegen work (incl. HLSL paths when present), "
-        "not middle-end auto-vectorization.",
+        re.compile(r"(?i)matrix splat|\bCIR\b.*matrix"),
+        "Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. "
+        "This is frontend/CIR work, not middle-end auto-vectorization.",
         False,
     ),
     (
         re.compile(r"(?i)vec_perm_const|extract subvector"),
-        "Changes how the RISC-V backend forms subvector extracts "
-        "({subject}). Related commits in the cluster touch permute costing "
-        "and vector lowering — inspect diffs before claiming perf wins.",
+        "Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. "
+        "Related commits also touch permute cost modeling — no perf claim without evidence.",
         False,
     ),
     (
         re.compile(r"(?i)\babi\b|calling.?convention|RISCVABI"),
-        "Touches ABI / calling-convention helpers ({subject}). "
-        "Wrong ABI lowers can break interoperability; this is not "
-        "automatically a register-allocator change.",
+        "Touches ABI / calling-convention helpers. Wrong ABI lowering can break "
+        "interoperability; this is not automatically a register-allocator change.",
         False,
     ),
     (
         re.compile(r"(?i)amdgpu|amdgcn|SIFixSGPR|D16 high"),
-        "AMDGPU backend change ({subject}). Likely instruction selection, "
-        "SGPR/VGPR handling, or ABI occupancy — verify in the linked diffs.",
+        "AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. "
+        "Verify the exact mechanism in the linked diffs.",
         False,
     ),
     (
         re.compile(r"(?i)spir-?v|spirv|SPIRVTranslate"),
-        "SPIR-V translation / tooling change ({subject}). Affects portable "
-        "GPU / offload stacks that consume SPIR-V, not CPU backends.",
+        "SPIR-V translation / tooling change. Affects portable GPU and offload stacks "
+        "that consume SPIR-V, not CPU backends.",
         False,
     ),
     (
         re.compile(r"(?i)loop.?vector|vectoriz(?:e|ation|er)\b"),
-        "Commit subject explicitly concerns vectorization ({subject}). "
+        "Subject explicitly concerns auto-vectorization / SIMD lowering. "
         "Do not assume measured speedups without benchmarks.",
         False,
     ),
     (
         re.compile(r"(?i)regalloc|register.?alloc"),
-        "Commit subject explicitly concerns register allocation ({subject}).",
+        "Subject explicitly concerns register allocation and spill behavior.",
         False,
     ),
     (
         re.compile(r"(?i)globalisel|selectiondag|instruction select|\bisel\b"),
-        "Instruction-selection / ISel change ({subject}): how IR becomes "
-        "machine instructions for the target.",
+        "Instruction-selection change: how IR becomes machine instructions for the target.",
         False,
     ),
     (
         re.compile(r"(?i)dwarf|debug.?info|lldb|DWARF"),
-        "Debug-info or debugger tooling change ({subject}). Relevant to "
-        "Runtime & Toolchain / debugging workflows.",
+        "Debug-info or debugger tooling change. Relevant to Runtime & Toolchain workflows.",
         False,
     ),
     (
         re.compile(r"(?i)RuntimeLibcalls|libcall"),
-        "RuntimeLibcalls / compiler-rt interface change ({subject}). "
-        "Affects how the compiler declares or emits library calls.",
+        "RuntimeLibcalls interface change — how the compiler declares or emits library calls.",
         False,
     ),
 ]
@@ -269,7 +263,10 @@ def _why_it_matters(story: Story, subject: str) -> tuple[str, bool, str]:
     hw = ", ".join(story.hardware_targets[:2]) or ""
     for pat, tmpl, uncertain in _WHY_SPECIFIC:
         if pat.search(primary):
-            msg = tmpl.format(subject=subject[:100], component=component, hw=hw)
+            try:
+                msg = tmpl.format(subject=subject[:100], component=component, hw=hw)
+            except Exception:
+                msg = tmpl
             note = (
                 "Impact beyond the commit subject is not independently verified."
                 if uncertain

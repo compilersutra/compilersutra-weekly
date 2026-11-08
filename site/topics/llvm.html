@@ -88,43 +88,43 @@
   <h4><a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer">Implement support for matrix splat cast</a></h4>
   <div class="badge-row"><span class="badge">Frontend</span><span class="badge">Languages</span><span class="badge">CPU</span></div>
   <p class="secondary"><strong>What.</strong> Support for matrix splat cast was implemented. (5 related commits) Cluster of 5 related commits treated as one development.</p>
-  <p><strong>Why.</strong> Extends Clang IR (CIR) coverage for matrix splat casts (Implement support for matrix splat cast). This is frontend/CIR codegen work (incl. HLSL paths when present), not middle-end auto-vectorization.</p>
+  <p><strong>Why.</strong> Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR work, not middle-end auto-vectorization.</p>
   <div class="meta">New capability · Frontend / Clang developers, Language frontend developers, CPU compiler developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer">Add RISCVABI helper functions for single/doubleFP and purecap</a></h4>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">CPU</span></div>
   <p class="secondary"><strong>What.</strong> RISCVABI helper functions for single/doubleFP and purecap was added. (4 related commits) Cluster of 4 related commits treated as one development.</p>
-  <p><strong>Why.</strong> Touches ABI / calling-convention helpers (Add RISCVABI helper functions for single/doubleFP and purecap). Wrong ABI lowers can break interoperability; this is not automatically a register-allocator ch</p>
+  <p><strong>Why.</strong> Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator change.</p>
   <div class="meta">Code generation · Backend developers, CPU compiler developers, RISC-V developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer">Use runCodeGenPipeline in SPIRVTranslate</a></h4>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
   <p class="secondary"><strong>What.</strong> Use runCodeGenPipeline in SPIRVTranslate. (3 related commits) Cluster of 3 related commits treated as one development.</p>
-  <p><strong>Why.</strong> SPIR-V translation / tooling change (Use runCodeGenPipeline in SPIRVTranslate). Affects portable GPU / offload stacks that consume SPIR-V, not CPU backends.</p>
+  <p><strong>Why.</strong> SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU backends.</p>
   <div class="meta">Code generation · Backend developers, GPU compiler developers, SPIR-V developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer">Added support for functions to DWARFASTParserFortran</a></h4>
   <div class="badge-row"><span class="badge">Runtime &amp; Toolchain</span><span class="badge">Languages</span><span class="badge">CPU</span></div>
   <p class="secondary"><strong>What.</strong> LLDB: support for functions to DWARFASTParserFortran was added. (2 related commits) Cluster of 2 related commits treated as one development.</p>
-  <p><strong>Why.</strong> Debug-info or debugger tooling change (Added support for functions to DWARFASTParserFortran). Relevant to Runtime &amp; Toolchain / debugging workflows.</p>
+  <p><strong>Why.</strong> Debug-info or debugger tooling change. Relevant to Runtime &amp; Toolchain workflows.</p>
   <div class="meta">Frontend · Runtime and toolchain developers, Language frontend developers, CPU compiler developers, Debugger / debug-info developer</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer">Clear NoPHIs after SIFixSGPRCopies under the new pass manager</a></h4>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
   <p class="secondary"><strong>What.</strong> Clear NoPHIs after SIFixSGPRCopies under the new pass manager. (2 related commits) Cluster of 2 related commits treated as one development.</p>
-  <p><strong>Why.</strong> AMDGPU backend change (Clear NoPHIs after SIFixSGPRCopies under the new pass manager). Likely instruction selection, SGPR/VGPR handling, or ABI occupancy — verify in the linked diffs.</p>
+  <p><strong>Why.</strong> AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
   <div class="meta">Bug fix · Backend developers, GPU compiler developers, AMDGPU developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/6e37cd2cc855cd23aa30705a2cde4e3bb646624a" rel="noopener noreferrer">Fold unmasked signed byte loads into D16 high loads</a></h4>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
   <p class="secondary"><strong>What.</strong> Fold unmasked signed byte loads into D16 high loads. (2 related commits) Cluster of 2 related commits treated as one development.</p>
-  <p><strong>Why.</strong> AMDGPU backend change (Fold unmasked signed byte loads into D16 high loads). Likely instruction selection, SGPR/VGPR handling, or ABI occupancy — verify in the linked diffs.</p>
+  <p><strong>Why.</strong> AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
   <div class="meta">Code generation · Backend developers, GPU compiler developers, AMDGPU developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/c5b99ea2731d7d1cd3a851c1fc306bacb630020b" rel="noopener noreferrer">Add documentation about ABI occupancy</a></h4>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
   <p class="secondary"><strong>What.</strong> Documentation about ABI occupancy was added.</p>
-  <p><strong>Why.</strong> Touches ABI / calling-convention helpers (Add documentation about ABI occupancy). Wrong ABI lowers can break interoperability; this is not automatically a register-allocator change.</p>
+  <p><strong>Why.</strong> Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator change.</p>
   <div class="meta">Backend · Backend developers, GPU compiler developers, AMDGPU developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/5bbc49f5d844871eadce3e06926dbd4cf538e180" rel="noopener noreferrer">Fix advancing past the end of an empty macro fusion list</a></h4>
@@ -136,7 +136,7 @@
   <h4><a href="https://github.com/llvm/llvm-project/commit/2853de0422d2fd02dca9c4cc89a6def2a3794198" rel="noopener noreferrer">Add signatures for the divrem libcalls</a></h4>
   <div class="badge-row"><span class="badge">Runtime &amp; Toolchain</span><span class="badge">Backend</span><span class="badge">CPU</span></div>
   <p class="secondary"><strong>What.</strong> Matt Arsenault: RuntimeLibcalls: Add signatures for the divrem libcalls. (7 related commits) Cluster of 7 related commits treated as one development.</p>
-  <p><strong>Why.</strong> RuntimeLibcalls / compiler-rt interface change (Matt Arsenault: RuntimeLibcalls: Add signatures for the divrem libcalls). Affects how the compiler declares or emits library calls.</p>
+  <p><strong>Why.</strong> RuntimeLibcalls interface change — how the compiler declares or emits library calls.</p>
   <div class="meta">IR · Runtime and toolchain developers, Backend developers, CPU compiler developers, X86 developers</div>
 </article><article class="story-card">
   <h4><a href="https://github.com/llvm/llvm-project/commit/76ded34e479dbe2f022ec1e021ee36a6f4f4331f" rel="noopener noreferrer">Port MulMulBugFixPass to NewPM</a></h4>

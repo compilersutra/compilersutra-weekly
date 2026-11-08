@@ -140,6 +140,7 @@ def split_non_git(stories: list[Story]) -> dict[str, list[Story]]:
 
 def clean_subject(text: str) -> str:
     text = (text or "").strip()
+    # Strip leading "Author Name: " when left looks like a person.
     for _ in range(4):
         m = re.match(r"^([^:]{2,70}):\s+(.+)$", text)
         if not m:
@@ -155,11 +156,19 @@ def clean_subject(text: str) -> str:
                 r"support|allow|refactor|improve|optimize|port|extract|check|"
                 r"fold|combine|compute|make|do not|pick|attach|split|drop|"
                 r"disallow|skip|clear|use |llvm|clang|gcc|mlir|amdgpu|i386|"
-                r"aarch64|riscv|gccrs|libc|flang|revert)",
+                r"aarch64|riscv|risc-v|gccrs|libc|flang|revert)",
                 right,
             )
         )
         if looks_like_person and looks_like_subject:
+            text = right
+            continue
+        # "Robin Dapp: RISC-V: Extract…" — person + target prefix
+        if looks_like_person and re.match(
+            r"(?i)^(gccrs|i386|aarch64|amdgcn|riscv|risc-v|mlir|nvvm|tosa|vector|"
+            r"math|match\.pd|libc\+\+|libc|lldb|flang-rt|flang|bolt|cir|abi)\s*:",
+            right,
+        ):
             text = right
             continue
         break
@@ -168,13 +177,18 @@ def clean_subject(text: str) -> str:
         if not m:
             break
         text = text[m.end() :].strip()
-    text = re.sub(
-        r"^(gccrs|i386|aarch64|amdgcn|riscv|risc-v|mlir|nvvm|tosa|vector|math|"
-        r"match\.pd|libc\+\+|libc|lldb|flang-rt|flang|bolt|cir|abi)\s*:\s*",
-        "",
-        text,
-        flags=re.I,
-    ).strip()
+    # Strip repeated "Target:" / "Component:" prefixes
+    for _ in range(3):
+        stripped = re.sub(
+            r"^(gccrs|i386|aarch64|amdgcn|riscv|risc-v|mlir|nvvm|tosa|vector|math|"
+            r"match\.pd|libc\+\+|libc|lldb|flang-rt|flang|bolt|cir|abi)\s*:\s*",
+            "",
+            text,
+            flags=re.I,
+        ).strip()
+        if stripped == text:
+            break
+        text = stripped
     text = _PR.sub("", text).strip()
     text = re.sub(r"\s*\(NFC\)\s*$", "", text, flags=re.I).strip()
     text = re.sub(r"\s*\[PR\d+\]\s*$", "", text).strip()

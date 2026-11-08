@@ -20,7 +20,8 @@ _PATH_RULES: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"(^|/)llvm/lib/CodeGen/SelectionDAG/", re.I), "Instruction selection"),
     (re.compile(r"(^|/)llvm/lib/CodeGen/", re.I), "Code generation"),
     # Require RegAlloc / RegisterInfo — bare "Register" matches too many ABI helpers.
-    (re.compile(r"RegAlloc|RegisterInfo|register.?alloc", re.I), "Register allocation"),
+    # Avoid matching "Register" inside unrelated names (e.g. helper Register* APIs outside RA).
+    (re.compile(r"(?i)(^|/)RegAlloc|RegisterCoalescer|register.?alloc"), "Register allocation"),
     (re.compile(r"Schedule|Scheduler|MachineScheduler", re.I), "Scheduling"),
     (re.compile(r"(^|/)llvm/lib/Target/", re.I), "Backend"),
     (re.compile(r"AMDGPU|NVPTX|NVVM|SPIRV|DirectX|cuda|rocm|hip", re.I), "GPU"),
