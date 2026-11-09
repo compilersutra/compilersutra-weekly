@@ -19,6 +19,7 @@
         "aria-label",
         theme === "light" ? "Switch to dark theme" : "Switch to light theme"
       );
+      btn.title = btn.getAttribute("aria-label") || "Theme";
     }
   }
   apply(preferred());

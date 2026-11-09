@@ -40,12 +40,22 @@ Because.
     assert "Read latest issue" in home
     assert ">Explore<" in home
     assert ">Topics<" in home
+    assert ">Subscribe<" in home
     assert "Backend hardware" in home
     assert "theme-toggle" in home
     assert "data-theme" in home
+    assert 'type="application/atom+xml"' in home
     assert (site / "assets" / "theme.js").is_file()
     assert (site / "assets" / "site.css").is_file()
     assert (site / "assets" / "filters.js").is_file()
+    assert (site / "feed.xml").is_file()
+    feed = (site / "feed.xml").read_text(encoding="utf-8")
+    assert "<feed" in feed and "CompilerSutra Weekly" in feed
+    about = (site / "about.html").read_text(encoding="utf-8")
+    assert "Selection and" in about or "high signal" in about.lower()
+    assert "Cadence" in about
+    changelog = (site / "changelog.html").read_text(encoding="utf-8")
+    assert "changelog-list" in changelog
     explore = (site / "explore" / "index.html").read_text(encoding="utf-8")
     assert "filters.js" in explore
     assert ">Explore<" in explore

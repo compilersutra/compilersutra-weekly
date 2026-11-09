@@ -6,6 +6,7 @@
   <title>About — CompilerSutra Weekly</title>
   <meta name="description" content="A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, with context on what changed and why it matters."/>
   <meta name="color-scheme" content="dark light"/>
+  <link rel="alternate" type="application/atom+xml" title="CompilerSutra Weekly" href="feed.xml"/>
   <script>
   (function(){try{var t=localStorage.getItem('csw-theme');
   if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
@@ -26,13 +27,14 @@
         <a href="index.html">Latest</a>
         <a href="explore/index.html">Explore</a>
         <a href="topics/index.html">Topics</a>
-        <a href="topics/research.html">Research</a>
+        <a href="topics/research.html">Papers</a>
         <a href="archive.html">Archive</a>
+        <a href="subscribe.html">Subscribe</a>
         <a href="about.html" aria-current="page">About</a>
       </nav>
       <div class="header-actions">
         <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Switch to light theme">Theme</button>
         <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
@@ -41,10 +43,12 @@
         <a href="index.html">Latest</a>
         <a href="explore/index.html">Explore</a>
         <a href="topics/index.html">Topics</a>
-        <a href="topics/research.html">Research</a>
+        <a href="topics/research.html">Papers</a>
         <a href="archive.html">Archive</a>
+        <a href="subscribe.html">Subscribe</a>
         <a href="about.html">About</a>
         <a href="changelog.html">Change log</a>
+        <a href="feed.xml">Atom feed</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
         <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
@@ -69,12 +73,44 @@
 
   <main class="wrap article-narrow">
     <p class="hero-kicker">About</p>
-    <h1 class="page-title">Compiler intelligence, not a commit dump</h1>
-    <p class="muted">CompilerSutra Weekly curates developments across the compiler ecosystem and
-    explains <em>what changed</em>, <em>why it matters</em>, and <em>who should care</em>.</p>
-    <p class="muted">Git repository activity is the primary source. We do not invent benchmarks or impact.</p>
+    <h1 class="page-title">How this weekly works</h1>
+    <p class="muted">CompilerSutra Weekly is a curated brief of compiler changes.
+    We explain <em>what changed</em>, <em>why it might matter</em>, and
+    <em>who should care</em> — and we mark uncertainty when the source is thin.</p>
+
+    <h2 class="section-label">Cadence</h2>
+    <p class="muted">Published every Saturday (UTC). Each issue covers the previous Friday→Friday window (end exclusive). Issues stay at stable URLs under
+    <code>issues/YYYY/YYYY-MM-DD.html</code>.</p>
+
+    <h2 class="section-label">Sources</h2>
+    <p class="muted">Primary: git mirrors of tracked projects (LLVM/Clang, GCC, MLIR paths,
+    selected GPU/AI stacks). Secondary: GitHub releases, selected RFCs/discussions,
+    and compiler-relevant arXiv items when present in the collect window.</p>
+
+    <h2 class="section-label">Selection and “high signal”</h2>
+    <p class="muted">Commits are grouped by related subjects/paths into development themes.
+    Heuristics promote items that look like new support, ABI, codegen, correctness, or
+    multi-commit themes. Noise (reverts, NFC-only, test-only) is demoted. The newsletter
+    is curated from that set — not every collected commit.</p>
+    <p class="muted">We do <strong>not</strong> invent benchmarks, performance numbers,
+    or completion status. If impact is unclear from the subject/paths, we say so.</p>
+
+    <h2 class="section-label">Labels</h2>
+    <p class="muted"><strong>Stage</strong> (Frontend / Middle-end / Backend / Runtime &amp; Toolchain),
+    <strong>domain</strong> (CPU, GPU, AI/ML, …), <strong>hardware</strong> (when paths/subjects
+    name a target), and <strong>audience</strong> are assigned independently from evidence.
+    SPIR-V may appear as a hardware/target chip when the change is SPIR-V-specific.
+    “Papers” in the nav is research reading; Explore’s Research domain is the same label
+    used as a filter over stories.</p>
+
+    <h2 class="section-label">Who maintains this</h2>
+    <p class="muted">Published by CompilerSutra under Apache-2.0.
+    Corrections and questions: open a GitHub issue on the weekly repository.</p>
+
     <div class="cta-row" style="margin-top:1.5rem">
-      <a class="btn btn-primary" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+      <a class="btn btn-primary" href="subscribe.html">Subscribe (RSS)</a>
+      <a class="btn btn-ghost" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+      <a class="btn btn-ghost" href="https://github.com/compilersutra/compilersutra-weekly/issues" rel="noopener noreferrer">Report a correction</a>
       <a class="btn btn-ghost" href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra.com</a>
     </div>
   </main>
@@ -82,12 +118,13 @@
   </div>
   <footer class="site-footer">
     <div class="wrap">
-      <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
+      <div>© CompilerSutra · Apache-2.0 · Published every Saturday (UTC). Each issue covers the previous Friday→Friday window (end exclusive).</div>
       <div>
+        <a href="subscribe.html">Subscribe</a> ·
+        <a href="feed.xml">Feed</a> ·
         <a href="changelog.html">Change log</a> ·
-        <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
-        <a href="https://www.compilersutra.com/">Learn</a>
+        <a href="https://github.com/compilersutra/compilersutra-weekly/issues">Corrections</a>
       </div>
     </div>
   </footer>

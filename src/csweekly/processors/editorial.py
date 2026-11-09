@@ -218,6 +218,17 @@ def editorial_blurb(story: Story) -> str:
     )
 
 
+def _clip_words(text: str, limit: int) -> str:
+    """Truncate on a word boundary so UI summaries never cut mid-token."""
+    text = re.sub(r"\s+", " ", (text or "").strip())
+    if len(text) <= limit:
+        return text
+    cut = text[: limit + 1].rsplit(" ", 1)[0].rstrip(".,;:—-")
+    if len(cut) < max(24, limit // 3):
+        cut = text[:limit].rstrip()
+    return cut + "…"
+
+
 def week_overview_bullets(groups: list[ChangeGroup]) -> list[str]:
     """Five-minute briefing: named developments, not domain counts."""
     ranked = sorted(
@@ -237,8 +248,9 @@ def week_overview_bullets(groups: list[ChangeGroup]) -> list[str]:
     for g in ranked[:5]:
         stage = (g.stages or ["—"])[0]
         domain = (g.domains or ["—"])[0]
-        why = (g.why_it_matters or "Impact not yet clear.")[:140]
-        bullets.append(f"{g.title[:90]} — {why} ({stage} · {domain})")
+        title = _clip_words(g.title or "Untitled", 72)
+        why = _clip_words(g.why_it_matters or "Impact not yet clear.", 110)
+        bullets.append(f"{title} — {why} ({stage} · {domain})")
     if not bullets:
         return ["Quiet week in the tracked sources — no high-signal themes stood out."]
     return bullets

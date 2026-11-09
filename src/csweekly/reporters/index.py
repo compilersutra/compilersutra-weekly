@@ -14,10 +14,13 @@ from pathlib import Path
 from csweekly.analyzers.taxonomy import DOMAINS, STAGES, TECH_AREAS
 from csweekly.brand import (
     BRAND_TAG,
+    CADENCE,
+    CONTACT_NOTE,
     EDU_URL,
     HERO_KICKER,
     HERO_LEDE,
     HERO_TITLE,
+    ISSUES_URL,
     META_DESCRIPTION,
     PAGES_URL,
     PROJECT_NAME,
@@ -186,6 +189,7 @@ def write_archive_index(reports_dir: Path, site_dir: Path) -> Path:
     (site_dir / "about.html").write_text(_page_about(), encoding="utf-8")
     (site_dir / "changelog.html").write_text(_page_changelog(metas), encoding="utf-8")
     (site_dir / "subscribe.html").write_text(_page_subscribe(), encoding="utf-8")
+    (site_dir / "feed.xml").write_text(_atom_feed(metas), encoding="utf-8")
     (site_dir / "topics").mkdir(parents=True, exist_ok=True)
     (site_dir / "topics" / "index.html").write_text(_page_topics_hub(metas), encoding="utf-8")
     for topic in TOPICS:
@@ -279,13 +283,15 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         <div class="latest-card">
           <p class="hero-kicker">This week</p>
           <h2>Issue {html.escape(num)}</h2>
-          <p class="latest-meta">{html.escape(latest.date)} · {html.escape(latest.window)}</p>
+          <p class="latest-meta">Published {html.escape(latest.date)} (Saturday) · Window {html.escape(latest.window)}</p>
           <p class="latest-cover">{hs} high signal · {wk} worth knowing</p>
+          <p class="muted">{html.escape(CADENCE)}</p>
           {overview}
           <div class="cta-row">
             <a class="btn btn-primary" href="{html.escape(latest.href_html)}">Read latest issue →</a>
-            <a class="btn btn-ghost" href="explore/index.html">Explore ecosystem</a>
-            <a class="btn btn-ghost" href="archive.html">Browse archive</a>
+            <a class="btn btn-ghost" href="subscribe.html">Subscribe (RSS)</a>
+            <a class="btn btn-ghost" href="explore/index.html">Explore</a>
+            <a class="btn btn-ghost" href="archive.html">Archive</a>
           </div>
         </div>
 """
@@ -340,7 +346,7 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         f"""<a class="bucket" href="topics/{html.escape(str(t['id']))}.html">
   <strong>{html.escape(str(t['label']))}</strong>
   <span>{html.escape(str(t['blurb']))}</span>
-  <span class="go">Open →</span>
+  <span class="go">Open {html.escape(str(t['label']))} topic →</span>
 </a>"""
         for t in TOPICS
     )
@@ -424,13 +430,21 @@ def _page_topics_hub(metas: list[IssueMeta]) -> str:
         n = cat_counts.get(key, 0)
         if tid == "llvm":
             n += cat_counts.get("clang", 0)
-        latest_line = f"<span class='go'>Latest: {n} curated changes</span>" if latest and n else "<span class='go'>Open →</span>"
+        label = str(t["label"])
         if tid == "research" and latest:
             n = int(latest.stats.get("research") or 0)
-            latest_line = f"<span class='go'>Latest: {n} papers/items</span>" if n else latest_line
+            latest_line = (
+                f"<span class='go'>{n} papers/items in latest issue →</span>"
+                if n
+                else f"<span class='go'>Open {html.escape(label)} →</span>"
+            )
+        elif latest and n:
+            latest_line = f"<span class='go'>{n} curated in latest · Open {html.escape(label)} →</span>"
+        else:
+            latest_line = f"<span class='go'>Open {html.escape(label)} →</span>"
         cards.append(
             f"""<a class="bucket" href="{html.escape(tid)}.html">
-  <strong>{html.escape(str(t['label']))}</strong>
+  <strong>{html.escape(label)}</strong>
   <span>{html.escape(str(t['blurb']))}</span>
   {latest_line}
 </a>"""
@@ -677,12 +691,24 @@ def _group_html_card(g: dict, *, depth: int = 0, compact: bool = False) -> str:
 
 def _page_archive(metas: list[IssueMeta]) -> str:
     items = _issue_rows(metas, depth=0)
+    latest = metas[0] if metas else None
+    next_note = (
+        f'<p class="muted">Latest: #{latest.issue_number:03d} ({html.escape(latest.date)}). '
+        f"{html.escape(CADENCE)}</p>"
+        if latest and latest.issue_number
+        else f'<p class="muted">{html.escape(CADENCE)}</p>'
+    )
     body = f"""
   {_topic_bar(depth=0)}
   <main class="wrap article-narrow">
     <p class="hero-kicker">Archive</p>
     <h1 class="page-title">All issues</h1>
-    <section class="panel" style="margin-top:1.5rem">
+    {next_note}
+    <div class="cta-row" style="margin-bottom:1rem">
+      <a class="btn btn-ghost" href="subscribe.html">Subscribe (RSS)</a>
+      <a class="btn btn-ghost" href="feed.xml">Atom feed</a>
+    </div>
+    <section class="panel" style="margin-top:0.5rem">
       <ul class="issue-list">{items or "<li>No issues yet.</li>"}</ul>
     </section>
   </main>
@@ -695,12 +721,44 @@ def _page_about() -> str:
   {_topic_bar(depth=0)}
   <main class="wrap article-narrow">
     <p class="hero-kicker">About</p>
-    <h1 class="page-title">Compiler intelligence, not a commit dump</h1>
-    <p class="muted">CompilerSutra Weekly curates developments across the compiler ecosystem and
-    explains <em>what changed</em>, <em>why it matters</em>, and <em>who should care</em>.</p>
-    <p class="muted">Git repository activity is the primary source. We do not invent benchmarks or impact.</p>
+    <h1 class="page-title">How this weekly works</h1>
+    <p class="muted">CompilerSutra Weekly is a curated brief of compiler changes.
+    We explain <em>what changed</em>, <em>why it might matter</em>, and
+    <em>who should care</em> — and we mark uncertainty when the source is thin.</p>
+
+    <h2 class="section-label">Cadence</h2>
+    <p class="muted">{html.escape(CADENCE)} Issues stay at stable URLs under
+    <code>issues/YYYY/YYYY-MM-DD.html</code>.</p>
+
+    <h2 class="section-label">Sources</h2>
+    <p class="muted">Primary: git mirrors of tracked projects (LLVM/Clang, GCC, MLIR paths,
+    selected GPU/AI stacks). Secondary: GitHub releases, selected RFCs/discussions,
+    and compiler-relevant arXiv items when present in the collect window.</p>
+
+    <h2 class="section-label">Selection and “high signal”</h2>
+    <p class="muted">Commits are grouped by related subjects/paths into development themes.
+    Heuristics promote items that look like new support, ABI, codegen, correctness, or
+    multi-commit themes. Noise (reverts, NFC-only, test-only) is demoted. The newsletter
+    is curated from that set — not every collected commit.</p>
+    <p class="muted">We do <strong>not</strong> invent benchmarks, performance numbers,
+    or completion status. If impact is unclear from the subject/paths, we say so.</p>
+
+    <h2 class="section-label">Labels</h2>
+    <p class="muted"><strong>Stage</strong> (Frontend / Middle-end / Backend / Runtime &amp; Toolchain),
+    <strong>domain</strong> (CPU, GPU, AI/ML, …), <strong>hardware</strong> (when paths/subjects
+    name a target), and <strong>audience</strong> are assigned independently from evidence.
+    SPIR-V may appear as a hardware/target chip when the change is SPIR-V-specific.
+    “Papers” in the nav is research reading; Explore’s Research domain is the same label
+    used as a filter over stories.</p>
+
+    <h2 class="section-label">Who maintains this</h2>
+    <p class="muted">Published by CompilerSutra under Apache-2.0.
+    {html.escape(CONTACT_NOTE)}</p>
+
     <div class="cta-row" style="margin-top:1.5rem">
-      <a class="btn btn-primary" href="{html.escape(REPO_URL)}" rel="noopener noreferrer">GitHub</a>
+      <a class="btn btn-primary" href="subscribe.html">Subscribe (RSS)</a>
+      <a class="btn btn-ghost" href="{html.escape(REPO_URL)}" rel="noopener noreferrer">GitHub</a>
+      <a class="btn btn-ghost" href="{html.escape(ISSUES_URL)}" rel="noopener noreferrer">Report a correction</a>
       <a class="btn btn-ghost" href="{html.escape(EDU_URL)}" rel="noopener noreferrer">CompilerSutra.com</a>
     </div>
   </main>
@@ -709,14 +767,22 @@ def _page_about() -> str:
 
 
 def _page_subscribe() -> str:
+    feed = "feed.xml"
     body = f"""
   {_topic_bar(depth=0)}
   <main class="wrap article-narrow">
     <p class="hero-kicker">Subscribe</p>
-    <h1 class="page-title">Get future issues</h1>
-    <p class="muted">Email delivery is not wired yet. Watch the
-    <a href="{html.escape(REPO_URL)}">GitHub repository</a> or check the archive each Saturday.
-    We will not ship a fake signup form.</p>
+    <h1 class="page-title">Follow new issues</h1>
+    <p class="muted">{html.escape(CADENCE)}</p>
+    <p class="muted">Email delivery is not wired yet — we will not ship a fake signup form.
+    Use the Atom feed in any reader, or watch the GitHub repo.</p>
+    <div class="cta-row" style="margin-top:1.25rem">
+      <a class="btn btn-primary" href="{feed}">Atom feed</a>
+      <a class="btn btn-ghost" href="{html.escape(REPO_URL)}" rel="noopener noreferrer">Watch on GitHub</a>
+      <a class="btn btn-ghost" href="archive.html">Browse archive</a>
+    </div>
+    <p class="muted" style="margin-top:1.5rem">Feed URL:
+      <code>{html.escape(PAGES_URL.rstrip('/'))}/feed.xml</code></p>
   </main>
 """
     return _shell("Subscribe — CompilerSutra Weekly", body, active="about", depth=0)
@@ -741,13 +807,42 @@ def _page_changelog(metas: list[IssueMeta]) -> str:
                 "groups": data.get("groups") or [],
             }
         )
+    # Static preview so the page is useful without JS / before script runs
+    preview_rows: list[str] = []
+    for issue in datasets[:2]:
+        for s in (issue.get("stories") or [])[:25]:
+            title = html.escape((s.get("title") or "")[:140])
+            url = html.escape(s.get("source_url") or "#")
+            sig = html.escape(str(s.get("signal") or s.get("importance") or ""))
+            proj = html.escape(str(s.get("project") or s.get("category") or ""))
+            num = (
+                f"#{int(issue['issue_number']):03d}"
+                if issue.get("issue_number")
+                else issue.get("date")
+            )
+            href = html.escape(str(issue.get("href") or "archive.html"))
+            preview_rows.append(
+                f"<li><a href='{url}' rel='noopener noreferrer'><strong>{title}</strong></a>"
+                f"<div class='meta'>{sig} · {proj} · <a href='{href}'>{html.escape(str(num))}</a></div></li>"
+            )
+            if len(preview_rows) >= 40:
+                break
+        if len(preview_rows) >= 40:
+            break
+    if preview_rows:
+        static_list = "\n".join(preview_rows)
+        count_seed = f"{len(preview_rows)} shown (filter to refine)"
+    else:
+        static_list = '<li class="topic-empty">No collected stories yet. Run a collect/report cycle first.</li>'
+        count_seed = "0 shown"
     payload = json.dumps(datasets)
     body = f"""
   {_topic_bar(depth=0)}
   <main class="wrap">
     <p class="hero-kicker">Complete change log</p>
     <h1 class="page-title">Search the collected dataset</h1>
-    <p class="muted">Includes items not selected for the editorial newsletter.</p>
+    <p class="muted">Includes items not selected for the editorial newsletter.
+      Filters need JavaScript; a preview is listed below either way.</p>
     <div class="filters">
       <input id="q" type="search" placeholder="Search RISC-V, vectorization, MLIR, AMDGPU…" aria-label="Search"/>
       <select id="project" aria-label="Project"><option value="">All projects</option></select>
@@ -762,8 +857,10 @@ def _page_changelog(metas: list[IssueMeta]) -> str:
         <option value="other">Other</option>
       </select>
     </div>
-    <p id="count" class="muted"></p>
-    <ul id="results" class="changelog-list"></ul>
+    <p id="count" class="muted">{html.escape(count_seed)}</p>
+    <ul id="results" class="changelog-list">
+      {static_list}
+    </ul>
   </main>
   <script>
   const DATA = {payload};
@@ -810,7 +907,7 @@ def _page_changelog(metas: list[IssueMeta]) -> str:
         (s.areas||[]).join(' '),(s.technical_areas||[]).join(' '),s.project,s.category].join(' ').toLowerCase();
       return blob.includes(query);
     }}).slice(0,400);
-    countEl.textContent = hits.length + ' shown';
+    countEl.textContent = hits.length ? (hits.length + ' shown') : 'No matches for these filters.';
     results.innerHTML = hits.map(s => {{
       const why = s.why_it_matters || '';
       const num = s._num ? ('#'+String(s._num).padStart(3,'0')) : s._date;
@@ -819,14 +916,53 @@ def _page_changelog(metas: list[IssueMeta]) -> str:
         <div class="meta">${{esc(s.signal||s.importance||'')}} · ${{esc(s.project||s.category||'')}} ·
           ${{esc(why).slice(0,140)}} · <a href="${{s._href}}">${{esc(num)}}</a></div>
       </li>`;
-    }}).join('') || '<li class="topic-empty">No matches.</li>';
+    }}).join('') || '<li class="topic-empty">No matches for these filters.</li>';
   }}
   function esc(t){{return String(t||'').replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[c]));}}
   [q,project,domain,stage,importance].forEach(el=>el.addEventListener('input',render));
-  render();
+  if (flat.length) render();
   </script>
 """
     return _shell("Change log — CompilerSutra Weekly", body, active="archive", depth=0)
+
+
+def _atom_feed(metas: list[IssueMeta]) -> str:
+    """Atom feed of published issues for readers/subscribe."""
+    base = PAGES_URL.rstrip("/")
+    updated = metas[0].date if metas else "1970-01-01"
+    entries = []
+    for m in metas[:52]:
+        num = f"#{m.issue_number:03d}" if m.issue_number else m.date
+        link = f"{base}/{m.href_html}"
+        title = f"CompilerSutra Weekly {num} ({m.date})"
+        summary = m.window or "Weekly compiler brief"
+        # Prefer first briefing bullets from changelog when present
+        payload = _load_changelog(m.path)
+        bullets = payload.get("week_overview") or []
+        if bullets:
+            summary = " · ".join(bullets[:3])
+        entries.append(
+            f"""  <entry>
+    <title>{html.escape(title)}</title>
+    <link href="{html.escape(link)}" rel="alternate" type="text/html"/>
+    <id>{html.escape(link)}</id>
+    <updated>{html.escape(m.date)}T12:00:00Z</updated>
+    <summary>{html.escape(summary[:500])}</summary>
+  </entry>"""
+        )
+    return f"""<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{html.escape(PROJECT_NAME)}</title>
+  <subtitle>{html.escape(META_DESCRIPTION)}</subtitle>
+  <link href="{html.escape(base)}/feed.xml" rel="self" type="application/atom+xml"/>
+  <link href="{html.escape(base)}/" rel="alternate" type="text/html"/>
+  <id>{html.escape(base)}/</id>
+  <updated>{html.escape(updated)}T12:00:00Z</updated>
+  <author><name>CompilerSutra</name><uri>{html.escape(EDU_URL)}</uri></author>
+  <rights>Apache-2.0</rights>
+{chr(10).join(entries)}
+</feed>
+"""
 
 
 def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: IssueMeta | None) -> str:
@@ -867,7 +1003,8 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
     <div class="issue-nav">{" · ".join(nav_bits)}</div>
     <p class="hero-kicker">Issue {html.escape(num)}</p>
     <h1 class="page-title">CompilerSutra Weekly — {html.escape(num)}</h1>
-    <p class="muted">{html.escape(meta.window)}</p>
+    <p class="muted">Published {html.escape(meta.date)} · Window {html.escape(meta.window)}</p>
+    <p class="muted">{html.escape(CADENCE)}</p>
     {toc}
     {content}
   </article>
@@ -1165,6 +1302,8 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
     archive = "archive.html" if depth == 0 else "../" * depth + "archive.html"
     about = "about.html" if depth == 0 else "../" * depth + "about.html"
     changelog = "changelog.html" if depth == 0 else "../" * depth + "changelog.html"
+    subscribe = "subscribe.html" if depth == 0 else "../" * depth + "subscribe.html"
+    feed = "feed.xml" if depth == 0 else "../" * depth + "feed.xml"
     research = f"{'../' * depth}topics/research.html" if depth else "topics/research.html"
     if depth == 0:
         topics, explore, stages = "topics/index.html", "explore/index.html", "explore/index.html#stages"
@@ -1190,6 +1329,7 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
   <title>{html.escape(title)}</title>
   <meta name="description" content="{html.escape(META_DESCRIPTION)}"/>
   <meta name="color-scheme" content="dark light"/>
+  <link rel="alternate" type="application/atom+xml" title="{html.escape(PROJECT_NAME)}" href="{feed}"/>
   <script>
   (function(){{try{{var t=localStorage.getItem('csw-theme');
   if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
@@ -1210,13 +1350,14 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
         <a href="{home}"{cur("home")}>Latest</a>
         <a href="{explore}"{" aria-current=\"page\"" if active=="explore" else ""}>Explore</a>
         <a href="{topics}"{" aria-current=\"page\"" if topic_active else ""}>Topics</a>
-        <a href="{research}">Research</a>
+        <a href="{research}">Papers</a>
         <a href="{archive}"{cur("archive")}>Archive</a>
+        <a href="{subscribe}">Subscribe</a>
         <a href="{about}"{cur("about")}>About</a>
       </nav>
       <div class="header-actions">
         <a class="icon-btn" href="{html.escape(REPO_URL)}" rel="noopener noreferrer" title="GitHub">GitHub</a>
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Switch to light theme">Theme</button>
         <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
@@ -1225,10 +1366,12 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
         <a href="{home}">Latest</a>
         <a href="{explore}">Explore</a>
         <a href="{topics}">Topics</a>
-        <a href="{research}">Research</a>
+        <a href="{research}">Papers</a>
         <a href="{archive}">Archive</a>
+        <a href="{subscribe}">Subscribe</a>
         <a href="{about}">About</a>
         <a href="{changelog}">Change log</a>
+        <a href="{feed}">Atom feed</a>
         <a href="{html.escape(REPO_URL)}" rel="noopener noreferrer">GitHub</a>
         <a href="{html.escape(EDU_URL)}" rel="noopener noreferrer">CompilerSutra</a>
       </div>
@@ -1239,12 +1382,13 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
   </div>
   <footer class="site-footer">
     <div class="wrap">
-      <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
+      <div>© CompilerSutra · Apache-2.0 · {html.escape(CADENCE)}</div>
       <div>
+        <a href="{subscribe}">Subscribe</a> ·
+        <a href="{feed}">Feed</a> ·
         <a href="{changelog}">Change log</a> ·
-        <a href="{html.escape(PAGES_URL)}">Pages</a> ·
         <a href="{html.escape(REPO_URL)}">Source</a> ·
-        <a href="{html.escape(EDU_URL)}">Learn</a>
+        <a href="{html.escape(ISSUES_URL)}">Corrections</a>
       </div>
     </div>
   </footer>

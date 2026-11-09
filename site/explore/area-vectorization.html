@@ -6,6 +6,7 @@
   <title>Vectorization — CompilerSutra Weekly</title>
   <meta name="description" content="A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, with context on what changed and why it matters."/>
   <meta name="color-scheme" content="dark light"/>
+  <link rel="alternate" type="application/atom+xml" title="CompilerSutra Weekly" href="../feed.xml"/>
   <script>
   (function(){try{var t=localStorage.getItem('csw-theme');
   if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
@@ -26,13 +27,14 @@
         <a href="../index.html">Latest</a>
         <a href="index.html" aria-current="page">Explore</a>
         <a href="../topics/index.html">Topics</a>
-        <a href="../topics/research.html">Research</a>
+        <a href="../topics/research.html">Papers</a>
         <a href="../archive.html">Archive</a>
+        <a href="../subscribe.html">Subscribe</a>
         <a href="../about.html">About</a>
       </nav>
       <div class="header-actions">
         <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Switch to light theme">Theme</button>
         <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
@@ -41,10 +43,12 @@
         <a href="../index.html">Latest</a>
         <a href="index.html">Explore</a>
         <a href="../topics/index.html">Topics</a>
-        <a href="../topics/research.html">Research</a>
+        <a href="../topics/research.html">Papers</a>
         <a href="../archive.html">Archive</a>
+        <a href="../subscribe.html">Subscribe</a>
         <a href="../about.html">About</a>
         <a href="../changelog.html">Change log</a>
+        <a href="../feed.xml">Atom feed</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
         <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
@@ -81,12 +85,13 @@
   </div>
   <footer class="site-footer">
     <div class="wrap">
-      <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
+      <div>© CompilerSutra · Apache-2.0 · Published every Saturday (UTC). Each issue covers the previous Friday→Friday window (end exclusive).</div>
       <div>
+        <a href="../subscribe.html">Subscribe</a> ·
+        <a href="../feed.xml">Feed</a> ·
         <a href="../changelog.html">Change log</a> ·
-        <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
-        <a href="https://www.compilersutra.com/">Learn</a>
+        <a href="https://github.com/compilersutra/compilersutra-weekly/issues">Corrections</a>
       </div>
     </div>
   </footer>

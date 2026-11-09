@@ -6,6 +6,7 @@
   <title>#001 — CompilerSutra Weekly</title>
   <meta name="description" content="A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, with context on what changed and why it matters."/>
   <meta name="color-scheme" content="dark light"/>
+  <link rel="alternate" type="application/atom+xml" title="CompilerSutra Weekly" href="../../feed.xml"/>
   <script>
   (function(){try{var t=localStorage.getItem('csw-theme');
   if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
@@ -26,13 +27,14 @@
         <a href="../../index.html" aria-current="page">Latest</a>
         <a href="../../explore/index.html">Explore</a>
         <a href="../../topics/index.html">Topics</a>
-        <a href="../../topics/research.html">Research</a>
+        <a href="../../topics/research.html">Papers</a>
         <a href="../../archive.html">Archive</a>
+        <a href="../../subscribe.html">Subscribe</a>
         <a href="../../about.html">About</a>
       </nav>
       <div class="header-actions">
         <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Switch to light theme">Theme</button>
         <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
@@ -41,10 +43,12 @@
         <a href="../../index.html">Latest</a>
         <a href="../../explore/index.html">Explore</a>
         <a href="../../topics/index.html">Topics</a>
-        <a href="../../topics/research.html">Research</a>
+        <a href="../../topics/research.html">Papers</a>
         <a href="../../archive.html">Archive</a>
+        <a href="../../subscribe.html">Subscribe</a>
         <a href="../../about.html">About</a>
         <a href="../../changelog.html">Change log</a>
+        <a href="../../feed.xml">Atom feed</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
         <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
@@ -71,9 +75,10 @@
     <div class="issue-nav"><a class="back" href="../../archive.html">← Archive</a></div>
     <p class="hero-kicker">Issue #001</p>
     <h1 class="page-title">CompilerSutra Weekly — #001</h1>
-    <p class="muted">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+    <p class="muted">Published 2026-11-07 · Window 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+    <p class="muted">Published every Saturday (UTC). Each issue covers the previous Friday→Friday window (end exclusive).</p>
     <nav class="toc" aria-label="On this page"><a href="#briefing">Five-minute briefing</a><a href="#featured">Featured</a><a href="#worth-knowing">Worth knowing</a><a href="#themes">Themes</a><a href="#worth-reading">Research</a><a href="#deep-dive">Deep dive</a><a href="#topic-index">Topic index</a></nav>
-    <section id="briefing" class="issue-section"><h2>Five-minute briefing</h2><p class="muted">Start here if you only have a few minutes.</p><ul class="overview-list"><li>Extract subvectors via vec_perm_const — Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. Related commits also touch permute cost modeling — no perf cl (Backend · CPU)</li><li>Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR work, not middle-end auto-vectoriz (Frontend · Languages)</li><li>Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator chan (Backend · CPU)</li><li>Add nvvm.mulf Op — Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change, not a measured performance imp (Middle-end · GPU)</li><li>Use runCodeGenPipeline in SPIRVTranslate — SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU backends. (Backend · GPU)</li></ul></section>
+    <section id="briefing" class="issue-section"><h2>Five-minute briefing</h2><p class="muted">Start here if you only have a few minutes.</p><ul class="overview-list"><li>Extract subvectors via vec_perm_const — Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. Related commits also touch… (Backend · CPU)</li><li>Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR… (Frontend · Languages)</li><li>Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not… (Backend · CPU)</li><li>Add nvvm.mulf Op — Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change… (Middle-end · GPU)</li><li>Use runCodeGenPipeline in SPIRVTranslate — SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU… (Backend · GPU)</li></ul></section>
 <section id="featured" class="issue-section"><h2>Featured developments</h2><p class="muted">What changed, why it matters, and where to read the source.</p><div class="story-stack"><article class="story-card issue-story" id="gcc-gcc-risc-v">
   <h3>[GCC] Extract subvectors via vec_perm_const</h3>
   <div class="badge-row"><span class="badge">Backend</span><span class="badge">CPU</span><span class="badge">RISC-V</span></div>
@@ -321,12 +326,13 @@
   </div>
   <footer class="site-footer">
     <div class="wrap">
-      <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
+      <div>© CompilerSutra · Apache-2.0 · Published every Saturday (UTC). Each issue covers the previous Friday→Friday window (end exclusive).</div>
       <div>
+        <a href="../../subscribe.html">Subscribe</a> ·
+        <a href="../../feed.xml">Feed</a> ·
         <a href="../../changelog.html">Change log</a> ·
-        <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
-        <a href="https://www.compilersutra.com/">Learn</a>
+        <a href="https://github.com/compilersutra/compilersutra-weekly/issues">Corrections</a>
       </div>
     </div>
   </footer>

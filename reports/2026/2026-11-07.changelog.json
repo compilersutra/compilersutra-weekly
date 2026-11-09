@@ -51,11 +51,11 @@
     }
   },
   "week_overview": [
-    "Extract subvectors via vec_perm_const \u2014 Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. Related commits also touch permute cost modeling \u2014 no perf cl (Backend \u00b7 CPU)",
-    "Implement support for matrix splat cast \u2014 Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR work, not middle-end auto-vectoriz (Frontend \u00b7 Languages)",
-    "Add RISCVABI helper functions for single/doubleFP and purecap \u2014 Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator chan (Backend \u00b7 CPU)",
-    "Add nvvm.mulf Op \u2014 Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change, not a measured performance imp (Middle-end \u00b7 GPU)",
-    "Use runCodeGenPipeline in SPIRVTranslate \u2014 SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU backends. (Backend \u00b7 GPU)"
+    "Extract subvectors via vec_perm_const \u2014 Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. Related commits also touch\u2026 (Backend \u00b7 CPU)",
+    "Implement support for matrix splat cast \u2014 Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR\u2026 (Frontend \u00b7 Languages)",
+    "Add RISCVABI helper functions for single/doubleFP and purecap \u2014 Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not\u2026 (Backend \u00b7 CPU)",
+    "Add nvvm.mulf Op \u2014 Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change\u2026 (Middle-end \u00b7 GPU)",
+    "Use runCodeGenPipeline in SPIRVTranslate \u2014 SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU\u2026 (Backend \u00b7 GPU)"
   ],
   "stories": [
     {

@@ -6,6 +6,7 @@
   <title>CompilerSutra Weekly</title>
   <meta name="description" content="A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, with context on what changed and why it matters."/>
   <meta name="color-scheme" content="dark light"/>
+  <link rel="alternate" type="application/atom+xml" title="CompilerSutra Weekly" href="feed.xml"/>
   <script>
   (function(){try{var t=localStorage.getItem('csw-theme');
   if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
@@ -26,13 +27,14 @@
         <a href="index.html" aria-current="page">Latest</a>
         <a href="explore/index.html">Explore</a>
         <a href="topics/index.html">Topics</a>
-        <a href="topics/research.html">Research</a>
+        <a href="topics/research.html">Papers</a>
         <a href="archive.html">Archive</a>
+        <a href="subscribe.html">Subscribe</a>
         <a href="about.html">About</a>
       </nav>
       <div class="header-actions">
         <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
-        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Toggle color theme">Light</button>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Switch to light theme">Theme</button>
         <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
       </div>
     </div>
@@ -41,10 +43,12 @@
         <a href="index.html">Latest</a>
         <a href="explore/index.html">Explore</a>
         <a href="topics/index.html">Topics</a>
-        <a href="topics/research.html">Research</a>
+        <a href="topics/research.html">Papers</a>
         <a href="archive.html">Archive</a>
+        <a href="subscribe.html">Subscribe</a>
         <a href="about.html">About</a>
         <a href="changelog.html">Change log</a>
+        <a href="feed.xml">Atom feed</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
         <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
@@ -77,13 +81,15 @@
         <div class="latest-card">
           <p class="hero-kicker">This week</p>
           <h2>Issue #001</h2>
-          <p class="latest-meta">2026-11-07 · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+          <p class="latest-meta">Published 2026-11-07 (Saturday) · Window 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
           <p class="latest-cover">9 high signal · 12 worth knowing</p>
-          <ul class='overview-list'><li>Extract subvectors via vec_perm_const — Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. Related commits also touch permute cost modeling — no perf cl (Backend · CPU)</li><li>Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR work, not middle-end auto-vectoriz (Frontend · Languages)</li><li>Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator chan (Backend · CPU)</li><li>Add nvvm.mulf Op — Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change, not a measured performance imp (Middle-end · GPU)</li><li>Use runCodeGenPipeline in SPIRVTranslate — SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU backends. (Backend · GPU)</li></ul>
+          <p class="muted">Published every Saturday (UTC). Each issue covers the previous Friday→Friday window (end exclusive).</p>
+          <ul class='overview-list'><li>Extract subvectors via vec_perm_const — Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. Related commits also touch… (Backend · CPU)</li><li>Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR… (Frontend · Languages)</li><li>Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not… (Backend · CPU)</li><li>Add nvvm.mulf Op — Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change… (Middle-end · GPU)</li><li>Use runCodeGenPipeline in SPIRVTranslate — SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU… (Backend · GPU)</li></ul>
           <div class="cta-row">
             <a class="btn btn-primary" href="issues/2026/2026-11-07.html">Read latest issue →</a>
-            <a class="btn btn-ghost" href="explore/index.html">Explore ecosystem</a>
-            <a class="btn btn-ghost" href="archive.html">Browse archive</a>
+            <a class="btn btn-ghost" href="subscribe.html">Subscribe (RSS)</a>
+            <a class="btn btn-ghost" href="explore/index.html">Explore</a>
+            <a class="btn btn-ghost" href="archive.html">Archive</a>
           </div>
         </div>
 
@@ -144,32 +150,32 @@
       <div class="buckets"><a class="bucket" href="topics/llvm.html">
   <strong>LLVM</strong>
   <span>Optimization · IR · CodeGen · Clang · backends</span>
-  <span class="go">Open →</span>
+  <span class="go">Open LLVM topic →</span>
 </a>
 <a class="bucket" href="topics/gcc.html">
   <strong>GCC</strong>
   <span>GIMPLE · RTL · middle-end · targets</span>
-  <span class="go">Open →</span>
+  <span class="go">Open GCC topic →</span>
 </a>
 <a class="bucket" href="topics/mlir.html">
   <strong>MLIR</strong>
   <span>Dialects · transformations · infrastructure</span>
-  <span class="go">Open →</span>
+  <span class="go">Open MLIR topic →</span>
 </a>
 <a class="bucket" href="topics/ai.html">
   <strong>AI Compilers</strong>
   <span>Triton · XLA · IREE · TVM · MLIR</span>
-  <span class="go">Open →</span>
+  <span class="go">Open AI Compilers topic →</span>
 </a>
 <a class="bucket" href="topics/gpu.html">
   <strong>GPU</strong>
   <span>AMDGPU · NVPTX · SPIR-V · offloading</span>
-  <span class="go">Open →</span>
+  <span class="go">Open GPU topic →</span>
 </a>
 <a class="bucket" href="topics/research.html">
   <strong>Research</strong>
   <span>Papers, benchmarks, technical notes</span>
-  <span class="go">Open →</span>
+  <span class="go">Open Research topic →</span>
 </a></div>
       
       <section class="wrap" style="padding:1.5rem 0 0.5rem" aria-labelledby="latest-dev">
@@ -230,12 +236,13 @@
   </div>
   <footer class="site-footer">
     <div class="wrap">
-      <div>© CompilerSutra · Apache-2.0 · Editorial context over raw commits</div>
+      <div>© CompilerSutra · Apache-2.0 · Published every Saturday (UTC). Each issue covers the previous Friday→Friday window (end exclusive).</div>
       <div>
+        <a href="subscribe.html">Subscribe</a> ·
+        <a href="feed.xml">Feed</a> ·
         <a href="changelog.html">Change log</a> ·
-        <a href="https://compilersutra.github.io/compilersutra-weekly/">Pages</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
-        <a href="https://www.compilersutra.com/">Learn</a>
+        <a href="https://github.com/compilersutra/compilersutra-weekly/issues">Corrections</a>
       </div>
     </div>
   </footer>
