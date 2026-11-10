@@ -27,3 +27,10 @@ CADENCE = (
 CONTACT_NOTE = (
     "Corrections and questions: open a GitHub issue on the weekly repository."
 )
+# Same Google Form used on compilersutra.com (“Weekly Compiler Notes”) —
+# no separate Mailchimp/SendGrid stack for this static Pages site.
+NEWSLETTER_FORM_URL = (
+    "https://docs.google.com/forms/d/e/"
+    "1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform"
+)
+NEWSLETTER_FORM_LABEL = "Subscribe by email (Google Form)"

@@ -54,8 +54,9 @@ Because.
     assert "Edition" in feed or "<entry>" in feed
     assert (site / "feed.xsl").is_file()
     sub = (site / "subscribe.html").read_text(encoding="utf-8")
-    assert "What is an Atom feed" in sub
-    assert "How to subscribe" in sub
+    assert "docs.google.com/forms" in sub
+    assert "Easiest: email" in sub
+    assert "Atom feed" in sub
     about = (site / "about.html").read_text(encoding="utf-8")
     assert "Selection and" in about or "high signal" in about.lower()
     assert "Cadence" in about
