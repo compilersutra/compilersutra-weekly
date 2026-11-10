@@ -147,7 +147,7 @@ def render_markdown(issue: WeeklyIssue) -> str:
         "",
         "**What changed in compilers this week — selected, with context.**",
         "",
-        f"Welcome to issue **#{num:03d}**. Not every commit — curated changes across "
+        f"Welcome to edition **#{num:03d}**. Not every commit — curated changes across "
         "LLVM, Clang, GCC, MLIR, GPU compilers, AI compilers, and research, with context "
         "on why they matter.",
         "",
@@ -202,8 +202,8 @@ def render_markdown(issue: WeeklyIssue) -> str:
         lines.append("## Themes this week")
         lines.append("")
         lines.append(
-            "Theme index for this issue. Cross-issue continuity links appear once "
-            "prior issues cover the same story_id."
+            "Theme index for this edition. Cross-edition continuity links appear once "
+            "prior editions cover the same story_id."
         )
         lines.append("")
         for track, items in sorted(issue.moving_stories.items()):
@@ -297,7 +297,7 @@ def render_markdown(issue: WeeklyIssue) -> str:
     lines.append("## Topic index")
     lines.append("")
     lines.append(
-        "Compact links to canonical stories in this issue. Full explanations live above."
+        "Compact links to canonical stories in this edition. Full explanations live above."
     )
     lines.append("")
     buckets: dict[str, list[ChangeGroup]] = defaultdict(list)

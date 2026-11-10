@@ -18,11 +18,11 @@ HERO_LEDE = (
     "LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, "
     "and connected to the compiler pipeline."
 )
-# Editorial week: Saturday→Friday (Asia/Kolkata); public site shows published issues only
+# Editorial week: Saturday→Friday (Asia/Kolkata); public site shows published editions only
 CADENCE = (
-    "Published every Saturday. Each issue covers Saturday→Friday "
+    "Published every Saturday. Each edition covers Saturday→Friday "
     "(Asia/Kolkata), frozen at end of Friday. Raw collection stays private; "
-    "only the curated issue is published."
+    "only the curated edition is published."
 )
 CONTACT_NOTE = (
     "Corrections and questions: open a GitHub issue on the weekly repository."

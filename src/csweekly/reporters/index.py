@@ -162,7 +162,7 @@ def write_archive_index(reports_dir: Path, site_dir: Path) -> Path:
         "",
         f"Site: [{PAGES_URL}]({PAGES_URL}) · Source: [{REPO_URL}]({REPO_URL})",
         "",
-        "| Issue | Window |",
+        "| Edition | Window |",
         "| --- | --- |",
     ]
     metas: list[IssueMeta] = []
@@ -295,7 +295,7 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
     payload = _load_changelog(latest.path) if latest else {}
     featured = ""
     recent = ""
-    latest_block = '<p class="topic-empty">No issues yet.</p>'
+    latest_block = '<p class="topic-empty">No editions yet.</p>'
     if latest:
         num = f"#{latest.issue_number:03d}" if latest.issue_number else latest.date
         high = list(payload.get("high_signal") or [])
@@ -315,13 +315,13 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         )
         latest_block = f"""
         <div class="latest-card">
-          <p class="hero-kicker">Issue {html.escape(num)} · {html.escape(pub_human)}</p>
+          <p class="hero-kicker">Edition {html.escape(num)} · {html.escape(pub_human)}</p>
           <h2>This week&rsquo;s engineering highlights</h2>
           <p class="latest-cover">{hs_total} high-signal · {wk} worth knowing</p>
           <p class="muted">{html.escape(HERO_LEDE)}</p>
           {overview}
           <div class="cta-row">
-            <a class="btn btn-primary" href="{html.escape(latest.href_html)}">Read this week&rsquo;s issue →</a>
+            <a class="btn btn-primary" href="{html.escape(latest.href_html)}">Read this week&rsquo;s edition →</a>
             <a class="btn btn-ghost" href="{html.escape(NEWSLETTER_FORM_URL)}" rel="noopener noreferrer" target="_blank">{html.escape(NEWSLETTER_FORM_LABEL)}</a>
           </div>
         </div>
@@ -363,7 +363,7 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         if cards:
             count_note = (
                 f"Showing {shown} of {len(high)} high-signal developments"
-                + (f" · {remain} more in the issue" if remain else "")
+                + (f" · {remain} more in the edition" if remain else "")
                 + f" · {hs_total} total including deep dive"
             )
             recent = f"""
@@ -372,7 +372,7 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         <p class="muted">{html.escape(count_note)}</p>
         <div class="story-grid">{cards}</div>
         <p class="muted" style="margin-top:0.85rem">
-          <a href="{html.escape(latest.href_html)}">Open the full issue for every selected story →</a>
+          <a href="{html.escape(latest.href_html)}">Open the full edition for every selected story →</a>
         </p>
       </section>
 """
@@ -407,7 +407,7 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
       <div class="buckets">{domain_cards}</div>
       <section class="panel" aria-labelledby="archive-heading">
         <h2 id="archive-heading">Archive</h2>
-        <ul class="issue-list">{items if items else '<li class="topic-empty">No issues yet.</li>'}</ul>
+        <ul class="issue-list">{items if items else '<li class="topic-empty">No editions yet.</li>'}</ul>
       </section>
     </div>
   </main>
@@ -439,7 +439,7 @@ def _page_topics_hub(metas: list[IssueMeta]) -> str:
         if tid == "research" and latest:
             n = int(latest.stats.get("research") or 0)
             latest_line = (
-                f"<span class='go'>{n} papers/items in latest issue →</span>"
+                f"<span class='go'>{n} papers/items in latest edition →</span>"
                 if n
                 else f"<span class='go'>Open {html.escape(label)} →</span>"
             )
@@ -459,7 +459,7 @@ def _page_topics_hub(metas: list[IssueMeta]) -> str:
   <main class="wrap article-narrow">
     <p class="hero-kicker">Topics</p>
     <h1 class="page-title">Follow a topic</h1>
-    <p class="muted">Counts come from the latest curated issue — not every raw commit.</p>
+    <p class="muted">Counts come from the latest curated edition — not every raw commit.</p>
     <div class="buckets">{''.join(cards)}</div>
     <p class="muted"><a href="../explore/index.html">Or explore by stage / domain / technical area →</a></p>
   </main>
@@ -571,7 +571,7 @@ def _page_dimension(kind: str, label: str, metas: list[IssueMeta]) -> str:
   <main class="wrap article-narrow">
     <p class="hero-kicker">{html.escape(kind)}</p>
     <h1 class="page-title">{html.escape(label)}</h1>
-    <p class="muted">Curated stories tagged with this {html.escape(kind)} across recent issues.</p>
+    <p class="muted">Curated stories tagged with this {html.escape(kind)} across recent editions.</p>
     <div class="cta-row" style="margin-bottom:1.5rem">
       <a class="btn btn-ghost" href="index.html">All dimensions</a>
       <a class="btn btn-ghost" href="../changelog.html">Change log</a>
@@ -613,7 +613,7 @@ def _page_topic(topic: dict[str, object], metas: list[IssueMeta]) -> str:
             num = f"#{meta.issue_number:03d}" if meta.issue_number else meta.date
             blocks.append(
                 f"""<section class="topic-issue-block">
-  <h3><a href="../{html.escape(meta.href_html)}">{html.escape(num)} · full issue</a></h3>
+  <h3><a href="../{html.escape(meta.href_html)}">{html.escape(num)} · full edition</a></h3>
   <p class="muted">Latest developments · {html.escape(meta.window)}</p>
   <div class="story-grid">{cards}</div>
 </section>"""
@@ -701,13 +701,13 @@ def _page_archive(metas: list[IssueMeta]) -> str:
   {_topic_bar(depth=0)}
   <main class="wrap article-narrow">
     <p class="hero-kicker">Archive</p>
-    <h1 class="page-title">All issues</h1>
+    <h1 class="page-title">All editions</h1>
     {next_note}
     <div class="cta-row" style="margin-bottom:1rem">
       <a class="btn btn-ghost" href="{html.escape(NEWSLETTER_FORM_URL)}" rel="noopener noreferrer" target="_blank">{html.escape(NEWSLETTER_FORM_LABEL)}</a>
     </div>
     <section class="panel" style="margin-top:0.5rem">
-      <ul class="issue-list">{items or "<li>No issues yet.</li>"}</ul>
+      <ul class="issue-list">{items or "<li>No editions yet.</li>"}</ul>
     </section>
   </main>
 """
@@ -725,7 +725,7 @@ def _page_about() -> str:
     <em>who should care</em> — and we mark uncertainty when the source is thin.</p>
 
     <h2 class="section-label">Cadence</h2>
-    <p class="muted">{html.escape(CADENCE)} Issues stay at stable URLs under
+    <p class="muted">{html.escape(CADENCE)} Editions stay at stable URLs under
     <code>issues/YYYY/YYYY-MM-DD.html</code>.</p>
 
     <h2 class="section-label">Publishing lifecycle</h2>
@@ -735,11 +735,11 @@ def _page_about() -> str:
       <li><strong>Collect</strong> (Sat→Fri) — idempotent raw facts into an edition</li>
       <li><strong>Freeze</strong> (end of Friday) — close the period</li>
       <li><strong>Process / review</strong> — normalize, cluster, editorial queue</li>
-      <li><strong>Validate → publish</strong> (Saturday) — one immutable curated issue</li>
+      <li><strong>Validate → publish</strong> (Saturday) — one immutable curated edition</li>
     </ol>
-    <p class="muted">While the next issue is collecting, the site continues to show the
-    last published issue. Late items after freeze go to the next edition or an
-    explicit addendum — published issues are not silently rewritten.</p>
+    <p class="muted">While the next edition is collecting, the site continues to show the
+    last published edition. Late items after freeze go to the next edition or an
+    explicit addendum — published editions are not silently rewritten.</p>
 
     <h2 class="section-label">Sources</h2>
     <p class="muted">Primary: git mirrors of tracked projects (LLVM/Clang, GCC, MLIR paths,
@@ -782,7 +782,7 @@ def _page_subscribe() -> str:
     body = f"""
   <main class="wrap article-narrow">
     <p class="hero-kicker">Subscribe</p>
-    <h1 class="page-title">Get each Saturday issue</h1>
+    <h1 class="page-title">Get each Saturday edition</h1>
     <p class="lede">{html.escape(HERO_LEDE)}</p>
     <p class="muted">{html.escape(CADENCE)} Approximate reading time: 5–10 minutes.</p>
 
@@ -803,7 +803,7 @@ def _page_subscribe() -> str:
 
     <h2 class="section-label">What you receive</h2>
     <ul class="muted">
-      <li>One curated issue per week (Saturday publish on this site)</li>
+      <li>One curated edition per week (Saturday publish on this site)</li>
       <li>High-signal stories + worth knowing + optional deep dive</li>
       <li>Primary source links (commits / papers) — not a raw commit dump</li>
     </ul>
@@ -986,7 +986,7 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
   {_topic_bar(depth=2)}
   <article class="article issue-article">
     <div class="issue-nav">{" · ".join(nav_bits)}</div>
-    <p class="hero-kicker">Issue {html.escape(num)}</p>
+    <p class="hero-kicker">Edition {html.escape(num)}</p>
     <h1 class="page-title">CompilerSutra Weekly — {html.escape(num)}</h1>
     <p class="muted">Published {html.escape(meta.date)} · Window {html.escape(meta.window)}</p>
     <p class="muted">{html.escape(CADENCE)}</p>
@@ -1252,7 +1252,7 @@ def _issue_rows(metas: list[IssueMeta], *, depth: int) -> str:
     rows = []
     for m in metas:
         href = prefix + m.href_html
-        num = f"#{m.issue_number:03d}" if m.issue_number else "Weekly issue"
+        num = f"#{m.issue_number:03d}" if m.issue_number else "Weekly edition"
         hs = m.stats.get("high_signal")
         wk = m.stats.get("worth_knowing")
         bits = []
