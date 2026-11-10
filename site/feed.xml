@@ -13,6 +13,6 @@
     <link href="https://compilersutra.github.io/compilersutra-weekly/issues/2026/2026-11-07.html" rel="alternate" type="text/html"/>
     <id>https://compilersutra.github.io/compilersutra-weekly/issues/2026/2026-11-07.html</id>
     <updated>2026-11-07T12:00:00Z</updated>
-    <summary>Extract subvectors via vec_perm_const — Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. Related commits also touch… (Backend · CPU) · Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR… (Frontend · Languages) · Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is </summary>
+    <summary>Extract subvectors via vec_perm_const — This patch adds a const-perm recoginzer for subvector extractions. The implementation is exactly the same as… (Backend · CPU) · Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR… (Frontend · Languages) · Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this </summary>
   </entry>
 </feed>

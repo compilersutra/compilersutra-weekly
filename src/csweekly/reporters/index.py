@@ -27,6 +27,11 @@ from csweekly.brand import (
     REPO_URL,
 )
 from csweekly.reporters.mdhtml import markdown_to_html
+from csweekly.reporters.taxonomy_ui import (
+    format_issue_date,
+    taxonomy_badges_html,
+    taxonomy_line,
+)
 
 TOPICS: list[dict[str, object]] = [
     {
@@ -126,8 +131,22 @@ class IssueMeta:
 
 
 def list_issues(reports_dir: Path) -> list[Path]:
+    """Published issues only — drafts/collecting editions never appear on the site."""
+    from csweekly.edition import is_publicly_visible
+    from datetime import date as _date
+
     files = sorted(reports_dir.glob("**/*.md"), reverse=True)
-    return [p for p in files if p.name != "README.md" and p.parent.name != "archive"]
+    out: list[Path] = []
+    for p in files:
+        if p.name == "README.md" or p.parent.name == "archive":
+            continue
+        try:
+            published_on = _date.fromisoformat(p.stem)
+        except ValueError:
+            continue
+        if is_publicly_visible(published_on):
+            out.append(p)
+    return out
 
 
 def write_archive_index(reports_dir: Path, site_dir: Path) -> Path:
@@ -271,74 +290,82 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
     latest_block = '<p class="topic-empty">No issues yet.</p>'
     if latest:
         num = f"#{latest.issue_number:03d}" if latest.issue_number else latest.date
-        hs = int(latest.stats.get("high_signal") or 0)
+        high = list(payload.get("high_signal") or [])
+        dive = payload.get("deep_dive")
+        hs_total = int(latest.stats.get("high_signal") or (len(high) + (1 if dive else 0)))
         wk = int(latest.stats.get("worth_knowing") or 0)
+        pub_human = format_issue_date(latest.date)
         bullets = payload.get("week_overview") or []
-        overview = ""
-        if bullets:
-            overview = "<ul class='overview-list'>" + "".join(
-                f"<li>{html.escape(b)}</li>" for b in bullets[:5]
-            ) + "</ul>"
+        # Prefer short “what / why” lines over long commit-title dumps
+        overview_items = []
+        for b in bullets[:5]:
+            overview_items.append(f"<li>{html.escape(b)}</li>")
+        overview = (
+            "<ul class='overview-list'>" + "".join(overview_items) + "</ul>"
+            if overview_items
+            else ""
+        )
         latest_block = f"""
         <div class="latest-card">
-          <p class="hero-kicker">This week</p>
-          <h2>Issue {html.escape(num)}</h2>
-          <p class="latest-meta">Published {html.escape(latest.date)} (Saturday) · Window {html.escape(latest.window)}</p>
-          <p class="latest-cover">{hs} high signal · {wk} worth knowing</p>
-          <p class="muted">{html.escape(CADENCE)}</p>
+          <p class="hero-kicker">Issue {html.escape(num)} · {html.escape(pub_human)}</p>
+          <h2>This week&rsquo;s engineering highlights</h2>
+          <p class="latest-cover">{hs_total} high-signal · {wk} worth knowing</p>
+          <p class="muted">{html.escape(HERO_LEDE)}</p>
           {overview}
           <div class="cta-row">
-            <a class="btn btn-primary" href="{html.escape(latest.href_html)}">Read latest issue →</a>
+            <a class="btn btn-primary" href="{html.escape(latest.href_html)}">Read this week&rsquo;s issue →</a>
             <a class="btn btn-ghost" href="subscribe.html">Subscribe (RSS)</a>
-            <a class="btn btn-ghost" href="explore/index.html">Explore</a>
-            <a class="btn btn-ghost" href="archive.html">Archive</a>
           </div>
         </div>
 """
-        feat = payload.get("deep_dive") or (payload.get("high_signal") or [None])[0]
+        feat = dive or (high[0] if high else None)
+        feat_id = (feat or {}).get("story_id") or (feat or {}).get("id")
         if feat:
-            why = html.escape((feat.get("why_it_matters") or "")[:220])
-            what = html.escape((feat.get("what_changed") or feat.get("title") or "")[:240])
-            who = html.escape(", ".join(feat.get("who_should_care") or [])[:140])
+            why = html.escape((feat.get("why_it_matters") or "")[:280])
+            notes = feat.get("deep_dive_notes") or {}
+            problem = html.escape((notes.get("problem") or feat.get("what_changed") or "")[:320])
             src = "#"
             stories = feat.get("stories") or []
             if stories:
                 src = html.escape(stories[0].get("source_url") or "#")
-            badges = "".join(
-                f'<span class="badge">{html.escape(str(b))}</span>'
-                for b in (
-                    [feat.get("change_type")]
-                    + (feat.get("stages") or [])[:1]
-                    + (feat.get("domains") or [])[:1]
-                )
-                if b
-            )
             featured = f"""
       <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
-        <p class="hero-kicker">Featured development</p>
-        <h2 id="featured-heading" class="section-label">Featured this week</h2>
+        <h2 id="featured-heading" class="section-label">Deep dive</h2>
         <article class="feature-card">
           <h2>{html.escape((feat.get("title") or "")[:140])}</h2>
-          <div class="badge-row">{badges}</div>
-          <p class="secondary"><strong>What changed.</strong> {what}</p>
-          <p class="secondary"><strong>Why it matters.</strong> {why}</p>
-          <p class="muted"><strong>Who should care.</strong> {who or "Compiler engineers"}</p>
+          {taxonomy_badges_html(feat)}
+          <p class="secondary"><strong>Problem.</strong> {problem}</p>
+          <p class="secondary"><strong>Why engineers should care.</strong> {why}</p>
           <div class="cta-row" style="margin-top:0.85rem">
-            <a class="btn btn-primary" href="{html.escape(latest.href_html)}#deep-dive">Read technical analysis →</a>
-            <a class="btn btn-ghost" href="{src}" rel="noopener noreferrer">Original source</a>
+            <a class="btn btn-primary" href="{html.escape(latest.href_html)}#deep-dive">Full technical analysis →</a>
+            <a class="btn btn-ghost" href="{src}" rel="noopener noreferrer">Primary source</a>
           </div>
         </article>
       </section>
 """
-        cards = "".join(
-            _group_html_card(g, depth=0) for g in (payload.get("high_signal") or [])[:6]
-        )
+        # Do not repeat the featured deep-dive in the grid
+        grid_src = [
+            g
+            for g in high
+            if ((g.get("story_id") or g.get("id")) != feat_id)
+        ][:6]
+        shown = len(grid_src)
+        remain = max(0, len(high) - shown)
+        cards = "".join(_group_html_card(g, depth=0) for g in grid_src)
         if cards:
+            count_note = (
+                f"Showing {shown} of {len(high)} high-signal developments"
+                + (f" · {remain} more in the issue" if remain else "")
+                + f" · {hs_total} total including deep dive"
+            )
             recent = f"""
       <section class="wrap" style="padding:1.5rem 0 0.5rem" aria-labelledby="latest-dev">
-        <h2 id="latest-dev" class="section-label">Latest developments</h2>
-        <p class="muted">High-signal items from the current issue.</p>
+        <h2 id="latest-dev" class="section-label">This week&rsquo;s engineering highlights</h2>
+        <p class="muted">{html.escape(count_note)}</p>
         <div class="story-grid">{cards}</div>
+        <p class="muted" style="margin-top:0.85rem">
+          <a href="{html.escape(latest.href_html)}">Open the full issue for every selected story →</a>
+        </p>
       </section>
 """
 
@@ -346,60 +373,30 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         f"""<a class="bucket" href="topics/{html.escape(str(t['id']))}.html">
   <strong>{html.escape(str(t['label']))}</strong>
   <span>{html.escape(str(t['blurb']))}</span>
-  <span class="go">Open {html.escape(str(t['label']))} topic →</span>
 </a>"""
         for t in TOPICS
+        if t["id"] in {"llvm", "gcc", "mlir", "gpu", "ai", "research"}
     )
     items = _issue_rows(metas[:10], depth=0)
     body = f"""
-  {_topic_bar(depth=0)}
   <main>
     <section class="hero">
       <div class="wrap">
-        <p class="hero-kicker">{html.escape(HERO_KICKER)}</p>
+        <p class="hero-kicker">CompilerSutra Weekly</p>
         <h1>{html.escape(HERO_TITLE)}</h1>
-        <p class="lede">{html.escape(HERO_LEDE)}</p>
+        <p class="lede">LLVM · GCC · MLIR · GPU · AI Compilers — {html.escape(HERO_LEDE)}</p>
         {latest_block}
       </div>
     </section>
     {featured}
+    {recent}
     <div class="wrap" style="padding-top:2rem">
-      <h2 class="section-label">Explore the compiler pipeline</h2>
-      <p class="muted" style="margin-bottom:0.85rem">An organizing model — not a claim every compiler looks the same.
-        <a href="explore/index.html">View all filters →</a></p>
-      <div class="pipeline">
-        <a class="pipeline-step" href="explore/stage-frontend.html"><strong>01 Frontend</strong><span>Parsing · types · semantics</span></a>
-        <a class="pipeline-step" href="explore/stage-middle-end.html"><strong>02 Middle-end</strong><span>IR · analysis · optimization</span></a>
-        <a class="pipeline-step" href="explore/stage-backend.html"><strong>03 Backend</strong><span>CodeGen · register allocation</span></a>
-        <a class="pipeline-step" href="explore/stage-runtime-toolchain.html"><strong>04 Runtime</strong><span>JIT · linkers · toolchains</span></a>
-      </div>
-      <h2 class="section-label">Backend hardware</h2>
-      <div class="hw-grid" aria-label="Hardware targets">
-        <div class="hw-col"><h3>CPU</h3>
-          <a href="explore/domain-cpu.html">x86-64</a>
-          <a href="explore/domain-cpu.html">AArch64</a>
-          <a href="explore/domain-cpu.html">RISC-V</a>
-        </div>
-        <div class="hw-col"><h3>GPU</h3>
-          <a href="explore/domain-gpu.html">NVIDIA</a>
-          <a href="explore/domain-gpu.html">AMD</a>
-          <a href="explore/domain-gpu.html">Intel</a>
-          <a href="explore/domain-gpu.html">Portable GPU</a>
-        </div>
-        <div class="hw-col"><h3>AI accelerators</h3>
-          <a href="explore/domain-ai-ml.html">TPU</a>
-          <a href="explore/domain-accelerators.html">NPU</a>
-          <a href="explore/domain-accelerators.html">ASIC</a>
-        </div>
-        <div class="hw-col"><h3>Other</h3>
-          <a href="explore/domain-fpga.html">FPGA</a>
-          <a href="explore/domain-dsp.html">DSP</a>
-          <a href="explore/domain-quantum.html">Quantum</a>
-        </div>
-      </div>
-      <h2 class="section-label">Explore domains &amp; projects</h2>
+      <h2 class="section-label">Explore by engineering domain</h2>
+      <p class="muted" style="margin-bottom:0.85rem">
+        Independent filters for project, compiler stage, and hardware —
+        <a href="explore/index.html">open Explore</a>.
+      </p>
       <div class="buckets">{domain_cards}</div>
-      {recent}
       <section class="panel" aria-labelledby="archive-heading">
         <h2 id="archive-heading">Archive</h2>
         <ul class="issue-list">{items if items else '<li class="topic-empty">No issues yet.</li>'}</ul>
@@ -662,13 +659,7 @@ def _group_html_card(g: dict, *, depth: int = 0, compact: bool = False) -> str:
     title = html.escape((g.get("title") or "")[:120])
     why = html.escape((g.get("why_it_matters") or "Impact not yet clear.")[:200])
     what = html.escape((g.get("what_changed") or "")[:160])
-    who = html.escape(", ".join(g.get("who_should_care") or [])[:120])
-    ctype = html.escape(g.get("change_type") or "Other")
-    badges = "".join(
-        f'<span class="badge">{html.escape(str(b))}</span>'
-        for b in (g.get("stages") or [])[:2] + (g.get("domains") or [])[:2]
-        if b
-    )
+    tax = taxonomy_line(g)
     url = "#"
     stories = g.get("stories") or []
     if stories:
@@ -677,15 +668,15 @@ def _group_html_card(g: dict, *, depth: int = 0, compact: bool = False) -> str:
         return f"""<article class="story-row">
   <h4><a href="{url}" rel="noopener noreferrer">{title}</a></h4>
   <p class="secondary">{why}</p>
-  <div class="meta">{ctype} · {who}</div>
+  <div class="meta">{tax}</div>
 </article>"""
-    what_block = f'<p class="secondary"><strong>What.</strong> {what}</p>' if what else ""
+    what_block = f'<p class="secondary">{what}</p>' if what else ""
     return f"""<article class="story-card">
   <h4><a href="{url}" rel="noopener noreferrer">{title}</a></h4>
-  <div class="badge-row">{badges}</div>
+  {taxonomy_badges_html(g)}
   {what_block}
-  <p><strong>Why.</strong> {why}</p>
-  <div class="meta">{ctype} · {who}</div>
+  <p>{why}</p>
+  <div class="meta"><a href="{url}" rel="noopener noreferrer">Investigate source →</a></div>
 </article>"""
 
 
@@ -729,6 +720,19 @@ def _page_about() -> str:
     <h2 class="section-label">Cadence</h2>
     <p class="muted">{html.escape(CADENCE)} Issues stay at stable URLs under
     <code>issues/YYYY/YYYY-MM-DD.html</code>.</p>
+
+    <h2 class="section-label">Publishing lifecycle</h2>
+    <p class="muted">Raw data accumulates all week and is <strong>never</strong> the
+    public newsletter by itself. Pipeline:</p>
+    <ol class="muted">
+      <li><strong>Collect</strong> (Sat→Fri) — idempotent raw facts into an edition</li>
+      <li><strong>Freeze</strong> (end of Friday) — close the period</li>
+      <li><strong>Process / review</strong> — normalize, cluster, editorial queue</li>
+      <li><strong>Validate → publish</strong> (Saturday) — one immutable curated issue</li>
+    </ol>
+    <p class="muted">While the next issue is collecting, the site continues to show the
+    last published issue. Late items after freeze go to the next edition or an
+    explicit addendum — published issues are not silently rewritten.</p>
 
     <h2 class="section-label">Sources</h2>
     <p class="muted">Primary: git mirrors of tracked projects (LLVM/Clang, GCC, MLIR paths,
@@ -1117,28 +1121,14 @@ def _story_anchor(g: dict) -> str:
 def _issue_story_card(g: dict, *, prominent: bool) -> str:
     anchor = _story_anchor(g)
     title = html.escape((g.get("title") or "")[:140])
-    proj = html.escape((g.get("project") or g.get("category") or "").upper())
     what = html.escape(g.get("what_changed") or "")
     ctx = html.escape(g.get("technical_context") or "")
     why = html.escape(g.get("why_it_matters") or "Impact not yet clear from the source alone.")
     who = html.escape(", ".join(g.get("who_should_care") or []) or "Compiler engineers")
     uncertain = html.escape(g.get("uncertainty_note") or "")
-    ctype = html.escape(g.get("change_type") or "Other")
-    meta_bits = []
-    if g.get("stages"):
-        meta_bits.append("Stage: " + html.escape(", ".join(g["stages"][:2])))
-    if g.get("domains"):
-        meta_bits.append("Domain: " + html.escape(", ".join(g["domains"][:2])))
-    if g.get("hardware_targets"):
-        meta_bits.append("HW: " + html.escape(", ".join(g["hardware_targets"][:2])))
-    if g.get("technical_areas"):
-        meta_bits.append("Area: " + html.escape(", ".join(g["technical_areas"][:2])))
-    meta_bits.append("Type: " + ctype)
-    badges = "".join(
-        f'<span class="badge">{html.escape(str(b))}</span>'
-        for b in (g.get("stages") or [])[:2] + (g.get("domains") or [])[:2] + (g.get("hardware_targets") or [])[:1]
-        if b
-    )
+    level = html.escape(g.get("editorial_level") or ("engineering_analysis" if prominent else "quick_signal"))
+    score = g.get("impact_score")
+    score_bit = f" · editorial priority {score:.1f}/10" if isinstance(score, (int, float)) else ""
     stories = g.get("stories") or []
     primary = stories[0] if stories else {}
     primary_url = html.escape(primary.get("source_url") or "#")
@@ -1155,27 +1145,39 @@ def _issue_story_card(g: dict, *, prominent: bool) -> str:
             f"({len(stories) - 1})</summary><p>{' · '.join(related)}</p></details>"
         )
     cls = "story-card issue-story" if prominent else "story-row"
-    ctx_p = f'<p class="muted"><strong>Context.</strong> {ctx}</p>' if ctx and prominent else ""
+    files = []
+    for s in stories[:3]:
+        for p in (s.get("paths") or [])[:4]:
+            if p not in files:
+                files.append(p)
+    files_p = ""
+    if prominent and files:
+        files_p = (
+            '<p class="muted"><strong>Implementation surface.</strong> '
+            + html.escape(", ".join(files[:6]))
+            + "</p>"
+        )
     unc_p = (
-        f'<p class="muted"><em>Uncertainty.</em> {uncertain}</p>'
+        f'<p class="muted"><em>Limitations.</em> {uncertain}</p>'
         if uncertain and (prominent or g.get("impact_uncertain"))
         else ""
     )
     if prominent:
-        body = f"""  <p><strong>What changed.</strong> {what}</p>
-  {ctx_p}
+        body = f"""  <p><strong>Change.</strong> {what}</p>
+  <p class="muted"><strong>Context.</strong> {ctx}</p>
   <p><strong>Why it matters.</strong> {why}</p>
   <p class="muted"><strong>Who should care.</strong> {who}</p>
+  {files_p}
   {unc_p}"""
     else:
         body = f"""  <p class="secondary">{why}</p>
   {unc_p if g.get("impact_uncertain") else ""}"""
     return f"""<article class="{cls}" id="{html.escape(anchor)}">
-  <h3>{f'[{proj}] ' if proj else ''}{title}</h3>
-  <div class="badge-row">{badges}</div>
+  <h3>{title}</h3>
+  {taxonomy_badges_html(g, include_type=True)}
 {body}
-  <p class="meta">{' · '.join(meta_bits)}</p>
-  <p class="meta">Primary source: <a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a></p>
+  <p class="meta">Level: {level}{html.escape(score_bit)} · Primary source:
+    <a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a></p>
   {related_block}
 </article>"""
 
@@ -1196,20 +1198,23 @@ def _deep_dive_html(g: dict) -> str:
         sources.append(
             f'<li><a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a> — {summary}</li>'
         )
+    hw = html.escape(", ".join((g.get("hardware_targets") or [])[:3]) or "see paths")
     return f"""<section id="deep-dive" class="issue-section deep-dive">
   <h2>Deep dive</h2>
   <article class="feature-card" id="{html.escape(anchor)}-dive">
     <h3>{title}</h3>
+    {taxonomy_badges_html(g)}
     <ol class="deep-list">
-      <li><strong>Background</strong> — {n("background", "Related commits clustered as one theme.")}</li>
-      <li><strong>Previous behavior</strong> — {n("previous_behavior")}</li>
       <li><strong>Problem</strong> — {n("problem")}</li>
-      <li><strong>Implementation</strong> — {n("implementation", g.get("what_changed") or "")}</li>
-      <li><strong>Example</strong> — {n("example")}</li>
-      <li><strong>Implications</strong> — {n("implications", g.get("why_it_matters") or "")}</li>
-      <li><strong>Limits / uncertainty</strong> — {n("limits", g.get("uncertainty_note") or "")}</li>
+      <li><strong>Previous behavior</strong> — {n("previous_behavior")}</li>
+      <li><strong>Change</strong> — {n("implementation", g.get("what_changed") or "")}</li>
+      <li><strong>Implementation surface</strong> — {n("background", "See primary commit file list.")}</li>
+      <li><strong>Target impact</strong> — {hw}</li>
+      <li><strong>Validation</strong> — {n("validation", n("example"))}</li>
+      <li><strong>Why it matters</strong> — {n("implications", g.get("why_it_matters") or "")}</li>
+      <li><strong>Limitations</strong> — {n("limits", g.get("uncertainty_note") or "")}</li>
     </ol>
-    <h4>Evidence</h4>
+    <h4>Evidence (primary sources)</h4>
     <ul>{''.join(sources)}</ul>
   </article>
 </section>"""
@@ -1268,11 +1273,18 @@ def _issue_rows(metas: list[IssueMeta], *, depth: int) -> str:
         href = prefix + m.href_html
         num = f"#{m.issue_number:03d}" if m.issue_number else "Weekly issue"
         hs = m.stats.get("high_signal")
-        extra = f" · {hs} high signal" if hs else ""
+        wk = m.stats.get("worth_knowing")
+        bits = []
+        if hs:
+            bits.append(f"{hs} high-signal")
+        if wk:
+            bits.append(f"{wk} worth knowing")
+        extra = (" · " + " · ".join(bits)) if bits else ""
+        human = format_issue_date(m.date)
         rows.append(
             f"""<li>
   <a class="issue-row" href="{html.escape(href)}">
-    <span class="issue-date">{html.escape(m.date)}</span>
+    <span class="issue-date">{html.escape(human)}</span>
     <span class="title">{html.escape(num)}{html.escape(extra)}</span>
     <span class="issue-window">{html.escape(m.window)}</span>
   </a>

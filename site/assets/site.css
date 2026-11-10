@@ -483,15 +483,27 @@ a.issue-row:hover { background: color-mix(in srgb, var(--accent) 8%, transparent
   color: var(--text-muted);
   font-size: 0.8rem;
 }
-.badge-row { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.45rem 0; }
+.badge-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.45rem 0; }
 .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 0.12rem 0.45rem;
+  padding: 0.14rem 0.5rem;
   background: var(--surface-elevated);
+  white-space: nowrap;
 }
+.badge .tax-dim {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.badge.tax-project { border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
+.badge.tax-target { border-color: color-mix(in srgb, var(--teal) 40%, var(--border)); }
 .story-mini { list-style: none; margin: 0; padding: 0; }
 .story-mini li { border-top: 1px solid var(--border); padding: 0.7rem 0; }
 .story-mini li:first-child { border-top: 0; }

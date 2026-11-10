@@ -56,40 +56,22 @@
   </header>
   <div id="main">
   
-  
-  <div class="subnav" aria-label="Secondary">
-    <div class="wrap">
-      <a href="explore/stage-frontend.html">Frontend</a>
-      <a href="explore/stage-middle-end.html">Middle-end</a>
-      <a href="explore/stage-backend.html">Backend</a>
-      <a href="explore/stage-runtime-toolchain.html">Runtime</a>
-      <a href="explore/domain-cpu.html">CPU</a>
-      <a href="explore/domain-gpu.html">GPU</a>
-      <a href="explore/domain-ai-ml.html">AI / ML</a>
-      <a href="topics/index.html">Projects</a>
-      <a href="topics/llvm.html">LLVM</a><a href="topics/gcc.html">GCC</a><a href="topics/mlir.html">MLIR</a><a href="topics/ai.html">AI Compilers</a><a href="topics/gpu.html">GPU</a><a href="topics/research.html">Research</a>
-    </div>
-  </div>
-
   <main>
     <section class="hero">
       <div class="wrap">
-        <p class="hero-kicker">Weekly compiler brief</p>
-        <h1>What changed in compilers this week</h1>
-        <p class="lede">Selected commits and papers across CPU, GPU and AI compilers — explained for engineers, not dumped as a changelog.</p>
+        <p class="hero-kicker">CompilerSutra Weekly</p>
+        <h1>The compiler changes worth knowing this week</h1>
+        <p class="lede">LLVM · GCC · MLIR · GPU · AI Compilers — LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
         
         <div class="latest-card">
-          <p class="hero-kicker">This week</p>
-          <h2>Issue #001</h2>
-          <p class="latest-meta">Published 2026-11-07 (Saturday) · Window 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
-          <p class="latest-cover">9 high signal · 12 worth knowing</p>
-          <p class="muted">Published every Saturday (UTC). Each issue covers the previous Friday→Friday window (end exclusive).</p>
-          <ul class='overview-list'><li>Extract subvectors via vec_perm_const — Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. Related commits also touch… (Backend · CPU)</li><li>Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR… (Frontend · Languages)</li><li>Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not… (Backend · CPU)</li><li>Add nvvm.mulf Op — Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change… (Middle-end · GPU)</li><li>Use runCodeGenPipeline in SPIRVTranslate — SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU… (Backend · GPU)</li></ul>
+          <p class="hero-kicker">Issue #001 · 7 Nov 2026</p>
+          <h2>This week&rsquo;s engineering highlights</h2>
+          <p class="latest-cover">9 high-signal · 12 worth knowing</p>
+          <p class="muted">LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
+          <ul class='overview-list'><li>Extract subvectors via vec_perm_const — This patch adds a const-perm recoginzer for subvector extractions. The implementation is exactly the same as… (Backend · CPU)</li><li>Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR… (Frontend · Languages)</li><li>Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not… (Backend · CPU)</li><li>Add nvvm.mulf Op — Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change… (Middle-end · GPU)</li><li>Use runCodeGenPipeline in SPIRVTranslate — SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU… (Backend · GPU)</li></ul>
           <div class="cta-row">
-            <a class="btn btn-primary" href="issues/2026/2026-11-07.html">Read latest issue →</a>
+            <a class="btn btn-primary" href="issues/2026/2026-11-07.html">Read this week&rsquo;s issue →</a>
             <a class="btn btn-ghost" href="subscribe.html">Subscribe (RSS)</a>
-            <a class="btn btn-ghost" href="explore/index.html">Explore</a>
-            <a class="btn btn-ghost" href="archive.html">Archive</a>
           </div>
         </div>
 
@@ -97,135 +79,120 @@
     </section>
     
       <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
-        <p class="hero-kicker">Featured development</p>
-        <h2 id="featured-heading" class="section-label">Featured this week</h2>
+        <h2 id="featured-heading" class="section-label">Deep dive</h2>
         <article class="feature-card">
-          <h2>Extract subvectors via vec_perm_const</h2>
-          <div class="badge-row"><span class="badge">Backend</span><span class="badge">Backend</span><span class="badge">CPU</span></div>
-          <p class="secondary"><strong>What changed.</strong> Extract subvectors via vec_perm_const. (10 related commits) Cluster of 10 related commits treated as one development.</p>
-          <p class="secondary"><strong>Why it matters.</strong> Changes RISC-V vector codegen so subvector extracts go through vec_perm_const. Related commits also touch permute cost modeling — no perf claim without evidence.</p>
-          <p class="muted"><strong>Who should care.</strong> Backend developers, CPU compiler developers, RISC-V developers</p>
+          <h2>Extract subvectors via vec_perm_const.</h2>
+          <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>RISC-V</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>deep_dive</span></div>
+          <p class="secondary"><strong>Problem.</strong> This patch adds a const-perm recoginzer for subvector extractions.  The
+implementation is exactly the same as what vec_extract is doing, just
+that we&#x27;re independent of optab modes here and can extract arbitrary
+pieces.</p>
+          <p class="secondary"><strong>Why engineers should care.</strong> This patch adds a const-perm recoginzer for subvector extractions.  The
+implementation is exactly the same as what vec_extract is doing, just
+that we&#x27;re independent of optab modes here and can extract arbitrary
+pieces.</p>
           <div class="cta-row" style="margin-top:0.85rem">
-            <a class="btn btn-primary" href="issues/2026/2026-11-07.html#deep-dive">Read technical analysis →</a>
-            <a class="btn btn-ghost" href="https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91" rel="noopener noreferrer">Original source</a>
+            <a class="btn btn-primary" href="issues/2026/2026-11-07.html#deep-dive">Full technical analysis →</a>
+            <a class="btn btn-ghost" href="https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91" rel="noopener noreferrer">Primary source</a>
           </div>
         </article>
       </section>
 
+    
+      <section class="wrap" style="padding:1.5rem 0 0.5rem" aria-labelledby="latest-dev">
+        <h2 id="latest-dev" class="section-label">This week&rsquo;s engineering highlights</h2>
+        <p class="muted">Showing 6 of 8 high-signal developments · 2 more in the issue · 9 total including deep dive</p>
+        <div class="story-grid"><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer">[CIR] Implement support for matrix splat cast (#239299)</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>CLANG</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
+  <p class="secondary">Implement support for the matrix splat cast</p>
+  <p>Implement support for the matrix splat cast</p>
+  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer">Investigate source →</a></div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer">[RISCV] Add RISCVABI helper functions for single/doubleFP and purecap (#238962)</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>RISC-V</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
+  <p class="secondary">Use them to simplify code that checks for individual enum values.</p>
+  <p>Use them to simplify code that checks for individual enum values.</p>
+  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer">Investigate source →</a></div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer">[MLIR][NVVM] Add nvvm.mulf Op (#238395)</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>MLIR</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>NVPTX</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
+  <p class="secondary">Adds `nvvm.mulf` Op to the NVVM dialect. `nvvm.mulf` performs a
+floating-point multiplication between two operands of the same type and
+lowers to the `llvm.nvvm</p>
+  <p>Adds `nvvm.mulf` Op to the NVVM dialect. `nvvm.mulf` performs a
+floating-point multiplication between two operands of the same type and
+lowers to the `llvm.nvvm.fmul` family of intrinsics.</p>
+  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer">Investigate source →</a></div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer">[SPIR-V][NewPM] Use runCodeGenPipeline in SPIRVTranslate (#238451)</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>SPIR-V</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
+  <p class="secondary">SPIRVTranslate will be able to pick NewPM once SPIR-V defaults to it</p>
+  <p>SPIRVTranslate will be able to pick NewPM once SPIR-V defaults to it</p>
+  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer">Investigate source →</a></div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer">[lldb][Fortran] Added support for functions to DWARFASTParserFortran (#234312)</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLDB</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
+  <p class="secondary">Adds handling for the `DW_TAG_subprogram` and `DW_TAG_subroutine_type`
+DWARF tags in ParseTypeFromDWARF as well as implementing the
+ParseFunctionFromDWARF funct</p>
+  <p>Adds handling for the `DW_TAG_subprogram` and `DW_TAG_subroutine_type`
+DWARF tags in ParseTypeFromDWARF as well as implementing the
+ParseFunctionFromDWARF function, which is necessary for the `frame
+v</p>
+  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer">Investigate source →</a></div>
+</article><article class="story-card">
+  <h4><a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer">[AMDGPU] Clear NoPHIs after SIFixSGPRCopies under the new pass manager (#238531)</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AMDGPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
+  <p class="secondary">SIFixSGPRCopies can build waterfall loops, which add PHIs. The legacy
+pass declares that it clears NoPHIs, but the new pass manager&#x27;s
+SIFixSGPRCopiesPass declar</p>
+  <p>SIFixSGPRCopies can build waterfall loops, which add PHIs. The legacy
+pass declares that it clears NoPHIs, but the new pass manager&#x27;s
+SIFixSGPRCopiesPass declared no properties and never applied them.</p>
+  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer">Investigate source →</a></div>
+</article></div>
+        <p class="muted" style="margin-top:0.85rem">
+          <a href="issues/2026/2026-11-07.html">Open the full issue for every selected story →</a>
+        </p>
+      </section>
+
     <div class="wrap" style="padding-top:2rem">
-      <h2 class="section-label">Explore the compiler pipeline</h2>
-      <p class="muted" style="margin-bottom:0.85rem">An organizing model — not a claim every compiler looks the same.
-        <a href="explore/index.html">View all filters →</a></p>
-      <div class="pipeline">
-        <a class="pipeline-step" href="explore/stage-frontend.html"><strong>01 Frontend</strong><span>Parsing · types · semantics</span></a>
-        <a class="pipeline-step" href="explore/stage-middle-end.html"><strong>02 Middle-end</strong><span>IR · analysis · optimization</span></a>
-        <a class="pipeline-step" href="explore/stage-backend.html"><strong>03 Backend</strong><span>CodeGen · register allocation</span></a>
-        <a class="pipeline-step" href="explore/stage-runtime-toolchain.html"><strong>04 Runtime</strong><span>JIT · linkers · toolchains</span></a>
-      </div>
-      <h2 class="section-label">Backend hardware</h2>
-      <div class="hw-grid" aria-label="Hardware targets">
-        <div class="hw-col"><h3>CPU</h3>
-          <a href="explore/domain-cpu.html">x86-64</a>
-          <a href="explore/domain-cpu.html">AArch64</a>
-          <a href="explore/domain-cpu.html">RISC-V</a>
-        </div>
-        <div class="hw-col"><h3>GPU</h3>
-          <a href="explore/domain-gpu.html">NVIDIA</a>
-          <a href="explore/domain-gpu.html">AMD</a>
-          <a href="explore/domain-gpu.html">Intel</a>
-          <a href="explore/domain-gpu.html">Portable GPU</a>
-        </div>
-        <div class="hw-col"><h3>AI accelerators</h3>
-          <a href="explore/domain-ai-ml.html">TPU</a>
-          <a href="explore/domain-accelerators.html">NPU</a>
-          <a href="explore/domain-accelerators.html">ASIC</a>
-        </div>
-        <div class="hw-col"><h3>Other</h3>
-          <a href="explore/domain-fpga.html">FPGA</a>
-          <a href="explore/domain-dsp.html">DSP</a>
-          <a href="explore/domain-quantum.html">Quantum</a>
-        </div>
-      </div>
-      <h2 class="section-label">Explore domains &amp; projects</h2>
+      <h2 class="section-label">Explore by engineering domain</h2>
+      <p class="muted" style="margin-bottom:0.85rem">
+        Independent filters for project, compiler stage, and hardware —
+        <a href="explore/index.html">open Explore</a>.
+      </p>
       <div class="buckets"><a class="bucket" href="topics/llvm.html">
   <strong>LLVM</strong>
   <span>Optimization · IR · CodeGen · Clang · backends</span>
-  <span class="go">Open LLVM topic →</span>
 </a>
 <a class="bucket" href="topics/gcc.html">
   <strong>GCC</strong>
   <span>GIMPLE · RTL · middle-end · targets</span>
-  <span class="go">Open GCC topic →</span>
 </a>
 <a class="bucket" href="topics/mlir.html">
   <strong>MLIR</strong>
   <span>Dialects · transformations · infrastructure</span>
-  <span class="go">Open MLIR topic →</span>
 </a>
 <a class="bucket" href="topics/ai.html">
   <strong>AI Compilers</strong>
   <span>Triton · XLA · IREE · TVM · MLIR</span>
-  <span class="go">Open AI Compilers topic →</span>
 </a>
 <a class="bucket" href="topics/gpu.html">
   <strong>GPU</strong>
   <span>AMDGPU · NVPTX · SPIR-V · offloading</span>
-  <span class="go">Open GPU topic →</span>
 </a>
 <a class="bucket" href="topics/research.html">
   <strong>Research</strong>
   <span>Papers, benchmarks, technical notes</span>
-  <span class="go">Open Research topic →</span>
 </a></div>
-      
-      <section class="wrap" style="padding:1.5rem 0 0.5rem" aria-labelledby="latest-dev">
-        <h2 id="latest-dev" class="section-label">Latest developments</h2>
-        <p class="muted">High-signal items from the current issue.</p>
-        <div class="story-grid"><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer">Implement support for matrix splat cast</a></h4>
-  <div class="badge-row"><span class="badge">Frontend</span><span class="badge">Languages</span><span class="badge">CPU</span></div>
-  <p class="secondary"><strong>What.</strong> Support for matrix splat cast was implemented. (5 related commits) Cluster of 5 related commits treated as one development.</p>
-  <p><strong>Why.</strong> Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR work, not middle-end auto-vectorization.</p>
-  <div class="meta">New capability · Frontend / Clang developers, Language frontend developers, CPU compiler developers</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer">Add RISCVABI helper functions for single/doubleFP and purecap</a></h4>
-  <div class="badge-row"><span class="badge">Backend</span><span class="badge">CPU</span></div>
-  <p class="secondary"><strong>What.</strong> RISCVABI helper functions for single/doubleFP and purecap was added. (4 related commits) Cluster of 4 related commits treated as one development.</p>
-  <p><strong>Why.</strong> Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator change.</p>
-  <div class="meta">Code generation · Backend developers, CPU compiler developers, RISC-V developers</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer">Add nvvm.mulf Op</a></h4>
-  <div class="badge-row"><span class="badge">Middle-end</span><span class="badge">Backend</span><span class="badge">GPU</span></div>
-  <p class="secondary"><strong>What.</strong> Nvvm.mulf Op was added. (3 related commits) Cluster of 3 related commits treated as one development.</p>
-  <p><strong>Why.</strong> Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change, not a measured performance improvement.</p>
-  <div class="meta">Backend · Middle-end / optimization developers, Backend developers, GPU compiler developers, NVPTX developers</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer">Use runCodeGenPipeline in SPIRVTranslate</a></h4>
-  <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
-  <p class="secondary"><strong>What.</strong> Use runCodeGenPipeline in SPIRVTranslate. (3 related commits) Cluster of 3 related commits treated as one development.</p>
-  <p><strong>Why.</strong> SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU backends.</p>
-  <div class="meta">Code generation · Backend developers, GPU compiler developers, SPIR-V developers</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer">Added support for functions to DWARFASTParserFortran</a></h4>
-  <div class="badge-row"><span class="badge">Runtime &amp; Toolchain</span><span class="badge">Languages</span><span class="badge">CPU</span></div>
-  <p class="secondary"><strong>What.</strong> LLDB: support for functions to DWARFASTParserFortran was added. (2 related commits) Cluster of 2 related commits treated as one development.</p>
-  <p><strong>Why.</strong> Debug-info or debugger tooling change. Relevant to Runtime &amp; Toolchain workflows.</p>
-  <div class="meta">Frontend · Runtime and toolchain developers, Language frontend developers, CPU compiler developers, Debugger / debug-info developer</div>
-</article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer">Clear NoPHIs after SIFixSGPRCopies under the new pass manager</a></h4>
-  <div class="badge-row"><span class="badge">Backend</span><span class="badge">GPU</span></div>
-  <p class="secondary"><strong>What.</strong> Clear NoPHIs after SIFixSGPRCopies under the new pass manager. (2 related commits) Cluster of 2 related commits treated as one development.</p>
-  <p><strong>Why.</strong> AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
-  <div class="meta">Bug fix · Backend developers, GPU compiler developers, AMDGPU developers</div>
-</article></div>
-      </section>
-
       <section class="panel" aria-labelledby="archive-heading">
         <h2 id="archive-heading">Archive</h2>
         <ul class="issue-list"><li>
   <a class="issue-row" href="issues/2026/2026-11-07.html">
-    <span class="issue-date">2026-11-07</span>
-    <span class="title">#001 · 9 high signal</span>
+    <span class="issue-date">7 Nov 2026</span>
+    <span class="title">#001 · 9 high-signal · 12 worth knowing</span>
     <span class="issue-window">2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</span>
   </a>
 </li></ul>
@@ -236,7 +203,7 @@
   </div>
   <footer class="site-footer">
     <div class="wrap">
-      <div>© CompilerSutra · Apache-2.0 · Published every Saturday (UTC). Each issue covers the previous Friday→Friday window (end exclusive).</div>
+      <div>© CompilerSutra · Apache-2.0 · Published every Saturday. Each issue covers Saturday→Friday (Asia/Kolkata), frozen at end of Friday. Raw collection stays private; only the curated issue is published.</div>
       <div>
         <a href="subscribe.html">Subscribe</a> ·
         <a href="feed.xml">Feed</a> ·

@@ -28,7 +28,7 @@ def _source(**kwargs):
 
 
 def test_collect_window_filters_old_commits():
-    window = friday_friday_window(as_of=date(2026, 11, 8))
+    window = friday_friday_window(as_of=date(2026, 11, 5))
     result = collect_git(_source(), window, Path("data/mirrors"), fetch=False, repo_path=FIX)
     subjects = {s.raw["sha"] and s.summary for s in result.stories}
     text = " | ".join(s.summary for s in result.stories)
@@ -38,7 +38,7 @@ def test_collect_window_filters_old_commits():
 
 
 def test_mlir_path_filter():
-    window = friday_friday_window(as_of=date(2026, 11, 8))
+    window = friday_friday_window(as_of=date(2026, 11, 5))
     result = collect_git(
         _source(id="mlir", category="mlir", path_prefixes=["mlir/"]),
         window,
@@ -51,7 +51,7 @@ def test_mlir_path_filter():
 
 
 def test_dedupe_and_report():
-    window = friday_friday_window(as_of=date(2026, 11, 8))
+    window = friday_friday_window(as_of=date(2026, 11, 5))
     a = collect_git(_source(), window, Path("."), fetch=False, repo_path=FIX)
     b = collect_git(_source(), window, Path("."), fetch=False, repo_path=FIX)
     merged = dedupe_stories(a.stories + b.stories)

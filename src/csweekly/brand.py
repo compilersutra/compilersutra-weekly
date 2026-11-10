@@ -13,15 +13,16 @@ META_DESCRIPTION = (
     "with context on what changed and why it matters."
 )
 HERO_KICKER = "Weekly compiler brief"
-HERO_TITLE = "What changed in compilers this week"
+HERO_TITLE = "The compiler changes worth knowing this week"
 HERO_LEDE = (
-    "Selected commits and papers across CPU, GPU and AI compilers — "
-    "explained for engineers, not dumped as a changelog."
+    "LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, "
+    "and connected to the compiler pipeline."
 )
-# Plain-English cadence (window math stays Fri→Fri UTC in the pipeline)
+# Editorial week: Saturday→Friday (Asia/Kolkata); public site shows published issues only
 CADENCE = (
-    "Published every Saturday (UTC). Each issue covers the previous "
-    "Friday→Friday window (end exclusive)."
+    "Published every Saturday. Each issue covers Saturday→Friday "
+    "(Asia/Kolkata), frozen at end of Friday. Raw collection stays private; "
+    "only the curated issue is published."
 )
 CONTACT_NOTE = (
     "Corrections and questions: open a GitHub issue on the weekly repository."

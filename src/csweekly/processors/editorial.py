@@ -90,10 +90,15 @@ def select_for_newsletter(groups: list[ChangeGroup]) -> list[ChangeGroup]:
     )
     dive = pick_deep_dive(deep_candidates)
     if dive:
+        from pathlib import Path
+
+        from csweekly.processors.diff_enrich import enrich_group_from_mirrors
         from csweekly.processors.explain import build_deep_dive_notes
 
         dive.signal = SignalLevel.DEEP_DIVE
+        dive.editorial_level = "deep_dive"
         build_deep_dive_notes(dive)
+        enrich_group_from_mirrors(dive, Path("data/mirrors"))
         selected.append(dive)
 
     for level in (SignalLevel.HIGH_SIGNAL, SignalLevel.WORTH_KNOWING):

@@ -118,6 +118,10 @@ class ChangeGroup(BaseModel):
     hardware_targets: list[str] = Field(default_factory=list)
     impact_uncertain: bool = False
     deep_dive_notes: dict[str, str] = Field(default_factory=dict)
+    # Editorial intelligence (optional; backward compatible)
+    editorial_level: str | None = None  # quick_signal | engineering_analysis | deep_dive
+    impact_score: float | None = None  # 0–10 editorial priority, not a perf claim
+    impact_factors: dict[str, float] = Field(default_factory=dict)
 
 
 class Window(BaseModel):

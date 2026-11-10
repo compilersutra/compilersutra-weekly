@@ -15,7 +15,7 @@ class _Entry(dict):
 
 
 def test_rss_window_filter():
-    window = friday_friday_window(as_of=date(2026, 11, 8))
+    window = friday_friday_window(as_of=date(2026, 11, 5))
 
     class Feed:
         entries = [
@@ -50,7 +50,7 @@ def test_rss_window_filter():
 
 
 def test_arxiv_window_filter():
-    window = friday_friday_window(as_of=date(2026, 11, 8))
+    window = friday_friday_window(as_of=date(2026, 11, 5))
 
     class Feed:
         entries = [

@@ -8,7 +8,7 @@ from csweekly.window import friday_friday_window
 
 
 def test_github_releases_window():
-    window = friday_friday_window(as_of=date(2026, 11, 8))
+    window = friday_friday_window(as_of=date(2026, 11, 5))
     payload = [
         {
             "tag_name": "llvmorg-21.1.0",

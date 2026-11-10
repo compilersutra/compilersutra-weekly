@@ -36,12 +36,12 @@ Because.
     assert (site / "explore" / "index.html").is_file()
     assert (site / "topics" / "llvm.html").is_file()
     home = (site / "index.html").read_text(encoding="utf-8")
-    assert "what changed in compilers this week" in home.lower()
-    assert "Read latest issue" in home
+    assert "compiler changes worth knowing this week" in home.lower()
+    assert "Read this week" in home or "Read latest issue" in home
     assert ">Explore<" in home
     assert ">Topics<" in home
     assert ">Subscribe<" in home
-    assert "Backend hardware" in home
+    assert "Explore by engineering domain" in home
     assert "theme-toggle" in home
     assert "data-theme" in home
     assert 'type="application/atom+xml"' in home

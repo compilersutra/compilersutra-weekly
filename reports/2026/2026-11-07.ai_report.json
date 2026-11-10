@@ -1,0 +1,92 @@
+[
+  {
+    "id": "gcc-gcc-risc-v",
+    "title": "Extract subvectors via vec_perm_const.",
+    "level": "deep_dive",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "llvm-clang-cir-implement",
+    "title": "[CIR] Implement support for matrix splat cast (#239299)",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "llvm-llvm-riscv-add",
+    "title": "[RISCV] Add RISCVABI helper functions for single/doubleFP and purecap (#238962)",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "mlir-mlir-nvvm-add",
+    "title": "[MLIR][NVVM] Add nvvm.mulf Op (#238395)",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "llvm-llvm-spir-v-newpm",
+    "title": "[SPIR-V][NewPM] Use runCodeGenPipeline in SPIRVTranslate (#238451)",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "llvm-lldb-lldb-fortran",
+    "title": "[lldb][Fortran] Added support for functions to DWARFASTParserFortran (#234312)",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "llvm-llvm-amdgpu-clear",
+    "title": "[AMDGPU] Clear NoPHIs after SIFixSGPRCopies under the new pass manager (#238531)",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "llvm-llvm-amdgpu-globalisel",
+    "title": "[AMDGPU][GlobalISel] Fold unmasked signed byte loads into D16 high loads (#236136)",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "llvm-llvm-rfc-amdgpu",
+    "title": "[RFC][AMDGPU][Doc] Add documentation about ABI occupancy (#224103)",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  }
+]

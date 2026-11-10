@@ -99,7 +99,10 @@ def build_issue(
         "unique_items": len(unique),
         "groups": len(groups),
         "editorial_groups": len(editorial),
+        # deep dive is separate from high_signal list; total for covers:
         "high_signal": len(high) + (1 if deep else 0),
+        "high_signal_listed": len(high),
+        "deep_dive_count": 1 if deep else 0,
         "worth_knowing": len(worth),
         "highlights": sum(1 for g in editorial if g.importance == Importance.HIGHLIGHT),
         "notable": sum(1 for g in editorial if g.importance == Importance.NOTABLE),

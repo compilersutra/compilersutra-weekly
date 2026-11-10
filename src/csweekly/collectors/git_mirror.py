@@ -2,7 +2,7 @@
 """Git mirror collector — primary source of weekly truth.
 
 Clones/fetches mirrors and extracts commits by **committer timestamp**
-inside the Friday→Friday UTC window (end exclusive).
+inside the Saturday→Friday editorial window (Asia/Kolkata, end exclusive).
 """
 
 from __future__ import annotations

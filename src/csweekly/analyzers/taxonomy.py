@@ -61,7 +61,10 @@ _PATH_STAGE: list[tuple[re.Pattern[str], str]] = [
         "Backend",
     ),
     (
-        re.compile(r"(^|/)(compiler-rt|libcxx|lld|lldb|runtime|jit|linker)/", re.I),
+        re.compile(
+            r"(^|/)(compiler-rt|libcxx|lld|lldb|runtime|jit|linker|SPIRVAPI)/",
+            re.I,
+        ),
         "Runtime & Toolchain",
     ),
 ]
@@ -155,8 +158,35 @@ def classify_dimensions(story: Story) -> tuple[list[str], list[str], list[str], 
                 stages.append("Backend")
         elif "AI / ML" not in domains:
             domains.append("AI / ML")
+    # CPU is a hardware domain — do not attach it to every LLVM/GCC frontend,
+    # language, or debugger change. Require target/backend evidence.
     if cat in {"llvm", "gcc"} and "CPU" not in domains and "GPU" not in domains:
-        domains.append("CPU")
+        has_cpu_target = bool(
+            re.search(
+                r"llvm/lib/Target/|llvm/lib/CodeGen|gcc/config|"
+                r"SelectionDAG|GlobalISel|"
+                r"RISCV|RISC-V|X86|AArch64|ARM|PowerPC|LoongArch",
+                blob,
+                re.I,
+            )
+        )
+        is_lang_or_debug = bool(
+            re.search(
+                r"(^|/)(clang|flang|lldb|CIR|HLSL)/|\bDWARF\b|\bFortran\b",
+                blob,
+                re.I,
+            )
+        )
+        if has_cpu_target:
+            domains.append("CPU")
+        elif not domains and not is_lang_or_debug:
+            domains.append("CPU")
+        elif is_lang_or_debug and "Languages" not in domains:
+            if re.search(r"lldb|DWARF", blob, re.I):
+                # Debugger / debug-info work — not a CPU-domain story by default.
+                pass
+            elif "Languages" not in domains:
+                domains.append("Languages")
 
     for name, pat in (
         ("AMDGPU", r"AMDGPU|amdgcn"),

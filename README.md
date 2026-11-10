@@ -6,10 +6,13 @@ Tracks LLVM, MLIR, GCC, TVM, IREE, Triton, GPU stacks, and research papers using
 
 | | |
 | --- | --- |
-| Window | **Friday → Friday** (UTC, end exclusive) |
-| Publish | **Saturday** |
+| Window | **Saturday → Friday** (Asia/Kolkata, end exclusive) |
+| Freeze | End of **Friday** |
+| Publish | **Saturday** (curated issue only) |
 | License | Apache-2.0 |
 | CLI | `csweekly` |
+
+Raw collection accumulates all week under `data/editions/` and is **never** the public newsletter by itself. Lifecycle: [docs/LIFECYCLE.md](docs/LIFECYCLE.md).
 
 CompilerSutra (Docusaurus/Vercel) stays educational. This repo owns collection, processing, reports, and Pages.
 
@@ -57,18 +60,30 @@ csweekly index
 # optional for GitHub API rate limits
 export CSWEEKLY_GITHUB_TOKEN=ghp_...
 
-# light (hosted CI): releases + RSS + arXiv
-csweekly run --kind github_releases --kind rss --kind arxiv
+# During the week (Sat→Fri): accumulate raw facts only
+csweekly collect --kind github_releases --kind rss --kind arxiv
 
-# full (self-hosted / Jenkins with disk):
-csweekly run --mirrors-dir /var/cache/csweekly/mirrors
+# Friday close
+csweekly freeze
+csweekly process
+csweekly review
+
+# Evidence-backed editorial (diffs → write → fact-check). Optional: --llm
+csweekly analyze --changelog reports/YYYY/YYYY-MM-DD.changelog.json
+
+# Saturday
+csweekly validate
+csweekly publish
+
+# full git mirrors (self-hosted / Jenkins with disk):
+csweekly collect --mirrors-dir /var/cache/csweekly/mirrors
 ```
 
 Artifacts:
 
-- `reports/YYYY/YYYY-MM-DD.md` — Saturday issue  
-- `reports/README.md` — archive index  
-- `site/` — GitHub Pages payload  
+- `data/editions/YYYY/YYYY-MM-DD/` — raw + normalized + editorial (retained)  
+- `reports/YYYY/YYYY-MM-DD.md` — published Saturday issue  
+- `site/` — GitHub Pages payload (published issues only)  
 
 ## Add another compiler
 
