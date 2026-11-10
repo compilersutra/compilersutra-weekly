@@ -209,6 +209,9 @@ def write_archive_index(reports_dir: Path, site_dir: Path) -> Path:
     (site_dir / "changelog.html").write_text(_page_changelog(metas), encoding="utf-8")
     (site_dir / "subscribe.html").write_text(_page_subscribe(), encoding="utf-8")
     (site_dir / "feed.xml").write_text(_atom_feed(metas), encoding="utf-8")
+    xsl_src = assets_src / "feed.xsl"
+    if xsl_src.is_file():
+        (site_dir / "feed.xsl").write_text(xsl_src.read_text(encoding="utf-8"), encoding="utf-8")
     (site_dir / "topics").mkdir(parents=True, exist_ok=True)
     (site_dir / "topics" / "index.html").write_text(_page_topics_hub(metas), encoding="utf-8")
     for topic in TOPICS:
@@ -772,21 +775,72 @@ def _page_about() -> str:
 
 def _page_subscribe() -> str:
     feed = "feed.xml"
+    feed_url = f"{PAGES_URL.rstrip('/')}/feed.xml"
     body = f"""
-  {_topic_bar(depth=0)}
   <main class="wrap article-narrow">
     <p class="hero-kicker">Subscribe</p>
-    <h1 class="page-title">Follow new issues</h1>
-    <p class="muted">{html.escape(CADENCE)}</p>
-    <p class="muted">Email delivery is not wired yet — we will not ship a fake signup form.
-    Use the Atom feed in any reader, or watch the GitHub repo.</p>
+    <h1 class="page-title">Get each Saturday issue</h1>
+    <p class="lede">{html.escape(HERO_LEDE)}</p>
+    <p class="muted">{html.escape(CADENCE)} Approximate reading time: 5–10 minutes.</p>
+    <p class="muted"><strong>Email delivery is not available yet.</strong>
+    We will not show a fake signup form. Use the Atom feed (below) or watch the GitHub repo.</p>
+
     <div class="cta-row" style="margin-top:1.25rem">
-      <a class="btn btn-primary" href="{feed}">Atom feed</a>
+      <a class="btn btn-primary" href="{feed}">Open Atom feed</a>
       <a class="btn btn-ghost" href="{html.escape(REPO_URL)}" rel="noopener noreferrer">Watch on GitHub</a>
       <a class="btn btn-ghost" href="archive.html">Browse archive</a>
     </div>
-    <p class="muted" style="margin-top:1.5rem">Feed URL:
-      <code>{html.escape(PAGES_URL.rstrip('/'))}/feed.xml</code></p>
+    <p class="muted" style="margin-top:1.25rem">Feed URL (copy this into a reader):</p>
+    <p><code class="feed-url">{html.escape(feed_url)}</code></p>
+
+    <h2 class="section-label">What is an Atom feed?</h2>
+    <p class="muted">Atom is a small XML file that lists new issues in a standard format.
+    Feed readers (Feedly, Inoreader, NetNewsWire, Thunderbird, and many others)
+    poll that file and show you a card when a new Saturday edition is published.</p>
+    <p class="muted">If you open <code>feed.xml</code> in a normal browser, you will often see
+    <strong>raw XML</strong>. That is expected — the file is for machines/readers, not a
+    styled article page. Your subscription page is this HTML page; the feed stays valid XML.</p>
+
+    <h2 class="section-label">How to subscribe (step by step)</h2>
+    <ol class="muted subscribe-steps">
+      <li>Copy the feed URL above
+        (<code>{html.escape(feed_url)}</code>).</li>
+      <li>Open a feed reader and choose <strong>Add subscription</strong> /
+        <strong>Follow</strong> / <strong>Subscribe</strong>.</li>
+      <li>Paste the URL and confirm. You should see
+        <em>CompilerSutra Weekly</em> with entries like
+        <em>Edition 001</em>.</li>
+      <li>When we publish next Saturday, the reader shows a new entry with the
+        issue summary and a link to the full HTML edition.</li>
+    </ol>
+
+    <h3 class="section-label">Common readers</h3>
+    <ul class="muted">
+      <li><strong>Feedly / Inoreader</strong> (web): Add content → paste feed URL.</li>
+      <li><strong>NetNewsWire</strong> (macOS/iOS): File → New Feed → paste URL.</li>
+      <li><strong>Thunderbird</strong>: File → New → Feed → paste URL.</li>
+      <li><strong>FreshRSS / Miniflux</strong> (self-hosted): Add feed → paste URL.</li>
+      <li><strong>GitHub</strong> (not Atom): Watch the
+        <a href="{html.escape(REPO_URL)}" rel="noopener noreferrer">repository</a>
+        for commits/releases if you prefer that signal.</li>
+    </ul>
+
+    <h2 class="section-label">What a reader shows</h2>
+    <div class="panel feed-preview" aria-label="Example feed card">
+      <p class="hero-kicker">Example card</p>
+      <h3>CompilerSutra Weekly — Edition 001</h3>
+      <p class="muted">7 November 2026</p>
+      <p>This week's compiler engineering developments — for example RISC-V
+      vector codegen, Clang matrix splat cast, RISC-V ABI helpers, MLIR NVVM
+      ops, and SPIR-V pipeline work — with links to the full issue.</p>
+    </div>
+
+    <h2 class="section-label">What you receive</h2>
+    <ul class="muted">
+      <li>One curated issue per week (Saturday publish)</li>
+      <li>High-signal stories + worth knowing + optional deep dive</li>
+      <li>Primary source links (commits / papers) — not a raw commit dump</li>
+    </ul>
   </main>
 """
     return _shell("Subscribe — CompilerSutra Weekly", body, active="about", depth=0)
@@ -930,36 +984,95 @@ def _page_changelog(metas: list[IssueMeta]) -> str:
     return _shell("Change log — CompilerSutra Weekly", body, active="archive", depth=0)
 
 
+def _edition_title(m: IssueMeta) -> str:
+    if m.issue_number:
+        return f"CompilerSutra Weekly — Edition {m.issue_number:03d}"
+    return f"CompilerSutra Weekly — {m.date}"
+
+
+def _atom_entry_summary(m: IssueMeta) -> str:
+    """Full, readable summary for feed readers — titles only, no mid-sentence cuts."""
+    from csweekly.reporters.taxonomy_ui import format_issue_date
+
+    payload = _load_changelog(m.path)
+    human = format_issue_date(m.date)
+    edition_line = (
+        f"CompilerSutra Weekly — Edition {m.issue_number:03d}"
+        if m.issue_number
+        else "CompilerSutra Weekly"
+    )
+    lines = [
+        edition_line,
+        f"Published {human}.",
+        "",
+        "This week's compiler engineering developments:",
+    ]
+    titles: list[str] = []
+    dive = payload.get("deep_dive")
+    if dive and dive.get("title"):
+        titles.append(str(dive["title"]).strip().rstrip("."))
+    for g in payload.get("high_signal") or []:
+        t = (g.get("title") or "").strip().rstrip(".")
+        # Drop PR-number noise in feed cards
+        t = re.sub(r"\s*\(#\d+\)\s*$", "", t)
+        t = re.sub(r"^\[.*?\]\s*", "", t)
+        if t and t not in titles:
+            titles.append(t)
+        if len(titles) >= 8:
+            break
+    if not titles:
+        for b in (payload.get("week_overview") or [])[:5]:
+            # Prefer text before em-dash / long explanation
+            head = re.split(r"\s+[—–-]\s+", str(b), maxsplit=1)[0].strip()
+            if head:
+                titles.append(head)
+    if titles:
+        lines.extend(f"- {t}" for t in titles)
+    else:
+        lines.append("- See the full issue for this week's selections.")
+    hs = (m.stats or {}).get("high_signal")
+    wk = (m.stats or {}).get("worth_knowing")
+    if hs or wk:
+        lines.append("")
+        bits = []
+        if hs:
+            bits.append(f"{hs} high-signal")
+        if wk:
+            bits.append(f"{wk} worth knowing")
+        lines.append("Coverage: " + ", ".join(bits) + ".")
+    lines.append("")
+    lines.append(f"Read the full issue: {PAGES_URL.rstrip('/')}/{m.href_html}")
+    return "\n".join(lines)
+
+
 def _atom_feed(metas: list[IssueMeta]) -> str:
     """Atom feed of published issues for readers/subscribe."""
     base = PAGES_URL.rstrip("/")
     updated = metas[0].date if metas else "1970-01-01"
     entries = []
     for m in metas[:52]:
-        num = f"#{m.issue_number:03d}" if m.issue_number else m.date
         link = f"{base}/{m.href_html}"
-        title = f"CompilerSutra Weekly {num} ({m.date})"
-        summary = m.window or "Weekly compiler brief"
-        # Prefer first briefing bullets from changelog when present
-        payload = _load_changelog(m.path)
-        bullets = payload.get("week_overview") or []
-        if bullets:
-            summary = " · ".join(bullets[:3])
+        title = _edition_title(m)
+        summary = _atom_entry_summary(m)
         entries.append(
             f"""  <entry>
     <title>{html.escape(title)}</title>
     <link href="{html.escape(link)}" rel="alternate" type="text/html"/>
     <id>{html.escape(link)}</id>
     <updated>{html.escape(m.date)}T12:00:00Z</updated>
-    <summary>{html.escape(summary[:500])}</summary>
+    <published>{html.escape(m.date)}T12:00:00Z</published>
+    <author><name>CompilerSutra</name></author>
+    <summary type="text">{html.escape(summary)}</summary>
   </entry>"""
         )
     return f"""<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="feed.xsl"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>{html.escape(PROJECT_NAME)}</title>
   <subtitle>{html.escape(META_DESCRIPTION)}</subtitle>
   <link href="{html.escape(base)}/feed.xml" rel="self" type="application/atom+xml"/>
   <link href="{html.escape(base)}/" rel="alternate" type="text/html"/>
+  <link href="{html.escape(base)}/subscribe.html" rel="related" type="text/html" title="How to subscribe"/>
   <id>{html.escape(base)}/</id>
   <updated>{html.escape(updated)}T12:00:00Z</updated>
   <author><name>CompilerSutra</name><uri>{html.escape(EDU_URL)}</uri></author>

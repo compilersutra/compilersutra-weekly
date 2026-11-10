@@ -56,34 +56,70 @@
   </header>
   <div id="main">
   
-  
-  <div class="subnav" aria-label="Secondary">
-    <div class="wrap">
-      <a href="explore/stage-frontend.html">Frontend</a>
-      <a href="explore/stage-middle-end.html">Middle-end</a>
-      <a href="explore/stage-backend.html">Backend</a>
-      <a href="explore/stage-runtime-toolchain.html">Runtime</a>
-      <a href="explore/domain-cpu.html">CPU</a>
-      <a href="explore/domain-gpu.html">GPU</a>
-      <a href="explore/domain-ai-ml.html">AI / ML</a>
-      <a href="topics/index.html">Projects</a>
-      <a href="topics/llvm.html">LLVM</a><a href="topics/gcc.html">GCC</a><a href="topics/mlir.html">MLIR</a><a href="topics/ai.html">AI Compilers</a><a href="topics/gpu.html">GPU</a><a href="topics/research.html">Research</a>
-    </div>
-  </div>
-
   <main class="wrap article-narrow">
     <p class="hero-kicker">Subscribe</p>
-    <h1 class="page-title">Follow new issues</h1>
-    <p class="muted">Published every Saturday. Each issue covers Saturday→Friday (Asia/Kolkata), frozen at end of Friday. Raw collection stays private; only the curated issue is published.</p>
-    <p class="muted">Email delivery is not wired yet — we will not ship a fake signup form.
-    Use the Atom feed in any reader, or watch the GitHub repo.</p>
+    <h1 class="page-title">Get each Saturday issue</h1>
+    <p class="lede">LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
+    <p class="muted">Published every Saturday. Each issue covers Saturday→Friday (Asia/Kolkata), frozen at end of Friday. Raw collection stays private; only the curated issue is published. Approximate reading time: 5–10 minutes.</p>
+    <p class="muted"><strong>Email delivery is not available yet.</strong>
+    We will not show a fake signup form. Use the Atom feed (below) or watch the GitHub repo.</p>
+
     <div class="cta-row" style="margin-top:1.25rem">
-      <a class="btn btn-primary" href="feed.xml">Atom feed</a>
+      <a class="btn btn-primary" href="feed.xml">Open Atom feed</a>
       <a class="btn btn-ghost" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">Watch on GitHub</a>
       <a class="btn btn-ghost" href="archive.html">Browse archive</a>
     </div>
-    <p class="muted" style="margin-top:1.5rem">Feed URL:
-      <code>https://compilersutra.github.io/compilersutra-weekly/feed.xml</code></p>
+    <p class="muted" style="margin-top:1.25rem">Feed URL (copy this into a reader):</p>
+    <p><code class="feed-url">https://compilersutra.github.io/compilersutra-weekly/feed.xml</code></p>
+
+    <h2 class="section-label">What is an Atom feed?</h2>
+    <p class="muted">Atom is a small XML file that lists new issues in a standard format.
+    Feed readers (Feedly, Inoreader, NetNewsWire, Thunderbird, and many others)
+    poll that file and show you a card when a new Saturday edition is published.</p>
+    <p class="muted">If you open <code>feed.xml</code> in a normal browser, you will often see
+    <strong>raw XML</strong>. That is expected — the file is for machines/readers, not a
+    styled article page. Your subscription page is this HTML page; the feed stays valid XML.</p>
+
+    <h2 class="section-label">How to subscribe (step by step)</h2>
+    <ol class="muted subscribe-steps">
+      <li>Copy the feed URL above
+        (<code>https://compilersutra.github.io/compilersutra-weekly/feed.xml</code>).</li>
+      <li>Open a feed reader and choose <strong>Add subscription</strong> /
+        <strong>Follow</strong> / <strong>Subscribe</strong>.</li>
+      <li>Paste the URL and confirm. You should see
+        <em>CompilerSutra Weekly</em> with entries like
+        <em>Edition 001</em>.</li>
+      <li>When we publish next Saturday, the reader shows a new entry with the
+        issue summary and a link to the full HTML edition.</li>
+    </ol>
+
+    <h3 class="section-label">Common readers</h3>
+    <ul class="muted">
+      <li><strong>Feedly / Inoreader</strong> (web): Add content → paste feed URL.</li>
+      <li><strong>NetNewsWire</strong> (macOS/iOS): File → New Feed → paste URL.</li>
+      <li><strong>Thunderbird</strong>: File → New → Feed → paste URL.</li>
+      <li><strong>FreshRSS / Miniflux</strong> (self-hosted): Add feed → paste URL.</li>
+      <li><strong>GitHub</strong> (not Atom): Watch the
+        <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">repository</a>
+        for commits/releases if you prefer that signal.</li>
+    </ul>
+
+    <h2 class="section-label">What a reader shows</h2>
+    <div class="panel feed-preview" aria-label="Example feed card">
+      <p class="hero-kicker">Example card</p>
+      <h3>CompilerSutra Weekly — Edition 001</h3>
+      <p class="muted">7 November 2026</p>
+      <p>This week's compiler engineering developments — for example RISC-V
+      vector codegen, Clang matrix splat cast, RISC-V ABI helpers, MLIR NVVM
+      ops, and SPIR-V pipeline work — with links to the full issue.</p>
+    </div>
+
+    <h2 class="section-label">What you receive</h2>
+    <ul class="muted">
+      <li>One curated issue per week (Saturday publish)</li>
+      <li>High-signal stories + worth knowing + optional deep dive</li>
+      <li>Primary source links (commits / papers) — not a raw commit dump</li>
+    </ul>
   </main>
 
   </div>
