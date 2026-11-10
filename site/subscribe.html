@@ -6,7 +6,6 @@
   <title>Subscribe — CompilerSutra Weekly</title>
   <meta name="description" content="A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, with context on what changed and why it matters."/>
   <meta name="color-scheme" content="dark light"/>
-  <link rel="alternate" type="application/atom+xml" title="CompilerSutra Weekly" href="feed.xml"/>
   <script>
   (function(){try{var t=localStorage.getItem('csw-theme');
   if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
@@ -29,8 +28,8 @@
         <a href="topics/index.html">Topics</a>
         <a href="topics/research.html">Papers</a>
         <a href="archive.html">Archive</a>
-        <a href="subscribe.html">Subscribe</a>
-        <a href="about.html" aria-current="page">About</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe</a>
+        <a href="about.html">About</a>
       </nav>
       <div class="header-actions">
         <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
@@ -45,10 +44,9 @@
         <a href="topics/index.html">Topics</a>
         <a href="topics/research.html">Papers</a>
         <a href="archive.html">Archive</a>
-        <a href="subscribe.html">Subscribe</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe</a>
         <a href="about.html">About</a>
         <a href="changelog.html">Change log</a>
-        <a href="feed.xml">Atom feed</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
         <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
@@ -62,25 +60,19 @@
     <p class="lede">LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
     <p class="muted">Published every Saturday. Each issue covers Saturday→Friday (Asia/Kolkata), frozen at end of Friday. Raw collection stays private; only the curated issue is published. Approximate reading time: 5–10 minutes.</p>
 
-    <h2 class="section-label">Easiest: email (recommended)</h2>
-    <p class="muted">Most readers do not want to set up Feedly or paste XML URLs.
-    Use the <strong>same Google Form</strong> already used on
+    <h2 class="section-label">Email signup</h2>
+    <p class="muted">Use the <strong>same Google Form</strong> as
     <a href="https://www.compilersutra.com/" rel="noopener noreferrer">compilersutra.com</a>
-    for Weekly Compiler Notes — leave your email there.</p>
-    <p class="muted">We are <strong>not</strong> wiring a separate Mailchimp/SendGrid stack
-    on this static GitHub Pages site. That would be more moving parts than this
-    publication needs right now.</p>
+    (Weekly Compiler Notes). Enter your email and submit — no separate list for this site.</p>
     <div class="cta-row" style="margin-top:1rem">
       <a class="btn btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer"
-         target="_blank">Subscribe by email (Google Form)</a>
-      <a class="btn btn-ghost" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">Watch on GitHub</a>
+         target="_blank">Subscribe by email</a>
       <a class="btn btn-ghost" href="archive.html">Browse archive</a>
     </div>
     <ol class="muted subscribe-steps" style="margin-top:1rem">
       <li>Open the Google Form (button above).</li>
       <li>Enter your email and submit.</li>
-      <li>You are on the CompilerSutra notes list — the same signup used across
-        the main site (clang-flag pages, articles, etc.).</li>
+      <li>You are on the CompilerSutra notes list used across the main site.</li>
     </ol>
 
     <h2 class="section-label">What you receive</h2>
@@ -89,36 +81,6 @@
       <li>High-signal stories + worth knowing + optional deep dive</li>
       <li>Primary source links (commits / papers) — not a raw commit dump</li>
     </ul>
-
-    <h2 class="section-label">Advanced: Atom feed</h2>
-    <p class="muted">If you already use a feed reader, Atom is fine. If you open
-    <code>feed.xml</code> in a browser you may see raw XML — that is normal.
-    Atom is for readers (Feedly, Inoreader, NetNewsWire, Thunderbird), not for
-    casual email users.</p>
-    <div class="cta-row" style="margin-top:0.75rem">
-      <a class="btn btn-ghost" href="feed.xml">Open Atom feed</a>
-    </div>
-    <p class="muted" style="margin-top:1rem">Feed URL:</p>
-    <p><code class="feed-url">https://compilersutra.github.io/compilersutra-weekly/feed.xml</code></p>
-    <ol class="muted subscribe-steps">
-      <li>Copy the feed URL.</li>
-      <li>In your reader: Add subscription / Follow / Subscribe.</li>
-      <li>Paste the URL — you should see entries like
-        <em>CompilerSutra Weekly — Edition 001</em>.</li>
-    </ol>
-    <ul class="muted">
-      <li><strong>Feedly / Inoreader</strong> — Add content → paste URL</li>
-      <li><strong>NetNewsWire</strong> — File → New Feed</li>
-      <li><strong>Thunderbird</strong> — File → New → Feed</li>
-      <li><strong>FreshRSS / Miniflux</strong> — Add feed</li>
-    </ul>
-
-    <div class="panel feed-preview" aria-label="Example feed card">
-      <p class="hero-kicker">Example reader card</p>
-      <h3>CompilerSutra Weekly — Edition 001</h3>
-      <p class="muted">7 November 2026</p>
-      <p>This week's compiler engineering developments — with a link to the full issue.</p>
-    </div>
   </main>
 
   </div>
@@ -126,8 +88,7 @@
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · Published every Saturday. Each issue covers Saturday→Friday (Asia/Kolkata), frozen at end of Friday. Raw collection stays private; only the curated issue is published.</div>
       <div>
-        <a href="subscribe.html">Subscribe</a> ·
-        <a href="feed.xml">Feed</a> ·
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe</a> ·
         <a href="changelog.html">Change log</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly/issues">Corrections</a>

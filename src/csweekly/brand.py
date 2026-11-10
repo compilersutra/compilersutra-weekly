@@ -33,4 +33,4 @@ NEWSLETTER_FORM_URL = (
     "https://docs.google.com/forms/d/e/"
     "1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform"
 )
-NEWSLETTER_FORM_LABEL = "Subscribe by email (Google Form)"
+NEWSLETTER_FORM_LABEL = "Subscribe by email"

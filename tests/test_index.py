@@ -44,19 +44,20 @@ Because.
     assert "Explore by engineering domain" in home
     assert "theme-toggle" in home
     assert "data-theme" in home
-    assert 'type="application/atom+xml"' in home
+    assert "application/atom+xml" not in home
+    assert "Atom feed" not in home
+    assert "docs.google.com/forms" in home
     assert (site / "assets" / "theme.js").is_file()
     assert (site / "assets" / "site.css").is_file()
     assert (site / "assets" / "filters.js").is_file()
-    assert (site / "feed.xml").is_file()
-    feed = (site / "feed.xml").read_text(encoding="utf-8")
-    assert "<feed" in feed and "CompilerSutra Weekly" in feed
-    assert "Edition" in feed or "<entry>" in feed
-    assert (site / "feed.xsl").is_file()
+    assert not (site / "feed.xml").exists()
+    assert not (site / "feed.xsl").exists()
     sub = (site / "subscribe.html").read_text(encoding="utf-8")
     assert "docs.google.com/forms" in sub
-    assert "Easiest: email" in sub
-    assert "Atom feed" in sub
+    assert "Email signup" in sub
+    assert "Atom" not in sub
+    assert "RSS" not in sub
+    assert "feed.xml" not in sub
     about = (site / "about.html").read_text(encoding="utf-8")
     assert "Selection and" in about or "high signal" in about.lower()
     assert "Cadence" in about

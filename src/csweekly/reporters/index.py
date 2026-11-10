@@ -210,10 +210,13 @@ def write_archive_index(reports_dir: Path, site_dir: Path) -> Path:
     (site_dir / "about.html").write_text(_page_about(), encoding="utf-8")
     (site_dir / "changelog.html").write_text(_page_changelog(metas), encoding="utf-8")
     (site_dir / "subscribe.html").write_text(_page_subscribe(), encoding="utf-8")
-    (site_dir / "feed.xml").write_text(_atom_feed(metas), encoding="utf-8")
-    xsl_src = assets_src / "feed.xsl"
-    if xsl_src.is_file():
-        (site_dir / "feed.xsl").write_text(xsl_src.read_text(encoding="utf-8"), encoding="utf-8")
+    for stale in ("feed.xml", "feed.xsl"):
+        old = site_dir / stale
+        if old.is_file():
+            old.unlink()
+        asset_old = assets_dst / stale
+        if asset_old.is_file():
+            asset_old.unlink()
     (site_dir / "topics").mkdir(parents=True, exist_ok=True)
     (site_dir / "topics" / "index.html").write_text(_page_topics_hub(metas), encoding="utf-8")
     for topic in TOPICS:
@@ -319,7 +322,7 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
           {overview}
           <div class="cta-row">
             <a class="btn btn-primary" href="{html.escape(latest.href_html)}">Read this week&rsquo;s issue →</a>
-            <a class="btn btn-ghost" href="subscribe.html">Subscribe (RSS)</a>
+            <a class="btn btn-ghost" href="{html.escape(NEWSLETTER_FORM_URL)}" rel="noopener noreferrer" target="_blank">{html.escape(NEWSLETTER_FORM_LABEL)}</a>
           </div>
         </div>
 """
@@ -701,8 +704,7 @@ def _page_archive(metas: list[IssueMeta]) -> str:
     <h1 class="page-title">All issues</h1>
     {next_note}
     <div class="cta-row" style="margin-bottom:1rem">
-      <a class="btn btn-ghost" href="subscribe.html">Subscribe (RSS)</a>
-      <a class="btn btn-ghost" href="feed.xml">Atom feed</a>
+      <a class="btn btn-ghost" href="{html.escape(NEWSLETTER_FORM_URL)}" rel="noopener noreferrer" target="_blank">{html.escape(NEWSLETTER_FORM_LABEL)}</a>
     </div>
     <section class="panel" style="margin-top:0.5rem">
       <ul class="issue-list">{items or "<li>No issues yet.</li>"}</ul>
@@ -765,7 +767,7 @@ def _page_about() -> str:
     {html.escape(CONTACT_NOTE)}</p>
 
     <div class="cta-row" style="margin-top:1.5rem">
-      <a class="btn btn-primary" href="subscribe.html">Subscribe (RSS)</a>
+      <a class="btn btn-primary" href="{html.escape(NEWSLETTER_FORM_URL)}" rel="noopener noreferrer" target="_blank">{html.escape(NEWSLETTER_FORM_LABEL)}</a>
       <a class="btn btn-ghost" href="{html.escape(REPO_URL)}" rel="noopener noreferrer">GitHub</a>
       <a class="btn btn-ghost" href="{html.escape(ISSUES_URL)}" rel="noopener noreferrer">Report a correction</a>
       <a class="btn btn-ghost" href="{html.escape(EDU_URL)}" rel="noopener noreferrer">CompilerSutra.com</a>
@@ -776,8 +778,6 @@ def _page_about() -> str:
 
 
 def _page_subscribe() -> str:
-    feed = "feed.xml"
-    feed_url = f"{PAGES_URL.rstrip('/')}/feed.xml"
     form = html.escape(NEWSLETTER_FORM_URL)
     body = f"""
   <main class="wrap article-narrow">
@@ -786,25 +786,19 @@ def _page_subscribe() -> str:
     <p class="lede">{html.escape(HERO_LEDE)}</p>
     <p class="muted">{html.escape(CADENCE)} Approximate reading time: 5–10 minutes.</p>
 
-    <h2 class="section-label">Easiest: email (recommended)</h2>
-    <p class="muted">Most readers do not want to set up Feedly or paste XML URLs.
-    Use the <strong>same Google Form</strong> already used on
+    <h2 class="section-label">Email signup</h2>
+    <p class="muted">Use the <strong>same Google Form</strong> as
     <a href="{html.escape(EDU_URL)}" rel="noopener noreferrer">compilersutra.com</a>
-    for Weekly Compiler Notes — leave your email there.</p>
-    <p class="muted">We are <strong>not</strong> wiring a separate Mailchimp/SendGrid stack
-    on this static GitHub Pages site. That would be more moving parts than this
-    publication needs right now.</p>
+    (Weekly Compiler Notes). Enter your email and submit — no separate list for this site.</p>
     <div class="cta-row" style="margin-top:1rem">
       <a class="btn btn-primary" href="{form}" rel="noopener noreferrer"
          target="_blank">{html.escape(NEWSLETTER_FORM_LABEL)}</a>
-      <a class="btn btn-ghost" href="{html.escape(REPO_URL)}" rel="noopener noreferrer">Watch on GitHub</a>
       <a class="btn btn-ghost" href="archive.html">Browse archive</a>
     </div>
     <ol class="muted subscribe-steps" style="margin-top:1rem">
       <li>Open the Google Form (button above).</li>
       <li>Enter your email and submit.</li>
-      <li>You are on the CompilerSutra notes list — the same signup used across
-        the main site (clang-flag pages, articles, etc.).</li>
+      <li>You are on the CompilerSutra notes list used across the main site.</li>
     </ol>
 
     <h2 class="section-label">What you receive</h2>
@@ -813,39 +807,9 @@ def _page_subscribe() -> str:
       <li>High-signal stories + worth knowing + optional deep dive</li>
       <li>Primary source links (commits / papers) — not a raw commit dump</li>
     </ul>
-
-    <h2 class="section-label">Advanced: Atom feed</h2>
-    <p class="muted">If you already use a feed reader, Atom is fine. If you open
-    <code>feed.xml</code> in a browser you may see raw XML — that is normal.
-    Atom is for readers (Feedly, Inoreader, NetNewsWire, Thunderbird), not for
-    casual email users.</p>
-    <div class="cta-row" style="margin-top:0.75rem">
-      <a class="btn btn-ghost" href="{feed}">Open Atom feed</a>
-    </div>
-    <p class="muted" style="margin-top:1rem">Feed URL:</p>
-    <p><code class="feed-url">{html.escape(feed_url)}</code></p>
-    <ol class="muted subscribe-steps">
-      <li>Copy the feed URL.</li>
-      <li>In your reader: Add subscription / Follow / Subscribe.</li>
-      <li>Paste the URL — you should see entries like
-        <em>CompilerSutra Weekly — Edition 001</em>.</li>
-    </ol>
-    <ul class="muted">
-      <li><strong>Feedly / Inoreader</strong> — Add content → paste URL</li>
-      <li><strong>NetNewsWire</strong> — File → New Feed</li>
-      <li><strong>Thunderbird</strong> — File → New → Feed</li>
-      <li><strong>FreshRSS / Miniflux</strong> — Add feed</li>
-    </ul>
-
-    <div class="panel feed-preview" aria-label="Example feed card">
-      <p class="hero-kicker">Example reader card</p>
-      <h3>CompilerSutra Weekly — Edition 001</h3>
-      <p class="muted">7 November 2026</p>
-      <p>This week's compiler engineering developments — with a link to the full issue.</p>
-    </div>
   </main>
 """
-    return _shell("Subscribe — CompilerSutra Weekly", body, active="about", depth=0)
+    return _shell("Subscribe — CompilerSutra Weekly", body, active="subscribe", depth=0)
 
 
 def _page_changelog(metas: list[IssueMeta]) -> str:
@@ -984,104 +948,6 @@ def _page_changelog(metas: list[IssueMeta]) -> str:
   </script>
 """
     return _shell("Change log — CompilerSutra Weekly", body, active="archive", depth=0)
-
-
-def _edition_title(m: IssueMeta) -> str:
-    if m.issue_number:
-        return f"CompilerSutra Weekly — Edition {m.issue_number:03d}"
-    return f"CompilerSutra Weekly — {m.date}"
-
-
-def _atom_entry_summary(m: IssueMeta) -> str:
-    """Full, readable summary for feed readers — titles only, no mid-sentence cuts."""
-    from csweekly.reporters.taxonomy_ui import format_issue_date
-
-    payload = _load_changelog(m.path)
-    human = format_issue_date(m.date)
-    edition_line = (
-        f"CompilerSutra Weekly — Edition {m.issue_number:03d}"
-        if m.issue_number
-        else "CompilerSutra Weekly"
-    )
-    lines = [
-        edition_line,
-        f"Published {human}.",
-        "",
-        "This week's compiler engineering developments:",
-    ]
-    titles: list[str] = []
-    dive = payload.get("deep_dive")
-    if dive and dive.get("title"):
-        titles.append(str(dive["title"]).strip().rstrip("."))
-    for g in payload.get("high_signal") or []:
-        t = (g.get("title") or "").strip().rstrip(".")
-        # Drop PR-number noise in feed cards
-        t = re.sub(r"\s*\(#\d+\)\s*$", "", t)
-        t = re.sub(r"^\[.*?\]\s*", "", t)
-        if t and t not in titles:
-            titles.append(t)
-        if len(titles) >= 8:
-            break
-    if not titles:
-        for b in (payload.get("week_overview") or [])[:5]:
-            # Prefer text before em-dash / long explanation
-            head = re.split(r"\s+[—–-]\s+", str(b), maxsplit=1)[0].strip()
-            if head:
-                titles.append(head)
-    if titles:
-        lines.extend(f"- {t}" for t in titles)
-    else:
-        lines.append("- See the full issue for this week's selections.")
-    hs = (m.stats or {}).get("high_signal")
-    wk = (m.stats or {}).get("worth_knowing")
-    if hs or wk:
-        lines.append("")
-        bits = []
-        if hs:
-            bits.append(f"{hs} high-signal")
-        if wk:
-            bits.append(f"{wk} worth knowing")
-        lines.append("Coverage: " + ", ".join(bits) + ".")
-    lines.append("")
-    lines.append(f"Read the full issue: {PAGES_URL.rstrip('/')}/{m.href_html}")
-    return "\n".join(lines)
-
-
-def _atom_feed(metas: list[IssueMeta]) -> str:
-    """Atom feed of published issues for readers/subscribe."""
-    base = PAGES_URL.rstrip("/")
-    updated = metas[0].date if metas else "1970-01-01"
-    entries = []
-    for m in metas[:52]:
-        link = f"{base}/{m.href_html}"
-        title = _edition_title(m)
-        summary = _atom_entry_summary(m)
-        entries.append(
-            f"""  <entry>
-    <title>{html.escape(title)}</title>
-    <link href="{html.escape(link)}" rel="alternate" type="text/html"/>
-    <id>{html.escape(link)}</id>
-    <updated>{html.escape(m.date)}T12:00:00Z</updated>
-    <published>{html.escape(m.date)}T12:00:00Z</published>
-    <author><name>CompilerSutra</name></author>
-    <summary type="text">{html.escape(summary)}</summary>
-  </entry>"""
-        )
-    return f"""<?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="feed.xsl"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title>{html.escape(PROJECT_NAME)}</title>
-  <subtitle>{html.escape(META_DESCRIPTION)}</subtitle>
-  <link href="{html.escape(base)}/feed.xml" rel="self" type="application/atom+xml"/>
-  <link href="{html.escape(base)}/" rel="alternate" type="text/html"/>
-  <link href="{html.escape(base)}/subscribe.html" rel="related" type="text/html" title="How to subscribe"/>
-  <id>{html.escape(base)}/</id>
-  <updated>{html.escape(updated)}T12:00:00Z</updated>
-  <author><name>CompilerSutra</name><uri>{html.escape(EDU_URL)}</uri></author>
-  <rights>Apache-2.0</rights>
-{chr(10).join(entries)}
-</feed>
-"""
 
 
 def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: IssueMeta | None) -> str:
@@ -1429,8 +1295,7 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
     archive = "archive.html" if depth == 0 else "../" * depth + "archive.html"
     about = "about.html" if depth == 0 else "../" * depth + "about.html"
     changelog = "changelog.html" if depth == 0 else "../" * depth + "changelog.html"
-    subscribe = "subscribe.html" if depth == 0 else "../" * depth + "subscribe.html"
-    feed = "feed.xml" if depth == 0 else "../" * depth + "feed.xml"
+    subscribe = html.escape(NEWSLETTER_FORM_URL)
     research = f"{'../' * depth}topics/research.html" if depth else "topics/research.html"
     if depth == 0:
         topics, explore, stages = "topics/index.html", "explore/index.html", "explore/index.html#stages"
@@ -1456,7 +1321,6 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
   <title>{html.escape(title)}</title>
   <meta name="description" content="{html.escape(META_DESCRIPTION)}"/>
   <meta name="color-scheme" content="dark light"/>
-  <link rel="alternate" type="application/atom+xml" title="{html.escape(PROJECT_NAME)}" href="{feed}"/>
   <script>
   (function(){{try{{var t=localStorage.getItem('csw-theme');
   if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
@@ -1479,7 +1343,7 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
         <a href="{topics}"{" aria-current=\"page\"" if topic_active else ""}>Topics</a>
         <a href="{research}">Papers</a>
         <a href="{archive}"{cur("archive")}>Archive</a>
-        <a href="{subscribe}">Subscribe</a>
+        <a href="{subscribe}" rel="noopener noreferrer" target="_blank">Subscribe</a>
         <a href="{about}"{cur("about")}>About</a>
       </nav>
       <div class="header-actions">
@@ -1495,10 +1359,9 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
         <a href="{topics}">Topics</a>
         <a href="{research}">Papers</a>
         <a href="{archive}">Archive</a>
-        <a href="{subscribe}">Subscribe</a>
+        <a href="{subscribe}" rel="noopener noreferrer" target="_blank">Subscribe</a>
         <a href="{about}">About</a>
         <a href="{changelog}">Change log</a>
-        <a href="{feed}">Atom feed</a>
         <a href="{html.escape(REPO_URL)}" rel="noopener noreferrer">GitHub</a>
         <a href="{html.escape(EDU_URL)}" rel="noopener noreferrer">CompilerSutra</a>
       </div>
@@ -1511,8 +1374,7 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · {html.escape(CADENCE)}</div>
       <div>
-        <a href="{subscribe}">Subscribe</a> ·
-        <a href="{feed}">Feed</a> ·
+        <a href="{subscribe}" rel="noopener noreferrer" target="_blank">Subscribe</a> ·
         <a href="{changelog}">Change log</a> ·
         <a href="{html.escape(REPO_URL)}">Source</a> ·
         <a href="{html.escape(ISSUES_URL)}">Corrections</a>

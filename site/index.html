@@ -6,7 +6,6 @@
   <title>CompilerSutra Weekly</title>
   <meta name="description" content="A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, with context on what changed and why it matters."/>
   <meta name="color-scheme" content="dark light"/>
-  <link rel="alternate" type="application/atom+xml" title="CompilerSutra Weekly" href="feed.xml"/>
   <script>
   (function(){try{var t=localStorage.getItem('csw-theme');
   if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
@@ -29,7 +28,7 @@
         <a href="topics/index.html">Topics</a>
         <a href="topics/research.html">Papers</a>
         <a href="archive.html">Archive</a>
-        <a href="subscribe.html">Subscribe</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe</a>
         <a href="about.html">About</a>
       </nav>
       <div class="header-actions">
@@ -45,10 +44,9 @@
         <a href="topics/index.html">Topics</a>
         <a href="topics/research.html">Papers</a>
         <a href="archive.html">Archive</a>
-        <a href="subscribe.html">Subscribe</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe</a>
         <a href="about.html">About</a>
         <a href="changelog.html">Change log</a>
-        <a href="feed.xml">Atom feed</a>
         <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
         <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
       </div>
@@ -71,7 +69,7 @@
           <ul class='overview-list'><li>Extract subvectors via vec_perm_const — This patch adds a const-perm recoginzer for subvector extractions. The implementation is exactly the same as… (Backend · CPU)</li><li>Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR… (Frontend · Languages)</li><li>Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not… (Backend · CPU)</li><li>Add nvvm.mulf Op — Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change… (Middle-end · GPU)</li><li>Use runCodeGenPipeline in SPIRVTranslate — SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU… (Backend · GPU)</li></ul>
           <div class="cta-row">
             <a class="btn btn-primary" href="issues/2026/2026-11-07.html">Read this week&rsquo;s issue →</a>
-            <a class="btn btn-ghost" href="subscribe.html">Subscribe (RSS)</a>
+            <a class="btn btn-ghost" href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe by email</a>
           </div>
         </div>
 
@@ -205,8 +203,7 @@ SIFixSGPRCopiesPass declared no properties and never applied them.</p>
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · Published every Saturday. Each issue covers Saturday→Friday (Asia/Kolkata), frozen at end of Friday. Raw collection stays private; only the curated issue is published.</div>
       <div>
-        <a href="subscribe.html">Subscribe</a> ·
-        <a href="feed.xml">Feed</a> ·
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe</a> ·
         <a href="changelog.html">Change log</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
         <a href="https://github.com/compilersutra/compilersutra-weekly/issues">Corrections</a>
