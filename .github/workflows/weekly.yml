@@ -70,6 +70,29 @@ jobs:
           if [ -n "${AS_OF:-}" ]; then AS_OF_ARG="--as-of $AS_OF"; fi
           MODE="${MODE:-full-git}"
 
+          # Idempotent: if this Saturday's edition is already published, done.
+          ALREADY=$(python3 - <<'PY'
+from datetime import date
+import os
+from pathlib import Path
+import yaml
+from csweekly.window import publishable_window, publish_saturday
+as_of = os.environ.get("AS_OF") or None
+d = date.fromisoformat(as_of) if as_of else None
+pub = publish_saturday(publishable_window(as_of=d))
+meta = Path("data/editions") / f"{pub.year}" / pub.isoformat() / "edition.yaml"
+if meta.is_file():
+    status = yaml.safe_load(meta.read_text()).get("status")
+    print("yes" if status == "published" else "no")
+else:
+    print("no")
+PY
+)
+          if [ "$ALREADY" = "yes" ]; then
+            echo "Publishable edition already published — nothing to do"
+            exit 0
+          fi
+
           case "$MODE" in
             fixture)
               csweekly collect $AS_OF_ARG --closed --no-fetch --kind git \
@@ -84,6 +107,8 @@ jobs:
             full-git)
               csweekly collect $AS_OF_ARG --closed \
                 --mirrors-dir data/mirrors \
+                --source llvm --source gcc --source mlir \
+                --source circt --source iree \
                 --kind git --kind github_releases --kind rss --kind arxiv \
                 --out data/last_collect.json
               ;;
