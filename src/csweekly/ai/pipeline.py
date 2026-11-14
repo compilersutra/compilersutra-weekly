@@ -47,9 +47,16 @@ def apply_draft(
     group.editorial_level = _level_for(group)
 
     notes = dict(group.deep_dive_notes or {})
+    # Problem = prior limitation when known; Change = what_changed (separate fields).
+    problem = (
+        draft.previous_behavior
+        if (draft.previous_behavior or "").strip()
+        and "not established" not in (draft.previous_behavior or "").lower()
+        else draft.what_changed
+    )
     notes.update(
         {
-            "problem": draft.what_changed,
+            "problem": problem,
             "previous_behavior": draft.previous_behavior
             or "Not established from available evidence.",
             "implementation": draft.technical_implementation,
@@ -61,6 +68,11 @@ def apply_draft(
             "confidence": draft.confidence,
             "writer": draft.writer,
             "factcheck": "pass" if check.ok else "fail",
+            "example": notes.get("example")
+            or (
+                "See linked tests in the commit for concrete coverage. "
+                "No IR/assembly is invented here."
+            ),
         }
     )
     if pack.primary:

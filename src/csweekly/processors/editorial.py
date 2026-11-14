@@ -234,8 +234,28 @@ def _clip_words(text: str, limit: int) -> str:
     return cut + "…"
 
 
+def _briefing_slot_label(g: ChangeGroup, index: int) -> str:
+    """Editorial slot names for the five-minute briefing."""
+    if index == 0 or g.signal == SignalLevel.DEEP_DIVE:
+        return "The biggest development"
+    domains = {d.lower() for d in (g.domains or [])}
+    stages = {s.lower() for s in (g.stages or [])}
+    if domains & {"gpu", "ai / ml", "ai/ml"} or any(
+        t.lower() in {"amdgpu", "nvptx", "spir-v", "nvvm"}
+        for t in (g.hardware_targets or [])
+    ):
+        return "GPU / accelerator compilers"
+    if "frontend" in stages or domains & {"languages"}:
+        return "Frontend and language infrastructure"
+    if "backend" in stages or domains & {"cpu"}:
+        return "Backend and code generation"
+    if g.category == "research" or domains & {"research"}:
+        return "Research worth reading"
+    return "Also on the radar"
+
+
 def week_overview_bullets(groups: list[ChangeGroup]) -> list[str]:
-    """Five-minute briefing: named developments, not domain counts."""
+    """Five-minute briefing: labeled editorial slots, not a raw title dump."""
     ranked = sorted(
         [
             g
@@ -250,12 +270,23 @@ def week_overview_bullets(groups: list[ChangeGroup]) -> list[str]:
         ),
     )
     bullets: list[str] = []
-    for g in ranked[:5]:
+    used_labels: set[str] = set()
+    for i, g in enumerate(ranked[:5]):
+        label = _briefing_slot_label(g, i)
+        if label in used_labels and i > 0:
+            label = "Also on the radar"
+        used_labels.add(label)
         stage = (g.stages or ["—"])[0]
         domain = (g.domains or ["—"])[0]
         title = _clip_words(g.title or "Untitled", 72)
         why = _clip_words(g.why_it_matters or "Impact not yet clear.", 110)
-        bullets.append(f"{title} — {why} ({stage} · {domain})")
+        # Avoid cloning title into why when thin
+        if _clip_words(why, 72) == title:
+            why = f"{stage} · {domain} — see the full edition for evidence."
+        num = f"{i + 1:02d}"
+        bullets.append(
+            f"{num} — {label}: {title}. {why} ({stage} · {domain})"
+        )
     if not bullets:
         return ["Quiet week in the tracked sources — no high-signal themes stood out."]
     return bullets

@@ -1,7 +1,7 @@
 # Phase 1 audit — quality & correctness
 
-Date: 2026-11-10  
-Scope: CompilerSutra Weekly site + Issue `#001` pipeline (no architecture rewrite).
+Date: 2026-11-14  
+Scope: CompilerSutra Weekly site + editorial pipeline (no architecture rewrite).
 
 ## Keep
 
@@ -9,32 +9,42 @@ Scope: CompilerSutra Weekly site + Issue `#001` pipeline (no architecture rewrit
 - Changelog JSON as structured source of truth
 - Clustering / editorial selection / deep-dive section
 - Explore filters (stage / domain / area) as secondary nav
-- Atom feed + subscribe honesty (no fake email)
+- Subscribe honesty via CompilerSutra Google Form (no fake email inbox on Pages)
+- Tagline: **The compiler changes worth understanding.**
 
-## Fix now (done / in progress)
+## Explicitly closed (unless product reopens)
 
-| Issue | Root cause | Fix |
-| --- | --- | --- |
-| `BackendBackendCPU`-style noise | Badges + meta repeated same dims; chips lacked separators | Independent tax chips (`project/stage/domain/target`) via `taxonomy_ui.py` |
-| CPU on every frontend/debugger story | Default `llvm/gcc → CPU` | Evidence-gated CPU in `taxonomy.py` |
-| 9 high-signal vs 6 cards | Deep dive counted in total; homepage sliced to 6 | Explicit “Showing N of M” + exclude featured from grid |
-| Archive date / window clutter | ISO + long window string | Human date (`7 Nov 2026`); cleaner row meta |
-| Homepage nav duplication | Subnav + pipeline + HW grid + topic buckets | Homepage: hero → deep dive → highlights → compact explore |
-| Thin technical copy | Subject-only explain | Mirror `git log`/`show` enrichment into deep-dive notes |
+- **Atom / RSS feed** — intentionally removed from public site; do not restore without a product decision + test rewrite
+
+## Phase 1 editorial bar (shipped)
+
+| Requirement | Mechanism |
+| --- | --- |
+| Distinct Change vs Why | `ai/writer.py` implication prose; fact-check fails if identical |
+| Confidence labels | Verified / Source-backed / Inferred / Unverified chips |
+| Featured notes required | `validate.py` requires `confidence` + `factcheck` on deep dive + high signal |
+| Analyze before publish | `csweekly publish` runs deterministic evidence→write→factcheck |
+| Five-minute briefing | Labeled slots (biggest / GPU / frontend / backend / radar) |
+| Deep dive structure | Background → Problem → Previous → Change → Implementation → Example → Impact → Confidence |
+| Cadence honesty | Saturday→Friday Asia/Kolkata only (no UTC Fri→Fri copy) |
+| No invented IR/benchmarks | Writer limitations + fact-check performance gate |
 
 ## Do not touch yet
 
 - React / SPA rewrite
-- Email provider
+- Email provider / Mailchimp
 - Auth, comments, engagement metrics
 - Invented benchmarks / IR / assembly
+- Homepage “intelligence dashboard” redesign (Phase 2)
 
 ## Phase 2 backlog
 
 - Diff explorer UI (files / functions / tests)
+- Homepage layout refresh (hero stats, clearer hierarchy)
 - Pipeline diagram highlighting affected stage
 - Stronger before/after IR when tests provide it
 
 ## Phase 3–4
 
 - Benchmark watch, paper→impl links, community corrections
+- Pass / backend trackers, learning-ecosystem links

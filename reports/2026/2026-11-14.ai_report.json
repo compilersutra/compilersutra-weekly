@@ -1,0 +1,92 @@
+[
+  {
+    "id": "llvm-llvm-aarch64",
+    "title": "Remove clearKillFlags calls (#239892)",
+    "level": "deep_dive",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "gcc-gcc-aarch64",
+    "title": "Port NEON widening shifts by an immediate to the pragma-based framework",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "gcc-gcc-aarch64",
+    "title": "Add SVE2p3/SME2p3 pairwise intrinsics",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "llvm-llvm-mips-port",
+    "title": "[Mips] Port PostLegalizerCombiner to NewPM",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "mlir-mlir-cir-add",
+    "title": "[CIR] Add support for direct with align in calling convention lowering (#238929)",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "gcc-gcc-vectorizer",
+    "title": "fix dump_printf_loc without dump_enabled_p",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "gcc-gcc-s390",
+    "title": "Fix return value ABI handling for nullptr_t",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "gcc-gcc-tree-optimization-128514",
+    "title": "tree-optimization/128514 - wrong bitfield vectorization with SSO",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  },
+  {
+    "id": "gcc-gcc-openmp-c",
+    "title": "Add support for 'omp allocate' directive",
+    "level": "engineering_analysis",
+    "writer": "deterministic",
+    "confidence": "high",
+    "factcheck_ok": true,
+    "unsupported": [],
+    "errors": []
+  }
+]

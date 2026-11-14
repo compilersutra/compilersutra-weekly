@@ -87,6 +87,22 @@ def factcheck_deterministic(draft: EditorialDraft, pack: EvidencePack) -> FactCh
         result.ok = False
         result.missing_evidence.append("empty what_changed")
 
+    what_n = " ".join((draft.what_changed or "").lower().split())
+    why_n = " ".join((draft.why_it_matters or "").lower().split())
+    if what_n and why_n and what_n == why_n:
+        result.ok = False
+        result.unsupported_claims.append(
+            "why_it_matters identical to what_changed — not an editorial explanation"
+        )
+
+    if not (draft.why_it_matters or "").strip():
+        result.ok = False
+        result.missing_evidence.append("empty why_it_matters")
+
+    if draft.confidence not in {"high", "medium", "low"}:
+        result.ok = False
+        result.missing_evidence.append("confidence must be high|medium|low")
+
     if draft.confidence == "low" and draft.writer == "deterministic":
         result.notes.append("low confidence deterministic draft")
 

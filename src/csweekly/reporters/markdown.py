@@ -159,7 +159,8 @@ def render_markdown(issue: WeeklyIssue) -> str:
         "LLVM, Clang, GCC, MLIR, GPU compilers, AI compilers, and research, with context "
         "on why they matter.",
         "",
-        f"**Reporting period:** {issue.window.label} (UTC, Fri→Fri, end exclusive)  ",
+        f"**Reporting period:** {issue.window.label} "
+        f"({issue.window.timezone}, Saturday→Friday, end exclusive)  ",
         f"**Published:** {issue.published_on.isoformat()}",
         "",
         "## The week in compiler development",

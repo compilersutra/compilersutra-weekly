@@ -127,7 +127,7 @@ class ChangeGroup(BaseModel):
 class Window(BaseModel):
     start: datetime
     end: datetime
-    timezone: str = "UTC"
+    timezone: str = "Asia/Kolkata"
 
     @property
     def label(self) -> str:

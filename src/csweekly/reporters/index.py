@@ -304,13 +304,11 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         wk = int(latest.stats.get("worth_knowing") or 0)
         pub_human = format_issue_date(latest.date)
         bullets = payload.get("week_overview") or []
-        # Prefer short “what / why” lines over long commit-title dumps
-        overview_items = []
-        for b in bullets[:5]:
-            overview_items.append(f"<li>{html.escape(b)}</li>")
         overview = (
-            "<ul class='overview-list'>" + "".join(overview_items) + "</ul>"
-            if overview_items
+            "<ol class='briefing-list'>"
+            + "".join(f"<li class='briefing-item'>{html.escape(b)}</li>" for b in bullets[:5])
+            + "</ol>"
+            if bullets
             else ""
         )
         latest_block = f"""
@@ -329,9 +327,10 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         feat = dive or (high[0] if high else None)
         feat_id = (feat or {}).get("story_id") or (feat or {}).get("id")
         if feat:
-            why = html.escape((feat.get("why_it_matters") or "")[:280])
             notes = feat.get("deep_dive_notes") or {}
-            problem = html.escape((notes.get("problem") or feat.get("what_changed") or "")[:320])
+            change = html.escape((feat.get("what_changed") or "")[:320])
+            why_raw = (notes.get("implications") or feat.get("why_it_matters") or "")[:280]
+            why = html.escape(why_raw)
             src = "#"
             stories = feat.get("stories") or []
             if stories:
@@ -342,7 +341,7 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         <article class="feature-card">
           <h2>{html.escape((feat.get("title") or "")[:140])}</h2>
           {taxonomy_badges_html(feat)}
-          <p class="secondary"><strong>Problem.</strong> {problem}</p>
+          <p class="secondary"><strong>Change.</strong> {change}</p>
           <p class="secondary"><strong>Why engineers should care.</strong> {why}</p>
           <div class="cta-row" style="margin-top:0.85rem">
             <a class="btn btn-primary" href="{html.escape(latest.href_html)}#deep-dive">Full technical analysis →</a>
@@ -956,7 +955,7 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
     if payload.get("high_signal") or payload.get("groups"):
         content = _render_issue_html(meta, payload)
         toc_ids = [
-            ("briefing", "Five-minute briefing"),
+            ("briefing", "Briefing"),
             ("featured", "Featured"),
             ("worth-knowing", "Worth knowing"),
             ("themes", "Themes"),
@@ -1001,12 +1000,15 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
     parts: list[str] = []
     overview = payload.get("week_overview") or []
     if overview:
-        items = "".join(f"<li>{html.escape(b)}</li>" for b in overview)
+        items = "".join(
+            f'<li class="briefing-item">{html.escape(b)}</li>' for b in overview
+        )
         parts.append(
             f'<section id="briefing" class="issue-section">'
-            f"<h2>Five-minute briefing</h2>"
-            f'<p class="muted">Start here if you only have a few minutes.</p>'
-            f'<ul class="overview-list">{items}</ul></section>'
+            f"<h2>The week in compiler engineering</h2>"
+            f'<p class="muted">Five-minute briefing — start here. '
+            f"Evidence-backed; primary sources in each story.</p>"
+            f'<ol class="briefing-list">{items}</ol></section>'
         )
 
     high = payload.get("high_signal") or []
@@ -1143,9 +1145,17 @@ def _issue_story_card(g: dict, *, prominent: bool) -> str:
         if uncertain and (prominent or g.get("impact_uncertain"))
         else ""
     )
+    notes = g.get("deep_dive_notes") or {}
+    prev = html.escape(notes.get("previous_behavior") or "")
+    prev_p = (
+        f'<p class="muted"><strong>Previous behavior.</strong> {prev}</p>'
+        if prev and "not established" not in prev.lower() and prominent
+        else ""
+    )
     if prominent:
-        body = f"""  <p><strong>Change.</strong> {what}</p>
-  <p class="muted"><strong>Context.</strong> {ctx}</p>
+        body = f"""  {prev_p}
+  <p><strong>Change.</strong> {what}</p>
+  <p class="muted"><strong>Implementation.</strong> {ctx}</p>
   <p><strong>Why it matters.</strong> {why}</p>
   <p class="muted"><strong>Who should care.</strong> {who}</p>
   {files_p}
@@ -1153,11 +1163,15 @@ def _issue_story_card(g: dict, *, prominent: bool) -> str:
     else:
         body = f"""  <p class="secondary">{why}</p>
   {unc_p if g.get("impact_uncertain") else ""}"""
+    from csweekly.reporters.taxonomy_ui import LEVEL_LABELS, evidence_confidence
+
+    level_disp = LEVEL_LABELS.get(level, level.replace("_", " "))
+    ev_label, _ = evidence_confidence(g)
     return f"""<article class="{cls}" id="{html.escape(anchor)}">
   <h3>{title}</h3>
   {taxonomy_badges_html(g, include_type=True)}
 {body}
-  <p class="meta">Level: {level}{html.escape(score_bit)} · Primary source:
+  <p class="meta">{html.escape(level_disp)} · {html.escape(ev_label)}{html.escape(score_bit)} · Primary source:
     <a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a></p>
   {related_block}
 </article>"""
@@ -1180,19 +1194,26 @@ def _deep_dive_html(g: dict) -> str:
             f'<li><a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a> — {summary}</li>'
         )
     hw = html.escape(", ".join((g.get("hardware_targets") or [])[:3]) or "see paths")
+    who = html.escape(", ".join(g.get("who_should_care") or []) or "Compiler engineers")
+    from csweekly.reporters.taxonomy_ui import evidence_confidence
+
+    ev_label, _ = evidence_confidence(g)
     return f"""<section id="deep-dive" class="issue-section deep-dive">
   <h2>Deep dive</h2>
   <article class="feature-card" id="{html.escape(anchor)}-dive">
     <h3>{title}</h3>
     {taxonomy_badges_html(g)}
     <ol class="deep-list">
+      <li><strong>Background</strong> — {n("background", "See primary commit evidence.")}</li>
       <li><strong>Problem</strong> — {n("problem")}</li>
       <li><strong>Previous behavior</strong> — {n("previous_behavior")}</li>
-      <li><strong>Change</strong> — {n("implementation", g.get("what_changed") or "")}</li>
-      <li><strong>Implementation surface</strong> — {n("background", "See primary commit file list.")}</li>
-      <li><strong>Target impact</strong> — {hw}</li>
-      <li><strong>Validation</strong> — {n("validation", n("example"))}</li>
-      <li><strong>Why it matters</strong> — {n("implications", g.get("why_it_matters") or "")}</li>
+      <li><strong>Change</strong> — {html.escape(g.get("what_changed") or "")}</li>
+      <li><strong>Implementation</strong> — {n("implementation")}</li>
+      <li><strong>Example / validation</strong> — {n("example", n("validation"))}</li>
+      <li><strong>Impact</strong> — {n("implications", g.get("why_it_matters") or "")}</li>
+      <li><strong>Who should care</strong> — {who}</li>
+      <li><strong>Target</strong> — {hw}</li>
+      <li><strong>Confidence</strong> — {html.escape(ev_label)} ({n("confidence", "unknown")}; fact-check {n("factcheck", "n/a")})</li>
       <li><strong>Limitations</strong> — {n("limits", g.get("uncertainty_note") or "")}</li>
     </ol>
     <h4>Evidence (primary sources)</h4>

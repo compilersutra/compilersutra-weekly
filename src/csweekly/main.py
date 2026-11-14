@@ -159,6 +159,7 @@ def main(argv: list[str] | None = None) -> int:
     p_publish.add_argument("--edition", type=Path, default=None)
     p_publish.add_argument("--reports-dir", type=Path, default=Path("reports"))
     p_publish.add_argument("--site-dir", type=Path, default=Path("site"))
+    p_publish.add_argument("--mirrors-dir", type=Path, default=Path("data/mirrors"))
     p_publish.add_argument("--skip-validate", action="store_true")
 
     p_report = sub.add_parser("report", help="Build Saturday Markdown from collect JSON (legacy)")
@@ -543,6 +544,38 @@ def cmd_publish(args: argparse.Namespace) -> int:
     stories = [enrich_story(s) for s in normalize_stories(raw)]
     window = publishable_window(as_of=_parse_as_of(args.as_of) or meta.published_at)
     issue = build_issue(window, stories, reports_dir=args.reports_dir)
+
+    # Phase 1: always run evidence-backed editorial on featured before publish.
+    from csweekly.ai.pipeline import analyze_issue_groups
+    from csweekly.processors.editorial import week_overview_bullets
+    from csweekly.processors.impact import score_impact
+
+    mirrors = Path(getattr(args, "mirrors_dir", None) or "data/mirrors")
+    targets = []
+    if issue.deep_dive:
+        issue.deep_dive.signal = SignalLevel.DEEP_DIVE
+        issue.deep_dive.editorial_level = "deep_dive"
+        targets.append(issue.deep_dive)
+    for g in issue.high_signal:
+        g.signal = SignalLevel.HIGH_SIGNAL
+        g.editorial_level = g.editorial_level or "engineering_analysis"
+        targets.append(g)
+    if targets:
+        analyze_issue_groups(targets, mirrors, use_llm=False, factcheck_llm=False)
+        for g in targets:
+            score_impact(g)
+        # Refresh briefing from enriched featured set
+        issue.week_overview = week_overview_bullets(
+            list(targets) + list(issue.worth_knowing or [])
+        )
+
+    if not args.skip_validate:
+        gate2 = validate_edition(edir, issue)
+        sys.stdout.write(format_gate_report(gate2))
+        if not gate2.ok:
+            print("publish aborted after editorial analyze", file=sys.stderr)
+            return 1
+
     path = write_issue(issue, args.reports_dir)
     meta.number = int(issue.stats.get("issue_number") or meta.number or 0) or None
     mark_published(edir, issue)

@@ -98,7 +98,7 @@ Same pattern for `github_releases`, `rss`, or `arxiv` kinds (`docs/sources.md`).
 
 | Command | Role |
 | --- | --- |
-| `csweekly week` | Show Fri→Fri window + Saturday publish date |
+| `csweekly week` | Show Sat→Fri Asia/Kolkata window + Saturday publish date |
 | `csweekly sources` | List enabled sources (`--all` for disabled) |
 | `csweekly collect` | Write `data/last_collect.json` |
 | `csweekly report` | Render Markdown issue |

@@ -126,6 +126,15 @@ def write_deterministic(pack: EvidencePack, *, level: str = "engineering_analysi
         audience.append(f"{pack.stages[0]} engineers")
     if not audience:
         audience = ["Compiler engineers"]
+    audience = list(dict.fromkeys(audience))[:6]
+
+    why = _why_it_matters_from_evidence(
+        subject=subject,
+        first=first,
+        pack=pack,
+        audience=audience,
+        has_tests=bool(primary.tests),
+    )
 
     notes = [
         f"commit:{primary.sha[:12]}",
@@ -142,8 +151,8 @@ def write_deterministic(pack: EvidencePack, *, level: str = "engineering_analysi
         what_changed=what[:900],
         previous_behavior=prev[:600],
         technical_implementation=" ".join(impl_parts),
-        why_it_matters=(first[:400] if first else subject)[:400],
-        who_should_care=list(dict.fromkeys(audience))[:6],
+        why_it_matters=why[:500],
+        who_should_care=audience,
         stages=list(pack.stages),
         domains=list(pack.domains),
         hardware_targets=list(pack.hardware_targets),
@@ -152,12 +161,57 @@ def write_deterministic(pack: EvidencePack, *, level: str = "engineering_analysi
         performance_impact="Not established from available evidence.",
         limitations=(
             "Interpretation is limited to the commit message and inspected diff. "
-            "No performance numbers are claimed without benchmarks in evidence."
+            "No performance numbers or invented IR/assembly are claimed without "
+            "evidence in the pack."
         ),
         confidence=confidence,
         evidence_notes=notes,
         writer="deterministic",
     )
+
+
+def _norm_cmp(text: str) -> str:
+    return " ".join((text or "").lower().split())
+
+
+def _why_it_matters_from_evidence(
+    *,
+    subject: str,
+    first: str,
+    pack: EvidencePack,
+    audience: list[str],
+    has_tests: bool,
+) -> str:
+    """Implication/audience prose — must not clone the commit body / what_changed."""
+    bits: list[str] = []
+    if pack.hardware_targets:
+        bits.append(
+            "Affects "
+            + ", ".join(pack.hardware_targets[:3])
+            + " lowering / target code generation."
+        )
+    if pack.domains:
+        bits.append(f"Matters for {pack.domains[0]} compiler engineering.")
+    if pack.stages:
+        bits.append(f"Lives in the {pack.stages[0]} of the pipeline.")
+    if has_tests:
+        bits.append("The same commit touches tests — use those as the reproduce entry point.")
+    who = ", ".join(audience[:3]) or "Compiler engineers"
+    bits.append(f"Primary audience: {who}.")
+    why = " ".join(bits)
+    # Hard guard: never publish why identical to the change description
+    if first and _norm_cmp(why) == _norm_cmp(first[:500]):
+        why = (
+            f"Engineers should inspect the linked diff for “{subject[:72]}”; "
+            f"broader product impact is not claimed beyond the evidence pack. "
+            f"Audience: {who}."
+        )
+    if _norm_cmp(why) == _norm_cmp(subject):
+        why = (
+            f"Track this if you maintain related pipeline code. "
+            f"Audience: {who}. Broader impact is not established beyond the source."
+        )
+    return why
 
 
 def write_with_llm(pack: EvidencePack, *, level: str = "engineering_analysis") -> EditorialDraft | None:

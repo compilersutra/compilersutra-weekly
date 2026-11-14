@@ -504,6 +504,33 @@ a.issue-row:hover { background: color-mix(in srgb, var(--accent) 8%, transparent
 }
 .badge.tax-project { border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
 .badge.tax-target { border-color: color-mix(in srgb, var(--teal) 40%, var(--border)); }
+.badge.tax-evidence.evidence-verified {
+  border-color: color-mix(in srgb, #3d9a6a 45%, var(--border));
+}
+.badge.tax-evidence.evidence-source-backed {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+.badge.tax-evidence.evidence-inferred {
+  border-color: color-mix(in srgb, #c4a35a 45%, var(--border));
+}
+.badge.tax-evidence.evidence-unverified {
+  border-color: color-mix(in srgb, var(--text-muted) 35%, var(--border));
+  opacity: 0.9;
+}
+.briefing-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  counter-reset: none;
+}
+.briefing-list .briefing-item {
+  margin: 0;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border);
+  line-height: 1.45;
+  color: var(--text);
+}
+.briefing-list .briefing-item:first-child { border-top: 0; padding-top: 0.25rem; }
 
 code.feed-url {
   display: block;

@@ -143,11 +143,42 @@ def validate_edition(edir: Path, issue: WeeklyIssue | None = None) -> GateResult
             f"flagged={bad[:3]}",
             warning=True,
         )
+
+        featured = list(issue.high_signal or [])
+        if issue.deep_dive:
+            featured = [issue.deep_dive] + featured
+
+        def _norm(text: str | None) -> str:
+            return " ".join((text or "").lower().split())
+
+        identical = [
+            g.title
+            for g in featured
+            if _norm(g.what_changed) and _norm(g.what_changed) == _norm(g.why_it_matters)
+        ]
+        result.add(
+            "Featured what_changed ≠ why_it_matters",
+            not identical,
+            f"flagged={identical[:3]}",
+        )
+
+        missing_notes = []
+        for g in featured:
+            notes = g.deep_dive_notes or {}
+            conf = notes.get("confidence")
+            if not notes or conf not in {"high", "medium", "low"} or not notes.get(
+                "factcheck"
+            ):
+                missing_notes.append(g.title)
+        result.add(
+            "Featured stories have confidence + factcheck notes",
+            not missing_notes,
+            f"missing={missing_notes[:3]}",
+        )
+
         # AI fact-check trail on deep dive / high signal
         fc_fail = []
-        for g in list(issue.high_signal or []) + (
-            [issue.deep_dive] if issue.deep_dive else []
-        ):
+        for g in featured:
             notes = g.deep_dive_notes or {}
             if notes.get("factcheck") == "fail":
                 fc_fail.append(g.title)

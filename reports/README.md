@@ -4,7 +4,7 @@ Site: [https://compilersutra.github.io/compilersutra-weekly/](https://compilersu
 
 | Edition | Window |
 | --- | --- |
-| [#002 2026-11-14](2026/2026-11-14.md) | 2026-11-07 → 2026-11-14 (UTC, Fri→Fri, end exclusive) |
+| [#002 2026-11-14](2026/2026-11-14.md) | 2026-11-07 → 2026-11-14 (Asia/Kolkata, Saturday→Friday, end exclusive) |
 | [#001 2026-11-07](2026/2026-11-07.md) | 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive) |
 
 Education: [https://www.compilersutra.com/](https://www.compilersutra.com/).

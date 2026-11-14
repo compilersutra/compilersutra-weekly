@@ -19,10 +19,10 @@ tests). Do not invent IR, assembly, benchmarks, or motivations absent from evide
 
 Return a single JSON object with keys:
 - title (string)
-- what_changed (string, 2–4 sentences)
+- what_changed (string, 2–4 sentences: the concrete change)
 - previous_behavior (string; empty if unsupported)
 - technical_implementation (string)
-- why_it_matters (string)
+- why_it_matters (string: implication / who should care — MUST NOT copy what_changed)
 - who_should_care (array of strings)
 - stages (array)
 - domains (array)

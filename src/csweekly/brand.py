@@ -12,8 +12,8 @@ META_DESCRIPTION = (
     "A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, "
     "with context on what changed and why it matters."
 )
-HERO_KICKER = "Weekly compiler brief"
-HERO_TITLE = "The compiler changes worth knowing this week"
+HERO_KICKER = "Weekly compiler intelligence"
+HERO_TITLE = "The compiler changes worth understanding"
 HERO_LEDE = (
     "LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, "
     "and connected to the compiler pipeline."

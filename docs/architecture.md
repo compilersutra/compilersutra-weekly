@@ -5,7 +5,7 @@ sources/*.yaml
     │
     ▼
 pipeline.collect_all
-    ├─ git_mirror        (persistent clones; Fri→Fri git log)
+    ├─ git_mirror        (persistent clones; Sat→Fri Asia/Kolkata git log)
     ├─ github_releases   (optional CSWEEKLY_GITHUB_TOKEN)
     ├─ rss_feed
     └─ arxiv_api

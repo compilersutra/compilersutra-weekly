@@ -55,11 +55,11 @@
     }
   },
   "week_overview": [
-    "Remove clearKillFlags calls \u2014 RuntimeLibcalls interface change \u2014 how the compiler declares or emits library calls. (Backend \u00b7 CPU)",
-    "Add support for direct with align in calling convention lowering \u2014 Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not\u2026 (Frontend \u00b7 Languages)",
-    "fix dump_printf_loc without dump_enabled_p \u2014 Subject explicitly concerns auto-vectorization / SIMD lowering. Do not assume measured speedups without\u2026 (Middle-end \u00b7 CPU)",
-    "Fix return value ABI handling for nullptr_t \u2014 Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not\u2026 (Backend \u00b7 CPU)",
-    "tree-optimization/128514 - wrong bitfield vectorization with SSO \u2014 Subject explicitly concerns auto-vectorization / SIMD lowering. Do not assume measured speedups without\u2026 (Middle-end \u00b7 CPU)"
+    "01 \u2014 The biggest development: Remove clearKillFlags calls (#239892). Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend\u2026 (Backend \u00b7 CPU)",
+    "02 \u2014 GPU / accelerator compilers: [CIR] Add support for direct with align in calling convention lowering\u2026. Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches\u2026 (Frontend \u00b7 Languages)",
+    "03 \u2014 Backend and code generation: fix dump_printf_loc without dump_enabled_p. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. Primary audience: CPU\u2026 (Middle-end \u00b7 CPU)",
+    "04 \u2014 Also on the radar: Fix return value ABI handling for nullptr_t. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2026 (Backend \u00b7 CPU)",
+    "05 \u2014 Also on the radar: tree-optimization/128514 - wrong bitfield vectorization with SSO. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2026 (Middle-end \u00b7 CPU)"
   ],
   "stories": [
     {
@@ -45084,9 +45084,25 @@
               "technical_areas": [
                 "Code generation"
               ]
-            }
+            },
+            "ai_writer": "deterministic",
+            "ai_confidence": "high",
+            "factcheck": {
+              "ok": true,
+              "unsupported_claims": [],
+              "missing_evidence": [],
+              "performance_claims_ok": true,
+              "notes": [],
+              "checker": "deterministic"
+            },
+            "evidence_notes": [
+              "commit:04a69e68bb4c",
+              "files:7",
+              "tests:2",
+              "cluster:22 commits"
+            ]
           },
-          "analysis_generated": false
+          "analysis_generated": true
         },
         {
           "id": "git:gcc:2ba612f2c74435a93939e7617af3569bdb7f4334",
@@ -46836,17 +46852,17 @@
         }
       ],
       "story_id": "gcc-gcc-aarch64",
-      "what_changed": "Port NEON widening shifts by an immediate to the pragma-based framework. (22 related commits) Cluster of 22 related commits treated as one development.",
-      "technical_context": "Touched trees: gcc. Technical areas: Code generation.",
-      "why_it_matters": "Source subject: \u201cPort NEON widening shifts by an immediate to the pragma-based framework\u201d. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.",
+      "what_changed": "Port the following families of NEON intrinsics to the pragma-based framework:\n* vshll_n\n* vshll_high_n",
+      "technical_context": "Primary `04a69e68bb4c` (+96/\u221296). Files: gcc/config/aarch64/aarch64-builtins.cc, gcc/config/aarch64/aarch64-neon-builtins-base.cc, gcc/config/aarch64/aarch64-neon-builtins-base.def, gcc/config/aarch64/aarch64-simd-builtins.def, gcc/config/aarch64/arm_neon.h, gcc/testsuite/gcc.target/aarch64/neon/shift_imm_range.c, gcc/testsuite/gcc.target/aarch64/neon/vshll_n.c. Diff-referenced symbols include: TYPES_USHIFTIMM, NEON_FUNCTION, DEF_NEON_FUNCTION, nonstreaming_only, BUILTIN_VD_BHSI, BUILTIN_VQW, vrsqrtsq_f64, __attribute__.",
+      "why_it_matters": "Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, GPU developers, AArch64 backend engineers.",
       "who_should_care": [
-        "Backend developers",
-        "Frontend / Clang developers",
-        "CPU compiler developers",
-        "GPU compiler developers"
+        "CPU developers",
+        "GPU developers",
+        "AArch64 backend engineers",
+        "Backend engineers"
       ],
       "uncertainty_note": "Broader impact is not established from the commit message alone.",
-      "change_type": "Backend",
+      "change_type": "New capability",
       "signal": "high_signal",
       "stages": [
         "Backend",
@@ -46867,10 +46883,30 @@
         "AArch64"
       ],
       "impact_uncertain": true,
-      "deep_dive_notes": {},
-      "editorial_level": null,
-      "impact_score": null,
-      "impact_factors": {}
+      "deep_dive_notes": {
+        "problem": "Port the following families of NEON intrinsics to the pragma-based framework:\n* vshll_n\n* vshll_high_n",
+        "previous_behavior": "Not established from available evidence.",
+        "implementation": "Primary `04a69e68bb4c` (+96/\u221296). Files: gcc/config/aarch64/aarch64-builtins.cc, gcc/config/aarch64/aarch64-neon-builtins-base.cc, gcc/config/aarch64/aarch64-neon-builtins-base.def, gcc/config/aarch64/aarch64-simd-builtins.def, gcc/config/aarch64/arm_neon.h, gcc/testsuite/gcc.target/aarch64/neon/shift_imm_range.c, gcc/testsuite/gcc.target/aarch64/neon/vshll_n.c. Diff-referenced symbols include: TYPES_USHIFTIMM, NEON_FUNCTION, DEF_NEON_FUNCTION, nonstreaming_only, BUILTIN_VD_BHSI, BUILTIN_VQW, vrsqrtsq_f64, __attribute__.",
+        "implications": "Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, GPU developers, AArch64 backend engineers.",
+        "validation": "Tests touched: gcc/testsuite/gcc.target/aarch64/neon/shift_imm_range.c, gcc/testsuite/gcc.target/aarch64/neon/vshll_n.c.",
+        "limits": "Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.",
+        "performance": "Not established from available evidence.",
+        "confidence": "high",
+        "writer": "deterministic",
+        "factcheck": "pass",
+        "example": "See linked tests in the commit for concrete coverage. No IR/assembly is invented here.",
+        "background": "Evidence from 04a69e68bb4c (+96/\u221296); cluster size 22."
+      },
+      "editorial_level": "engineering_analysis",
+      "impact_score": 6.85,
+      "impact_factors": {
+        "technical_significance": 7.0,
+        "architectural_impact": 5.0,
+        "developer_relevance": 7.0,
+        "scope_of_change": 10.0,
+        "novelty": 5.0,
+        "evidence_validation": 7.0
+      }
     },
     {
       "id": "GCC|gcc:aarch64|gcc/testsuite/gcc.target",
@@ -46916,16 +46952,7 @@
             "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addsubp_s8.c",
             "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addsubp_u16.c",
             "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addsubp_u32.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addsubp_u64.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addsubp_u8.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/subp_s16.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/subp_s32.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/subp_s64.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/subp_s8.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/subp_u16.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/subp_u32.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/subp_u64.c",
-            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/subp_u8.c"
+            "gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addsubp_u64.c"
           ],
           "areas": [
             "Backend"
@@ -46982,9 +47009,25 @@
               "technical_areas": [
                 "Code generation"
               ]
-            }
+            },
+            "ai_writer": "deterministic",
+            "ai_confidence": "high",
+            "factcheck": {
+              "ok": true,
+              "unsupported_claims": [],
+              "missing_evidence": [],
+              "performance_claims_ok": true,
+              "notes": [],
+              "checker": "deterministic"
+            },
+            "evidence_notes": [
+              "commit:94e294dbcd42",
+              "files:29",
+              "tests:20",
+              "cluster:5 commits"
+            ]
           },
-          "analysis_generated": false
+          "analysis_generated": true
         },
         {
           "id": "git:gcc:ee2f4aeb3c55f2603e41cf4772275660f987f046",
@@ -47336,16 +47379,16 @@
         }
       ],
       "story_id": "gcc-gcc-aarch64",
-      "what_changed": "SVE2p3/SME2p3 pairwise intrinsics was added. (5 related commits) Cluster of 5 related commits treated as one development.",
-      "technical_context": "Touched trees: gcc. Technical areas: Code generation.",
-      "why_it_matters": "Source subject: \u201cAdd SVE2p3/SME2p3 pairwise intrinsics\u201d. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.",
+      "what_changed": "Add support for these new pairwise intrinsic operations: svaddqp, svaddsubp and\nsvsubp.",
+      "technical_context": "Primary `94e294dbcd42` (+1076/\u221210). Files: gcc/config/aarch64/aarch64-sve-builtins-sve2.cc, gcc/config/aarch64/aarch64-sve-builtins-sve2.def, gcc/config/aarch64/aarch64-sve-builtins-sve2.h, gcc/config/aarch64/aarch64-sve2.md, gcc/config/aarch64/iterators.md, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s16.c, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s32.c, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s64.c. Diff-referenced symbols include: FUNCTION, DEF_SVE_FUNCTION_GS, sve_and_sme, DEF_SVE_FUNCTION.",
+      "why_it_matters": "Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, AArch64 backend engineers, Backend engineers.",
       "who_should_care": [
-        "Backend developers",
-        "CPU compiler developers",
-        "AArch64 developers"
+        "CPU developers",
+        "AArch64 backend engineers",
+        "Backend engineers"
       ],
       "uncertainty_note": "Broader impact is not established from the commit message alone.",
-      "change_type": "Backend",
+      "change_type": "New capability",
       "signal": "high_signal",
       "stages": [
         "Backend"
@@ -47360,14 +47403,34 @@
         "AArch64"
       ],
       "impact_uncertain": true,
-      "deep_dive_notes": {},
-      "editorial_level": null,
-      "impact_score": null,
-      "impact_factors": {}
+      "deep_dive_notes": {
+        "problem": "Add support for these new pairwise intrinsic operations: svaddqp, svaddsubp and\nsvsubp.",
+        "previous_behavior": "Not established from available evidence.",
+        "implementation": "Primary `94e294dbcd42` (+1076/\u221210). Files: gcc/config/aarch64/aarch64-sve-builtins-sve2.cc, gcc/config/aarch64/aarch64-sve-builtins-sve2.def, gcc/config/aarch64/aarch64-sve-builtins-sve2.h, gcc/config/aarch64/aarch64-sve2.md, gcc/config/aarch64/iterators.md, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s16.c, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s32.c, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s64.c. Diff-referenced symbols include: FUNCTION, DEF_SVE_FUNCTION_GS, sve_and_sme, DEF_SVE_FUNCTION.",
+        "implications": "Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, AArch64 backend engineers, Backend engineers.",
+        "validation": "Tests touched: gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s16.c, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s32.c, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s64.c, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_s8.c, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_u16.c, gcc/testsuite/gcc.target/aarch64/sve2/acle/asm/addqp_u32.c.",
+        "limits": "Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.",
+        "performance": "Not established from available evidence.",
+        "confidence": "high",
+        "writer": "deterministic",
+        "factcheck": "pass",
+        "example": "See linked tests in the commit for concrete coverage. No IR/assembly is invented here.",
+        "background": "Evidence from 94e294dbcd42 (+1076/\u221210); cluster size 5."
+      },
+      "editorial_level": "engineering_analysis",
+      "impact_score": 6.85,
+      "impact_factors": {
+        "technical_significance": 7.0,
+        "architectural_impact": 5.0,
+        "developer_relevance": 7.0,
+        "scope_of_change": 10.0,
+        "novelty": 5.0,
+        "evidence_validation": 7.0
+      }
     },
     {
       "id": "LLVM|llvm:mips port|llvm/lib/Target",
-      "title": "Port PostLegalizerCombiner to NewPM",
+      "title": "[Mips] Port PostLegalizerCombiner to NewPM",
       "category": "llvm",
       "project": "LLVM",
       "areas": [
@@ -47446,9 +47509,25 @@
               "technical_areas": [
                 "Code generation"
               ]
-            }
+            },
+            "ai_writer": "deterministic",
+            "ai_confidence": "high",
+            "factcheck": {
+              "ok": true,
+              "unsupported_claims": [],
+              "missing_evidence": [],
+              "performance_claims_ok": true,
+              "notes": [],
+              "checker": "deterministic"
+            },
+            "evidence_notes": [
+              "commit:a997ed4e98e8",
+              "files:4",
+              "tests:0",
+              "cluster:5 commits"
+            ]
           },
-          "analysis_generated": false
+          "analysis_generated": true
         },
         {
           "id": "git:llvm:786c55590992379c75e71c719ae8d08f1ebec68a",
@@ -47763,15 +47842,15 @@
         }
       ],
       "story_id": "llvm-llvm-mips-port",
-      "what_changed": "Port PostLegalizerCombiner to NewPM. (5 related commits) Cluster of 5 related commits treated as one development.",
-      "technical_context": "Touched trees: llvm. Technical areas: Code generation.",
-      "why_it_matters": "Source subject: \u201cPort PostLegalizerCombiner to NewPM\u201d. Apparent component: LLVM. Broader impact is not established from the commit message alone.",
+      "what_changed": "Standard NewPM pass porting.",
+      "technical_context": "Primary `a997ed4e98e8` (+74/\u221225). Files: llvm/lib/Target/Mips/Mips.h, llvm/lib/Target/Mips/MipsPassRegistry.def, llvm/lib/Target/Mips/MipsPostLegalizerCombiner.cpp, llvm/lib/Target/Mips/MipsTargetMachine.cpp. Diff-referenced symbols include: MipsPostLegalizerCombinerPass, initializeMipsBranchExpansionLegacyPass, MACHINE_FUNCTION_PASS, MipsPostLegalizerCombinerImpl::MipsPostLegalizerCombinerImpl, MipsPostLegalizerCombiner::getAnalysisUsage, MipsPostLegalizerCombiner::MipsPostLegalizerCombiner, MachineFunctionPass, parseCommandLineOption.",
+      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, Backend engineers.",
       "who_should_care": [
-        "Backend developers",
-        "CPU compiler developers"
+        "CPU developers",
+        "Backend engineers"
       ],
       "uncertainty_note": "Broader impact is not established from the commit message alone.",
-      "change_type": "Backend",
+      "change_type": "Other",
       "signal": "high_signal",
       "stages": [
         "Backend"
@@ -47785,14 +47864,34 @@
       ],
       "hardware_targets": [],
       "impact_uncertain": true,
-      "deep_dive_notes": {},
-      "editorial_level": null,
-      "impact_score": null,
-      "impact_factors": {}
+      "deep_dive_notes": {
+        "problem": "Standard NewPM pass porting.",
+        "previous_behavior": "Not established from available evidence.",
+        "implementation": "Primary `a997ed4e98e8` (+74/\u221225). Files: llvm/lib/Target/Mips/Mips.h, llvm/lib/Target/Mips/MipsPassRegistry.def, llvm/lib/Target/Mips/MipsPostLegalizerCombiner.cpp, llvm/lib/Target/Mips/MipsTargetMachine.cpp. Diff-referenced symbols include: MipsPostLegalizerCombinerPass, initializeMipsBranchExpansionLegacyPass, MACHINE_FUNCTION_PASS, MipsPostLegalizerCombinerImpl::MipsPostLegalizerCombinerImpl, MipsPostLegalizerCombiner::getAnalysisUsage, MipsPostLegalizerCombiner::MipsPostLegalizerCombiner, MachineFunctionPass, parseCommandLineOption.",
+        "implications": "Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, Backend engineers.",
+        "validation": "No obvious test paths in the primary commit file list.",
+        "limits": "Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.",
+        "performance": "Not established from available evidence.",
+        "confidence": "high",
+        "writer": "deterministic",
+        "factcheck": "pass",
+        "example": "See linked tests in the commit for concrete coverage. No IR/assembly is invented here.",
+        "background": "Evidence from a997ed4e98e8 (+74/\u221225); cluster size 5."
+      },
+      "editorial_level": "engineering_analysis",
+      "impact_score": 7.15,
+      "impact_factors": {
+        "technical_significance": 7.0,
+        "architectural_impact": 6.5,
+        "developer_relevance": 7.0,
+        "scope_of_change": 10.0,
+        "novelty": 5.0,
+        "evidence_validation": 7.0
+      }
     },
     {
       "id": "MLIR|mlir:cir add|clang/lib/CIR",
-      "title": "Add support for direct with align in calling convention lowering",
+      "title": "[CIR] Add support for direct with align in calling convention lowering (#238929)",
       "category": "mlir",
       "project": "MLIR",
       "areas": [
@@ -47889,20 +47988,35 @@
                 "IR",
                 "Tooling"
               ]
-            }
+            },
+            "ai_writer": "deterministic",
+            "ai_confidence": "high",
+            "factcheck": {
+              "ok": true,
+              "unsupported_claims": [],
+              "missing_evidence": [],
+              "performance_claims_ok": true,
+              "notes": [],
+              "checker": "deterministic"
+            },
+            "evidence_notes": [
+              "commit:6cfe6ebf4469",
+              "files:7",
+              "tests:4",
+              "cluster:1 commits"
+            ]
           },
-          "analysis_generated": false
+          "analysis_generated": true
         }
       ],
       "story_id": "mlir-mlir-cir-add",
-      "what_changed": "Support for direct with align in calling convention lowering was added.",
-      "technical_context": "Touched trees: clang, mlir. Technical areas: Language, Semantics, IR.",
-      "why_it_matters": "Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator change.",
+      "what_changed": "This change adds the infrastructure for handling arguments that are\nclassified as `Direct` with a required alignment. These arguments are\npassed unmodified but required an `alignstack` attribute. There are no\ncases where this is needed for x86, so these changes can only be tested\nvia unit tests. This support will be needed when AAPCS targets are\nsupported.",
+      "technical_context": "Primary `6cfe6ebf4469` (+138/\u221228). Files: clang/lib/CIR/Dialect/Transforms/CIRABIClassifier.cpp, clang/lib/CIR/Dialect/Transforms/TargetLowering/CIRABIRewriteContext.cpp, clang/test/CIR/Transforms/abi-lowering/direct-alignstack.cir, mlir/include/mlir/ABI/ABIRewriteContext.h, mlir/include/mlir/ABI/Targets/Test/TestTarget.h, mlir/lib/ABI/Targets/Test/TestTarget.cpp, mlir/unittests/ABI/TestTargetTest.cpp. Diff-referenced symbols include: mapCIRType, convertABIArgInfo, CIRABIClassifierCommon::classifySignature, isPassThrough, recordIsTransparentUnion, isCoercionWiderThanMemory, updateArgAttrs, getDirect.",
+      "why_it_matters": "Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: Languages developers, AI / ML developers, Frontend engineers.",
       "who_should_care": [
-        "Frontend / Clang developers",
-        "Middle-end / optimization developers",
-        "Language frontend developers",
-        "AI compiler developers"
+        "Languages developers",
+        "AI / ML developers",
+        "Frontend engineers"
       ],
       "uncertainty_note": "Explanation grounded in the commit subject; open the source for details.",
       "change_type": "New capability",
@@ -47923,10 +48037,30 @@
       ],
       "hardware_targets": [],
       "impact_uncertain": false,
-      "deep_dive_notes": {},
-      "editorial_level": null,
-      "impact_score": null,
-      "impact_factors": {}
+      "deep_dive_notes": {
+        "problem": "This change adds the infrastructure for handling arguments that are\nclassified as `Direct` with a required alignment. These arguments are\npassed unmodified but required an `alignstack` attribute. There are no\ncases where this is needed for x86, so these changes can only be tested\nvia unit tests. This support will be needed when AAPCS targets are\nsupported.",
+        "previous_behavior": "Not established from available evidence.",
+        "implementation": "Primary `6cfe6ebf4469` (+138/\u221228). Files: clang/lib/CIR/Dialect/Transforms/CIRABIClassifier.cpp, clang/lib/CIR/Dialect/Transforms/TargetLowering/CIRABIRewriteContext.cpp, clang/test/CIR/Transforms/abi-lowering/direct-alignstack.cir, mlir/include/mlir/ABI/ABIRewriteContext.h, mlir/include/mlir/ABI/Targets/Test/TestTarget.h, mlir/lib/ABI/Targets/Test/TestTarget.cpp, mlir/unittests/ABI/TestTargetTest.cpp. Diff-referenced symbols include: mapCIRType, convertABIArgInfo, CIRABIClassifierCommon::classifySignature, isPassThrough, recordIsTransparentUnion, isCoercionWiderThanMemory, updateArgAttrs, getDirect.",
+        "implications": "Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: Languages developers, AI / ML developers, Frontend engineers.",
+        "validation": "Tests touched: clang/test/CIR/Transforms/abi-lowering/direct-alignstack.cir, mlir/include/mlir/ABI/Targets/Test/TestTarget.h, mlir/lib/ABI/Targets/Test/TestTarget.cpp, mlir/unittests/ABI/TestTargetTest.cpp.",
+        "limits": "Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.",
+        "performance": "Not established from available evidence.",
+        "confidence": "high",
+        "writer": "deterministic",
+        "factcheck": "pass",
+        "example": "See linked tests in the commit for concrete coverage. No IR/assembly is invented here.",
+        "background": "Evidence from 6cfe6ebf4469 (+138/\u221228); cluster size 1."
+      },
+      "editorial_level": "engineering_analysis",
+      "impact_score": 6.33,
+      "impact_factors": {
+        "technical_significance": 7.0,
+        "architectural_impact": 6.5,
+        "developer_relevance": 7.0,
+        "scope_of_change": 4.5,
+        "novelty": 5.0,
+        "evidence_validation": 7.0
+      }
     },
     {
       "id": "GCC|gcc:vectorizer|gcc/tree-vect-stmts.cc",
@@ -48009,18 +48143,34 @@
                 "Vectorization",
                 "Optimization"
               ]
-            }
+            },
+            "ai_writer": "deterministic",
+            "ai_confidence": "high",
+            "factcheck": {
+              "ok": true,
+              "unsupported_claims": [],
+              "missing_evidence": [],
+              "performance_claims_ok": true,
+              "notes": [],
+              "checker": "deterministic"
+            },
+            "evidence_notes": [
+              "commit:75b4e997414d",
+              "files:1",
+              "tests:0",
+              "cluster:1 commits"
+            ]
           },
-          "analysis_generated": false
+          "analysis_generated": true
         }
       ],
       "story_id": "gcc-gcc-vectorizer",
-      "what_changed": "Dump_printf_loc without dump_enabled_p was fixed.",
-      "technical_context": "Touched trees: gcc. Technical areas: Vectorization, Optimization.",
-      "why_it_matters": "Subject explicitly concerns auto-vectorization / SIMD lowering. Do not assume measured speedups without benchmarks.",
+      "what_changed": "dump_printf_loc has to be guarded by dump_enabled_p.\nasserted by VERIFY_DUMP_ENABLED_P",
+      "technical_context": "Primary `75b4e997414d` (+4/\u22123). Files: gcc/tree-vect-stmts.cc. Diff-referenced symbols include: get_load_store_type, dump_enabled_p.",
+      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. Primary audience: CPU developers, Middle-end engineers.",
       "who_should_care": [
-        "Middle-end / optimization developers",
-        "CPU compiler developers"
+        "CPU developers",
+        "Middle-end engineers"
       ],
       "uncertainty_note": "Explanation grounded in the commit subject; open the source for details.",
       "change_type": "Bug fix",
@@ -48037,10 +48187,30 @@
       ],
       "hardware_targets": [],
       "impact_uncertain": false,
-      "deep_dive_notes": {},
-      "editorial_level": null,
-      "impact_score": null,
-      "impact_factors": {}
+      "deep_dive_notes": {
+        "problem": "dump_printf_loc has to be guarded by dump_enabled_p.\nasserted by VERIFY_DUMP_ENABLED_P",
+        "previous_behavior": "Not established from available evidence.",
+        "implementation": "Primary `75b4e997414d` (+4/\u22123). Files: gcc/tree-vect-stmts.cc. Diff-referenced symbols include: get_load_store_type, dump_enabled_p.",
+        "implications": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. Primary audience: CPU developers, Middle-end engineers.",
+        "validation": "No obvious test paths in the primary commit file list.",
+        "limits": "Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.",
+        "performance": "Not established from available evidence.",
+        "confidence": "high",
+        "writer": "deterministic",
+        "factcheck": "pass",
+        "example": "See linked tests in the commit for concrete coverage. No IR/assembly is invented here.",
+        "background": "Evidence from 75b4e997414d (+4/\u22123); cluster size 1."
+      },
+      "editorial_level": "engineering_analysis",
+      "impact_score": 5.83,
+      "impact_factors": {
+        "technical_significance": 7.0,
+        "architectural_impact": 5.0,
+        "developer_relevance": 7.0,
+        "scope_of_change": 4.5,
+        "novelty": 5.0,
+        "evidence_validation": 5.0
+      }
     },
     {
       "id": "GCC|gcc:s390|gcc/testsuite/gcc.target",
@@ -48129,18 +48299,34 @@
               "technical_areas": [
                 "Code generation"
               ]
-            }
+            },
+            "ai_writer": "deterministic",
+            "ai_confidence": "high",
+            "factcheck": {
+              "ok": true,
+              "unsupported_claims": [],
+              "missing_evidence": [],
+              "performance_claims_ok": true,
+              "notes": [],
+              "checker": "deterministic"
+            },
+            "evidence_notes": [
+              "commit:c6ebf01257c2",
+              "files:11",
+              "tests:10",
+              "cluster:1 commits"
+            ]
           },
-          "analysis_generated": false
+          "analysis_generated": true
         }
       ],
       "story_id": "gcc-gcc-s390",
-      "what_changed": "Return value ABI handling for nullptr_t was fixed.",
-      "technical_context": "Touched trees: gcc. Technical areas: Code generation.",
-      "why_it_matters": "Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator change.",
+      "what_changed": "Starting with r0-104773-g0d697034b7eecd in GCC 4.6 (which introduced\ninitial C++11 and std::nullptr_t support), arguments of type nullptr_t,\nstd::nullptr_t, and decltype(nullptr) are passed in registers.  However,\nreturn values are erroneously returned in memory, violating the psABI.",
+      "technical_context": "Primary `c6ebf01257c2` (+646/\u22120). Files: gcc/config/s390/s390.cc, gcc/testsuite/g++.target/s390/nullptr-1.C, gcc/testsuite/gcc.target/s390/lto/lto.exp, gcc/testsuite/gcc.target/s390/lto/nullptr-lto-1_0.c, gcc/testsuite/gcc.target/s390/lto/nullptr-lto-1_1.c, gcc/testsuite/gcc.target/s390/lto/nullptr-lto-1_2.c, gcc/testsuite/gcc.target/s390/nullptr-1.c, gcc/testsuite/gcc.target/s390/nullptr-2.c. Diff-referenced symbols include: s390_return_in_memory, s390_promote_function_mode, s390_diagnose_nullptr_return, TREE_CODE, DECL_EXTERNAL, decl_replaceable_p, DECL_UID, s390_function_and_libcall_value.",
+      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Backend engineers.",
       "who_should_care": [
-        "Backend developers",
-        "CPU compiler developers"
+        "CPU developers",
+        "Backend engineers"
       ],
       "uncertainty_note": "Explanation grounded in the commit subject; open the source for details.",
       "change_type": "Bug fix",
@@ -48156,10 +48342,30 @@
       ],
       "hardware_targets": [],
       "impact_uncertain": false,
-      "deep_dive_notes": {},
-      "editorial_level": null,
-      "impact_score": null,
-      "impact_factors": {}
+      "deep_dive_notes": {
+        "problem": "Starting with r0-104773-g0d697034b7eecd in GCC 4.6 (which introduced\ninitial C++11 and std::nullptr_t support), arguments of type nullptr_t,\nstd::nullptr_t, and decltype(nullptr) are passed in registers.  However,\nreturn values are erroneously returned in memory, violating the psABI.",
+        "previous_behavior": "Not established from available evidence.",
+        "implementation": "Primary `c6ebf01257c2` (+646/\u22120). Files: gcc/config/s390/s390.cc, gcc/testsuite/g++.target/s390/nullptr-1.C, gcc/testsuite/gcc.target/s390/lto/lto.exp, gcc/testsuite/gcc.target/s390/lto/nullptr-lto-1_0.c, gcc/testsuite/gcc.target/s390/lto/nullptr-lto-1_1.c, gcc/testsuite/gcc.target/s390/lto/nullptr-lto-1_2.c, gcc/testsuite/gcc.target/s390/nullptr-1.c, gcc/testsuite/gcc.target/s390/nullptr-2.c. Diff-referenced symbols include: s390_return_in_memory, s390_promote_function_mode, s390_diagnose_nullptr_return, TREE_CODE, DECL_EXTERNAL, decl_replaceable_p, DECL_UID, s390_function_and_libcall_value.",
+        "implications": "Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Backend engineers.",
+        "validation": "Tests touched: gcc/testsuite/g++.target/s390/nullptr-1.C, gcc/testsuite/gcc.target/s390/lto/lto.exp, gcc/testsuite/gcc.target/s390/lto/nullptr-lto-1_0.c, gcc/testsuite/gcc.target/s390/lto/nullptr-lto-1_1.c, gcc/testsuite/gcc.target/s390/lto/nullptr-lto-1_2.c, gcc/testsuite/gcc.target/s390/nullptr-1.c.",
+        "limits": "Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.",
+        "performance": "Not established from available evidence.",
+        "confidence": "high",
+        "writer": "deterministic",
+        "factcheck": "pass",
+        "example": "See linked tests in the commit for concrete coverage. No IR/assembly is invented here.",
+        "background": "Evidence from c6ebf01257c2 (+646/\u22120); cluster size 1."
+      },
+      "editorial_level": "engineering_analysis",
+      "impact_score": 6.33,
+      "impact_factors": {
+        "technical_significance": 7.0,
+        "architectural_impact": 6.5,
+        "developer_relevance": 7.0,
+        "scope_of_change": 4.5,
+        "novelty": 5.0,
+        "evidence_validation": 7.0
+      }
     },
     {
       "id": "GCC|gcc:tree-optimization 128514|gcc/testsuite/gcc.dg",
@@ -48239,21 +48445,37 @@
               "technical_areas": [
                 "Vectorization"
               ]
-            }
+            },
+            "ai_writer": "deterministic",
+            "ai_confidence": "high",
+            "factcheck": {
+              "ok": true,
+              "unsupported_claims": [],
+              "missing_evidence": [],
+              "performance_claims_ok": true,
+              "notes": [],
+              "checker": "deterministic"
+            },
+            "evidence_notes": [
+              "commit:cfddb495c2f4",
+              "files:2",
+              "tests:1",
+              "cluster:1 commits"
+            ]
           },
-          "analysis_generated": false
+          "analysis_generated": true
         }
       ],
       "story_id": "gcc-gcc-tree-optimization-128514",
-      "what_changed": "Tree-optimization/128514 - wrong bitfield vectorization with SSO.",
-      "technical_context": "Touched trees: gcc. Technical areas: Vectorization.",
-      "why_it_matters": "Subject explicitly concerns auto-vectorization / SIMD lowering. Do not assume measured speedups without benchmarks.",
+      "what_changed": "The following rejects reverse-storage-order components when lowering\nbitfields to avoid miscompilation.",
+      "technical_context": "Primary `cfddb495c2f4` (+30/\u22122). Files: gcc/testsuite/gcc.dg/vect/vect-pr128514.c, gcc/tree-if-conv.cc. Diff-referenced symbols include: bitfields_to_lower_p, TREE_THIS_VOLATILE, reverse_storage_order_for_component_p.",
+      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engineers.",
       "who_should_care": [
-        "Middle-end / optimization developers",
-        "CPU compiler developers"
+        "CPU developers",
+        "Middle-end engineers"
       ],
       "uncertainty_note": "Explanation grounded in the commit subject; open the source for details.",
-      "change_type": "Optimization",
+      "change_type": "Infrastructure",
       "signal": "high_signal",
       "stages": [
         "Middle-end"
@@ -48266,10 +48488,30 @@
       ],
       "hardware_targets": [],
       "impact_uncertain": false,
-      "deep_dive_notes": {},
-      "editorial_level": null,
-      "impact_score": null,
-      "impact_factors": {}
+      "deep_dive_notes": {
+        "problem": "The following rejects reverse-storage-order components when lowering\nbitfields to avoid miscompilation.",
+        "previous_behavior": "Not established from available evidence.",
+        "implementation": "Primary `cfddb495c2f4` (+30/\u22122). Files: gcc/testsuite/gcc.dg/vect/vect-pr128514.c, gcc/tree-if-conv.cc. Diff-referenced symbols include: bitfields_to_lower_p, TREE_THIS_VOLATILE, reverse_storage_order_for_component_p.",
+        "implications": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engineers.",
+        "validation": "Tests touched: gcc/testsuite/gcc.dg/vect/vect-pr128514.c.",
+        "limits": "Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.",
+        "performance": "Not established from available evidence.",
+        "confidence": "high",
+        "writer": "deterministic",
+        "factcheck": "pass",
+        "example": "See linked tests in the commit for concrete coverage. No IR/assembly is invented here.",
+        "background": "Evidence from cfddb495c2f4 (+30/\u22122); cluster size 1."
+      },
+      "editorial_level": "engineering_analysis",
+      "impact_score": 6.33,
+      "impact_factors": {
+        "technical_significance": 7.0,
+        "architectural_impact": 6.5,
+        "developer_relevance": 7.0,
+        "scope_of_change": 4.5,
+        "novelty": 5.0,
+        "evidence_validation": 7.0
+      }
     },
     {
       "id": "GCC|gcc:openmp/c++|gcc/testsuite/c-c++-common",
@@ -48315,27 +48557,7 @@
             "gcc/testsuite/c-c++-common/gomp/allocate-20.c",
             "gcc/testsuite/c-c++-common/gomp/allocate-5.c",
             "gcc/testsuite/c-c++-common/gomp/allocate-9.c",
-            "gcc/testsuite/c-c++-common/gomp/allocate-allocator-handle.h",
-            "gcc/testsuite/c-c++-common/gomp/directive-1.c",
-            "gcc/testsuite/g++.dg/gomp/allocate-10.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-11.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-12.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-13.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-5.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-6.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-7.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-8.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-9.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-allocator-handle.h",
-            "gcc/testsuite/g++.dg/gomp/allocate-handles-1.C",
-            "gcc/testsuite/g++.dg/gomp/allocate-handles-2.C",
-            "libgomp/libgomp.texi",
-            "libgomp/testsuite/libgomp.c++/allocate-2.C",
-            "libgomp/testsuite/libgomp.c-c++-common/allocate-4.c",
-            "libgomp/testsuite/libgomp.c-c++-common/allocate-5.c",
-            "libgomp/testsuite/libgomp.c-c++-common/allocate-6.c",
-            "libgomp/testsuite/libgomp.c-c++-common/allocate-7.c",
-            "libgomp/testsuite/libgomp.c-c++-common/uses_allocators-1.c"
+            "gcc/testsuite/c-c++-common/gomp/allocate-allocator-handle.h"
           ],
           "areas": [
             "Frontend"
@@ -48389,18 +48611,34 @@
                 "Language",
                 "Semantics"
               ]
-            }
+            },
+            "ai_writer": "deterministic",
+            "ai_confidence": "high",
+            "factcheck": {
+              "ok": true,
+              "unsupported_claims": [],
+              "missing_evidence": [],
+              "performance_claims_ok": true,
+              "notes": [],
+              "checker": "deterministic"
+            },
+            "evidence_notes": [
+              "commit:9bafebd00ec5",
+              "files:40",
+              "tests:20",
+              "cluster:1 commits"
+            ]
           },
-          "analysis_generated": false
+          "analysis_generated": true
         }
       ],
       "story_id": "gcc-gcc-openmp-c",
-      "what_changed": "OpenMP/C++: Add support for 'omp allocate' directive.",
-      "technical_context": "Touched trees: gcc. Technical areas: Language, Semantics.",
-      "why_it_matters": "Source subject: \u201cOpenMP/C++: Add support for 'omp allocate' directive\u201d. Apparent component: GCC. Broader impact is not established from the commit message alone.",
+      "what_changed": "This patch adds support for the 'omp allocate' directive in C++. In parity\nwith the C front end, each variable found in an allocate directive has an\n'omp allocate' attribute added to it to mark it for transformation during\nlowering. This patch makes minimal modifications to gimplification aside\nfrom clearing C++ specific diagnostic information. This attribute is added\nto VAR_DECL nodes during parsing to ensure correct diagnostics. Due to the\nnature of this feature, the 'omp allocate' attribute is parsed after each\nVAR_DECL, thus care must be taken to preserve ordering with regards to\ndependent attributes and non-dependent attributes. This is fairly brittle,\nbut appears to be a better solution than marking the attribute itself\ndependent to avoid copying the attribute each time the VAR_DECL is\nsubstituted into.",
+      "technical_context": "Primary `9bafebd00ec5` (+2439/\u2212229). Files: gcc/cp/constexpr.cc, gcc/cp/cp-tree.def, gcc/cp/cp-tree.h, gcc/cp/parser.cc, gcc/cp/pt.cc, gcc/cp/semantics.cc, gcc/gimplify.cc, gcc/testsuite/c-c++-common/gomp/allocate-10.c. Diff-referenced symbols include: cxx_eval_constant_expression, potential_constant_expression_1, DEFTREECODE, target_expr_needs_replace, OMP_ALLOCATE_VARS, TREE_OPERAND, finish_omp_for, cp_parser_omp_structured_block.",
+      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Frontend engineers.",
       "who_should_care": [
-        "Frontend / Clang developers",
-        "CPU compiler developers"
+        "CPU developers",
+        "Frontend engineers"
       ],
       "uncertainty_note": "Broader impact is not established from the commit message alone.",
       "change_type": "New capability",
@@ -48417,10 +48655,30 @@
       ],
       "hardware_targets": [],
       "impact_uncertain": true,
-      "deep_dive_notes": {},
-      "editorial_level": null,
-      "impact_score": null,
-      "impact_factors": {}
+      "deep_dive_notes": {
+        "problem": "This patch adds support for the 'omp allocate' directive in C++. In parity\nwith the C front end, each variable found in an allocate directive has an\n'omp allocate' attribute added to it to mark it for transformation during\nlowering. This patch makes minimal modifications to gimplification aside\nfrom clearing C++ specific diagnostic information. This attribute is added\nto VAR_DECL nodes during parsing to ensure correct diagnostics. Due to the\nnature of this feature, the 'omp allocate' attribute is parsed after each\nVAR_DECL, thus care must be taken to preserve ordering with regards to\ndependent attributes and non-dependent attributes. This is fairly brittle,\nbut appears to be a better solution than marking the attribute itself\ndependent to avoid copying the attribute each time the VAR_DECL is\nsubstituted into.",
+        "previous_behavior": "Not established from available evidence.",
+        "implementation": "Primary `9bafebd00ec5` (+2439/\u2212229). Files: gcc/cp/constexpr.cc, gcc/cp/cp-tree.def, gcc/cp/cp-tree.h, gcc/cp/parser.cc, gcc/cp/pt.cc, gcc/cp/semantics.cc, gcc/gimplify.cc, gcc/testsuite/c-c++-common/gomp/allocate-10.c. Diff-referenced symbols include: cxx_eval_constant_expression, potential_constant_expression_1, DEFTREECODE, target_expr_needs_replace, OMP_ALLOCATE_VARS, TREE_OPERAND, finish_omp_for, cp_parser_omp_structured_block.",
+        "implications": "Matters for CPU compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Frontend engineers.",
+        "validation": "Tests touched: gcc/testsuite/c-c++-common/gomp/allocate-10.c, gcc/testsuite/c-c++-common/gomp/allocate-11.c, gcc/testsuite/c-c++-common/gomp/allocate-12.c, gcc/testsuite/c-c++-common/gomp/allocate-14.c, gcc/testsuite/c-c++-common/gomp/allocate-15.c, gcc/testsuite/c-c++-common/gomp/allocate-16.c.",
+        "limits": "Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.",
+        "performance": "Not established from available evidence.",
+        "confidence": "high",
+        "writer": "deterministic",
+        "factcheck": "pass",
+        "example": "See linked tests in the commit for concrete coverage. No IR/assembly is invented here.",
+        "background": "Evidence from 9bafebd00ec5 (+2439/\u2212229); cluster size 1."
+      },
+      "editorial_level": "engineering_analysis",
+      "impact_score": 6.33,
+      "impact_factors": {
+        "technical_significance": 7.0,
+        "architectural_impact": 6.5,
+        "developer_relevance": 7.0,
+        "scope_of_change": 4.5,
+        "novelty": 5.0,
+        "evidence_validation": 7.0
+      }
     }
   ],
   "worth_knowing": [
@@ -51782,7 +52040,7 @@
   ],
   "deep_dive": {
     "id": "LLVM|llvm:aarch64|llvm/lib/Target",
-    "title": "Remove clearKillFlags calls",
+    "title": "Remove clearKillFlags calls (#239892)",
     "category": "llvm",
     "project": "LLVM",
     "areas": [
@@ -51863,9 +52121,25 @@
             "technical_areas": [
               "Code generation"
             ]
-          }
+          },
+          "ai_writer": "deterministic",
+          "ai_confidence": "high",
+          "factcheck": {
+            "ok": true,
+            "unsupported_claims": [],
+            "missing_evidence": [],
+            "performance_claims_ok": true,
+            "notes": [],
+            "checker": "deterministic"
+          },
+          "evidence_notes": [
+            "commit:ae4efc08a68f",
+            "files:2",
+            "tests:0",
+            "cluster:4 commits"
+          ]
         },
-        "analysis_generated": false
+        "analysis_generated": true
       },
       {
         "id": "git:llvm:35125211df71c550441777b1c1c7233c6fc7d7c6",
@@ -52099,16 +52373,16 @@
       }
     ],
     "story_id": "llvm-llvm-aarch64",
-    "what_changed": "ClearKillFlags calls was removed. (4 related commits) Cluster of 4 related commits treated as one development.",
-    "technical_context": "Touched trees: llvm. Technical areas: Code generation.",
-    "why_it_matters": "RuntimeLibcalls interface change \u2014 how the compiler declares or emits library calls.",
+    "what_changed": "Kill flags are no longer permitted on virtual registers, but these\ncontexts may also see physical registers. Those physical register\nkills are either never set by the time this code runs or are on\nreserved or constant registers where they carry no information.",
+    "technical_context": "Primary `ae4efc08a68f` (+0/\u22123). Files: llvm/lib/Target/AArch64/AArch64InstrInfo.cpp, llvm/lib/Target/AArch64/AArch64MIPeepholeOpt.cpp. Diff-referenced symbols include: AArch64InstrInfo::insertSelect, AArch64MIPeepholeOptImpl::visitORR. Diff inspected locally; see primary source for full hunks.",
+    "why_it_matters": "Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, AArch64 backend engineers, Backend engineers.",
     "who_should_care": [
-      "Backend developers",
-      "CPU compiler developers",
-      "AArch64 developers"
+      "CPU developers",
+      "AArch64 backend engineers",
+      "Backend engineers"
     ],
     "uncertainty_note": "Broader impact is not established from the commit message alone.",
-    "change_type": "Backend",
+    "change_type": "Other",
     "signal": "deep_dive",
     "stages": [
       "Backend"
@@ -52124,18 +52398,29 @@
     ],
     "impact_uncertain": false,
     "deep_dive_notes": {
-      "background": "4 related commit(s) clustered. Primary subject: AArch64: Remove clearKillFlags calls (#239892).",
-      "previous_behavior": "Inferred from the commit message (verify in the diff): Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
-      "problem": "Upstream states: AArch64: Remove clearKillFlags calls (#239892). Kill flags are no longer permitted on virtual registers, but these\ncontexts may also see physical registers. Those physical register\nkills are either never set by the time this code runs or are on\nreserved or constant registers where they carry no information.",
-      "implementation": "Primary commit `ae4efc08a68f` changes: llvm/lib/Target/AArch64/AArch64InstrInfo.cpp, llvm/lib/Target/AArch64/AArch64MIPeepholeOpt.cpp.",
+      "background": "Evidence from ae4efc08a68f (+0/\u22123); cluster size 4.",
+      "previous_behavior": "Not established from available evidence.",
+      "problem": "Kill flags are no longer permitted on virtual registers, but these\ncontexts may also see physical registers. Those physical register\nkills are either never set by the time this code runs or are on\nreserved or constant registers where they carry no information.",
+      "implementation": "Primary `ae4efc08a68f` (+0/\u22123). Files: llvm/lib/Target/AArch64/AArch64InstrInfo.cpp, llvm/lib/Target/AArch64/AArch64MIPeepholeOpt.cpp. Diff-referenced symbols include: AArch64InstrInfo::insertSelect, AArch64MIPeepholeOptImpl::visitORR. Diff inspected locally; see primary source for full hunks.",
       "example": "See linked tests in the commit for concrete coverage. No IR/assembly is invented here.",
-      "implications": "RuntimeLibcalls interface change \u2014 how the compiler declares or emits library calls. Stage: Backend. Hardware/target hints: AArch64.",
-      "limits": "Broader impact is not established from the commit message alone.",
-      "validation": "No obvious test paths in the primary commit file list."
+      "implications": "Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, AArch64 backend engineers, Backend engineers.",
+      "limits": "Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.",
+      "validation": "No obvious test paths in the primary commit file list.",
+      "performance": "Not established from available evidence.",
+      "confidence": "high",
+      "writer": "deterministic",
+      "factcheck": "pass"
     },
     "editorial_level": "deep_dive",
-    "impact_score": null,
-    "impact_factors": {}
+    "impact_score": 7.38,
+    "impact_factors": {
+      "technical_significance": 8.5,
+      "architectural_impact": 9.5,
+      "developer_relevance": 5.0,
+      "scope_of_change": 9.0,
+      "novelty": 5.0,
+      "evidence_validation": 5.0
+    }
   },
   "moving_stories": {
     "LLVM": [
