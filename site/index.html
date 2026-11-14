@@ -14,7 +14,7 @@
   <script src="assets/theme.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/site.css"/>
 </head>
 <body>
@@ -54,17 +54,30 @@
   </header>
   <div id="main">
   
-  <main>
+  <main id="main">
     <section class="hero">
       <div class="wrap">
         <p class="hero-kicker">CompilerSutra Weekly</p>
         <h1>The compiler changes worth understanding</h1>
-        <p class="lede">LLVM · GCC · MLIR · GPU · AI Compilers — LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
+        <p class="lede">LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
+        <div class="eco-row" aria-label="Compiler ecosystems">
+          <span class="eco-pill eco-llvm">LLVM</span>
+          <span class="eco-pill eco-gcc">GCC</span>
+          <span class="eco-pill eco-mlir">MLIR</span>
+          <span class="eco-pill eco-gpu">GPU</span>
+          <span class="eco-pill eco-ai">AI Compilers</span>
+          <span class="eco-pill eco-research">Research</span>
+        </div>
         
         <div class="latest-card">
-          <p class="hero-kicker">Edition #002 · 14 Nov 2026</p>
-          <h2>This week&rsquo;s engineering highlights</h2>
-          <p class="latest-cover">9 high-signal · 12 worth knowing</p>
+          <p class="hero-kicker">Latest edition · #002 · 14 Nov 2026</p>
+          <h2>Edition #002</h2>
+          <div class="stat-row" aria-label="Edition counts">
+            <div class="stat"><strong>8</strong><span>High signal</span></div>
+            <div class="stat"><strong>1</strong><span>Deep dive</span></div>
+            <div class="stat"><strong>12</strong><span>Worth knowing</span></div>
+          </div>
+          <p class="latest-cover">8 listed high-signal · 1 deep dive · 12 worth knowing</p>
           <p class="muted">LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
           <ol class='briefing-list'><li class='briefing-item'>01 — The biggest development: Remove clearKillFlags calls (#239892). Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend… (Backend · CPU)</li><li class='briefing-item'>02 — GPU / accelerator compilers: [CIR] Add support for direct with align in calling convention lowering…. Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches… (Frontend · Languages)</li><li class='briefing-item'>03 — Backend and code generation: fix dump_printf_loc without dump_enabled_p. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. Primary audience: CPU… (Middle-end · CPU)</li><li class='briefing-item'>04 — Also on the radar: Fix return value ABI handling for nullptr_t. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests … (Backend · CPU)</li><li class='briefing-item'>05 — Also on the radar: tree-optimization/128514 - wrong bitfield vectorization with SSO. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests … (Middle-end · CPU)</li></ol>
           <div class="cta-row">
@@ -78,14 +91,15 @@
     
       <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
         <h2 id="featured-heading" class="section-label">Deep dive</h2>
-        <article class="feature-card">
+        <article class="feature-card" data-project="llvm">
+          <p class="card-kicker">Featured technical analysis</p>
           <h2>Remove clearKillFlags calls (#239892)</h2>
-          <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Deep dive</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
-          <p class="secondary"><strong>Change.</strong> Kill flags are no longer permitted on virtual registers, but these
+          <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Deep dive</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
+          <div class="callout callout-insight"><strong>What changed.</strong> Kill flags are no longer permitted on virtual registers, but these
 contexts may also see physical registers. Those physical register
 kills are either never set by the time this code runs or are on
-reserved or constant registers where they carry no information.</p>
-          <p class="secondary"><strong>Why engineers should care.</strong> Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, AArch64 backend engineers, Backend engineers.</p>
+reserved or constant registers where they carry no information.</div>
+          <div class="callout callout-verified"><strong>Why engineers should care.</strong> Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, AArch64 backend engineers, Backend engineers.</div>
           <div class="cta-row" style="margin-top:0.85rem">
             <a class="btn btn-primary" href="issues/2026/2026-11-14.html#deep-dive">Full technical analysis →</a>
             <a class="btn btn-ghost" href="https://github.com/llvm/llvm-project/commit/ae4efc08a68f926d4558adcd7d2566e2d9563e7d" rel="noopener noreferrer">Primary source</a>
@@ -96,51 +110,51 @@ reserved or constant registers where they carry no information.</p>
     
       <section class="wrap" style="padding:1.5rem 0 0.5rem" aria-labelledby="latest-dev">
         <h2 id="latest-dev" class="section-label">This week&rsquo;s engineering highlights</h2>
-        <p class="muted">Showing 6 of 8 high-signal developments · 2 more in the edition · 9 total including deep dive</p>
-        <div class="story-grid"><article class="story-card">
+        <p class="muted">Showing 6 of 8 listed high-signal developments · 2 more in the full edition · deep dive featured above</p>
+        <div class="story-grid"><article class="story-card" data-project="gcc">
+  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
   <h4><a href="https://github.com/gcc-mirror/gcc/commit/04a69e68bb4c6334595f0e7da837ea0944ae0dcd" rel="noopener noreferrer">Port NEON widening shifts by an immediate to the pragma-based framework</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <p class="secondary">Port the following families of NEON intrinsics to the pragma-based framework:
+  <p class="card-summary"><strong>What changed.</strong> Port the following families of NEON intrinsics to the pragma-based framework:
 * vshll_n
 * vshll_high_n</p>
-  <p>Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. P</p>
-  <div class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/04a69e68bb4c6334595f0e7da837ea0944ae0dcd" rel="noopener noreferrer">Investigate source →</a></div>
-</article><article class="story-card">
+  <p class="card-summary"><strong>Why it matters.</strong> Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. P</p>
+  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/04a69e68bb4c6334595f0e7da837ea0944ae0dcd" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="gcc">
+  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
   <h4><a href="https://github.com/gcc-mirror/gcc/commit/94e294dbcd421bc8980795896d830c855163dbb1" rel="noopener noreferrer">Add SVE2p3/SME2p3 pairwise intrinsics</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <p class="secondary">Add support for these new pairwise intrinsic operations: svaddqp, svaddsubp and
+  <p class="card-summary"><strong>What changed.</strong> Add support for these new pairwise intrinsic operations: svaddqp, svaddsubp and
 svsubp.</p>
-  <p>Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. P</p>
-  <div class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/94e294dbcd421bc8980795896d830c855163dbb1" rel="noopener noreferrer">Investigate source →</a></div>
-</article><article class="story-card">
+  <p class="card-summary"><strong>Why it matters.</strong> Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. P</p>
+  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/94e294dbcd421bc8980795896d830c855163dbb1" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
   <h4><a href="https://github.com/llvm/llvm-project/commit/a997ed4e98e89817804a5dc2b9456617e3654f72" rel="noopener noreferrer">[Mips] Port PostLegalizerCombiner to NewPM</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
-  <p class="secondary">Standard NewPM pass porting.</p>
-  <p>Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, Backend engineers.</p>
-  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/a997ed4e98e89817804a5dc2b9456617e3654f72" rel="noopener noreferrer">Investigate source →</a></div>
-</article><article class="story-card">
+  <p class="card-summary"><strong>What changed.</strong> Standard NewPM pass porting.</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, Backend engineers.</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/a997ed4e98e89817804a5dc2b9456617e3654f72" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="mlir">
+  <div class="badge-row"><span class="badge tax-project project-mlir" data-dim="project" title="project"><span class="tax-dim">project</span>MLIR</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>AI / ML</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
   <h4><a href="https://github.com/llvm/llvm-project/commit/6cfe6ebf4469ed2865aa501901b9970e75b84970" rel="noopener noreferrer">[CIR] Add support for direct with align in calling convention lowering (#238929)</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>MLIR</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>AI / ML</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <p class="secondary">This change adds the infrastructure for handling arguments that are
+  <p class="card-summary"><strong>What changed.</strong> This change adds the infrastructure for handling arguments that are
 classified as `Direct` with a required alignment. These arguments are
 passed unmodified but </p>
-  <p>Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: Languages developers, AI / </p>
-  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/6cfe6ebf4469ed2865aa501901b9970e75b84970" rel="noopener noreferrer">Investigate source →</a></div>
-</article><article class="story-card">
+  <p class="card-summary"><strong>Why it matters.</strong> Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: Languages developers, AI / </p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/6cfe6ebf4469ed2865aa501901b9970e75b84970" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="gcc">
+  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
   <h4><a href="https://github.com/gcc-mirror/gcc/commit/75b4e997414d415fe61016fff963a3f5dbc49ce6" rel="noopener noreferrer">fix dump_printf_loc without dump_enabled_p</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
-  <p class="secondary">dump_printf_loc has to be guarded by dump_enabled_p.
+  <p class="card-summary"><strong>What changed.</strong> dump_printf_loc has to be guarded by dump_enabled_p.
 asserted by VERIFY_DUMP_ENABLED_P</p>
-  <p>Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. Primary audience: CPU developers, Middle-end engineers.</p>
-  <div class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/75b4e997414d415fe61016fff963a3f5dbc49ce6" rel="noopener noreferrer">Investigate source →</a></div>
-</article><article class="story-card">
+  <p class="card-summary"><strong>Why it matters.</strong> Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. Primary audience: CPU developers, Middle-end engineers.</p>
+  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/75b4e997414d415fe61016fff963a3f5dbc49ce6" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="gcc">
+  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
   <h4><a href="https://github.com/gcc-mirror/gcc/commit/c6ebf01257c2c1d8ceeec6273076544a336cccc9" rel="noopener noreferrer">Fix return value ABI handling for nullptr_t</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <p class="secondary">Starting with r0-104773-g0d697034b7eecd in GCC 4.6 (which introduced
+  <p class="card-summary"><strong>What changed.</strong> Starting with r0-104773-g0d697034b7eecd in GCC 4.6 (which introduced
 initial C++11 and std::nullptr_t support), arguments of type nullptr_t,
 std::nullptr_t, and</p>
-  <p>Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: CPU developers, Backend engineers.</p>
-  <div class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/c6ebf01257c2c1d8ceeec6273076544a336cccc9" rel="noopener noreferrer">Investigate source →</a></div>
+  <p class="card-summary"><strong>Why it matters.</strong> Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: CPU developers, Backend engineers.</p>
+  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/c6ebf01257c2c1d8ceeec6273076544a336cccc9" rel="noopener noreferrer">Primary source →</a></div>
 </article></div>
         <p class="muted" style="margin-top:0.85rem">
           <a href="issues/2026/2026-11-14.html">Open the full edition for every selected story →</a>
@@ -153,27 +167,27 @@ std::nullptr_t, and</p>
         Independent filters for project, compiler stage, and hardware —
         <a href="explore/index.html">open Explore</a>.
       </p>
-      <div class="buckets"><a class="bucket" href="topics/llvm.html">
+      <div class="buckets"><a class="bucket eco-bucket eco-llvm" href="topics/llvm.html">
   <strong>LLVM</strong>
   <span>Optimization · IR · CodeGen · Clang · backends</span>
 </a>
-<a class="bucket" href="topics/gcc.html">
+<a class="bucket eco-bucket eco-gcc" href="topics/gcc.html">
   <strong>GCC</strong>
   <span>GIMPLE · RTL · middle-end · targets</span>
 </a>
-<a class="bucket" href="topics/mlir.html">
+<a class="bucket eco-bucket eco-mlir" href="topics/mlir.html">
   <strong>MLIR</strong>
   <span>Dialects · transformations · infrastructure</span>
 </a>
-<a class="bucket" href="topics/ai.html">
+<a class="bucket eco-bucket eco-ai" href="topics/ai.html">
   <strong>AI Compilers</strong>
   <span>Triton · XLA · IREE · TVM · MLIR</span>
 </a>
-<a class="bucket" href="topics/gpu.html">
+<a class="bucket eco-bucket eco-gpu" href="topics/gpu.html">
   <strong>GPU</strong>
   <span>AMDGPU · NVPTX · SPIR-V · offloading</span>
 </a>
-<a class="bucket" href="topics/research.html">
+<a class="bucket eco-bucket eco-research" href="topics/research.html">
   <strong>Research</strong>
   <span>Papers, benchmarks, technical notes</span>
 </a></div>

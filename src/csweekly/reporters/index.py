@@ -292,6 +292,8 @@ def _topic_bar(active: str = "", *, depth: int = 0) -> str:
 
 
 def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
+    from csweekly.reporters.taxonomy_ui import project_color_key
+
     payload = _load_changelog(latest.path) if latest else {}
     featured = ""
     recent = ""
@@ -300,7 +302,10 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         num = f"#{latest.issue_number:03d}" if latest.issue_number else latest.date
         high = list(payload.get("high_signal") or [])
         dive = payload.get("deep_dive")
-        hs_total = int(latest.stats.get("high_signal") or (len(high) + (1 if dive else 0)))
+        hs_listed = len(high)
+        dive_n = 1 if dive else 0
+        # Prefer explicit listed+dive accounting over the aggregated high_signal stat.
+        hs_stat = int(latest.stats.get("high_signal") or 0)
         wk = int(latest.stats.get("worth_knowing") or 0)
         pub_human = format_issue_date(latest.date)
         bullets = payload.get("week_overview") or []
@@ -311,11 +316,22 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
             if bullets
             else ""
         )
+        cover_bits = [f"{hs_listed} listed high-signal"]
+        if dive_n:
+            cover_bits.append(f"{dive_n} deep dive")
+        if hs_stat and hs_stat != hs_listed + dive_n:
+            cover_bits.append(f"{hs_stat} curated total")
+        cover_bits.append(f"{wk} worth knowing")
         latest_block = f"""
         <div class="latest-card">
-          <p class="hero-kicker">Edition {html.escape(num)} · {html.escape(pub_human)}</p>
-          <h2>This week&rsquo;s engineering highlights</h2>
-          <p class="latest-cover">{hs_total} high-signal · {wk} worth knowing</p>
+          <p class="hero-kicker">Latest edition · {html.escape(num)} · {html.escape(pub_human)}</p>
+          <h2>Edition {html.escape(num)}</h2>
+          <div class="stat-row" aria-label="Edition counts">
+            <div class="stat"><strong>{hs_listed}</strong><span>High signal</span></div>
+            <div class="stat"><strong>{dive_n}</strong><span>Deep dive</span></div>
+            <div class="stat"><strong>{wk}</strong><span>Worth knowing</span></div>
+          </div>
+          <p class="latest-cover">{html.escape(" · ".join(cover_bits))}</p>
           <p class="muted">{html.escape(HERO_LEDE)}</p>
           {overview}
           <div class="cta-row">
@@ -335,14 +351,16 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
             stories = feat.get("stories") or []
             if stories:
                 src = html.escape(stories[0].get("source_url") or "#")
+            proj = project_color_key(str(feat.get("project") or feat.get("category") or ""))
             featured = f"""
       <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
         <h2 id="featured-heading" class="section-label">Deep dive</h2>
-        <article class="feature-card">
+        <article class="feature-card" data-project="{html.escape(proj)}">
+          <p class="card-kicker">Featured technical analysis</p>
           <h2>{html.escape((feat.get("title") or "")[:140])}</h2>
           {taxonomy_badges_html(feat)}
-          <p class="secondary"><strong>Change.</strong> {change}</p>
-          <p class="secondary"><strong>Why engineers should care.</strong> {why}</p>
+          <div class="callout callout-insight"><strong>What changed.</strong> {change}</div>
+          <div class="callout callout-verified"><strong>Why engineers should care.</strong> {why}</div>
           <div class="cta-row" style="margin-top:0.85rem">
             <a class="btn btn-primary" href="{html.escape(latest.href_html)}#deep-dive">Full technical analysis →</a>
             <a class="btn btn-ghost" href="{src}" rel="noopener noreferrer">Primary source</a>
@@ -357,13 +375,13 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
             if ((g.get("story_id") or g.get("id")) != feat_id)
         ][:6]
         shown = len(grid_src)
-        remain = max(0, len(high) - shown)
+        remain = max(0, hs_listed - shown)
         cards = "".join(_group_html_card(g, depth=0) for g in grid_src)
         if cards:
             count_note = (
-                f"Showing {shown} of {len(high)} high-signal developments"
-                + (f" · {remain} more in the edition" if remain else "")
-                + f" · {hs_total} total including deep dive"
+                f"Showing {shown} of {hs_listed} listed high-signal developments"
+                + (f" · {remain} more in the full edition" if remain else "")
+                + (" · deep dive featured above" if dive else "")
             )
             recent = f"""
       <section class="wrap" style="padding:1.5rem 0 0.5rem" aria-labelledby="latest-dev">
@@ -377,7 +395,7 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
 """
 
     domain_cards = "\n".join(
-        f"""<a class="bucket" href="topics/{html.escape(str(t['id']))}.html">
+        f"""<a class="bucket eco-bucket eco-{html.escape(str(t['id']))}" href="topics/{html.escape(str(t['id']))}.html">
   <strong>{html.escape(str(t['label']))}</strong>
   <span>{html.escape(str(t['blurb']))}</span>
 </a>"""
@@ -386,12 +404,20 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
     )
     items = _issue_rows(metas[:10], depth=0)
     body = f"""
-  <main>
+  <main id="main">
     <section class="hero">
       <div class="wrap">
         <p class="hero-kicker">CompilerSutra Weekly</p>
         <h1>{html.escape(HERO_TITLE)}</h1>
-        <p class="lede">LLVM · GCC · MLIR · GPU · AI Compilers — {html.escape(HERO_LEDE)}</p>
+        <p class="lede">{html.escape(HERO_LEDE)}</p>
+        <div class="eco-row" aria-label="Compiler ecosystems">
+          <span class="eco-pill eco-llvm">LLVM</span>
+          <span class="eco-pill eco-gcc">GCC</span>
+          <span class="eco-pill eco-mlir">MLIR</span>
+          <span class="eco-pill eco-gpu">GPU</span>
+          <span class="eco-pill eco-ai">AI Compilers</span>
+          <span class="eco-pill eco-research">Research</span>
+        </div>
         {latest_block}
       </div>
     </section>
@@ -663,27 +689,32 @@ def _page_topic(topic: dict[str, object], metas: list[IssueMeta]) -> str:
 
 
 def _group_html_card(g: dict, *, depth: int = 0, compact: bool = False) -> str:
+    from csweekly.reporters.taxonomy_ui import project_color_key
+
     title = html.escape((g.get("title") or "")[:120])
     why = html.escape((g.get("why_it_matters") or "Impact not yet clear.")[:200])
     what = html.escape((g.get("what_changed") or "")[:160])
     tax = taxonomy_line(g)
+    proj = project_color_key(str(g.get("project") or g.get("category") or ""))
     url = "#"
     stories = g.get("stories") or []
     if stories:
         url = html.escape(stories[0].get("source_url") or "#")
     if compact:
-        return f"""<article class="story-row">
+        return f"""<article class="story-row" data-project="{html.escape(proj)}">
   <h4><a href="{url}" rel="noopener noreferrer">{title}</a></h4>
   <p class="secondary">{why}</p>
   <div class="meta">{tax}</div>
 </article>"""
-    what_block = f'<p class="secondary">{what}</p>' if what else ""
-    return f"""<article class="story-card">
-  <h4><a href="{url}" rel="noopener noreferrer">{title}</a></h4>
+    what_block = (
+        f'<p class="card-summary"><strong>What changed.</strong> {what}</p>' if what else ""
+    )
+    return f"""<article class="story-card" data-project="{html.escape(proj)}">
   {taxonomy_badges_html(g)}
+  <h4><a href="{url}" rel="noopener noreferrer">{title}</a></h4>
   {what_block}
-  <p>{why}</p>
-  <div class="meta"><a href="{url}" rel="noopener noreferrer">Investigate source →</a></div>
+  <p class="card-summary"><strong>Why it matters.</strong> {why}</p>
+  <div class="card-meta-row"><a href="{url}" rel="noopener noreferrer">Primary source →</a></div>
 </article>"""
 
 
@@ -983,14 +1014,16 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
         )
     body = f"""
   {_topic_bar(depth=2)}
-  <article class="article issue-article">
+  <article class="article issue-article" id="main">
     <div class="issue-nav">{" · ".join(nav_bits)}</div>
     <p class="hero-kicker">Edition {html.escape(num)}</p>
     <h1 class="page-title">CompilerSutra Weekly — {html.escape(num)}</h1>
-    <p class="muted">Published {html.escape(meta.date)} · Window {html.escape(meta.window)}</p>
+    <p class="muted">Published {html.escape(format_issue_date(meta.date))} · Window {html.escape(meta.window)}</p>
     <p class="muted">{html.escape(CADENCE)}</p>
     {toc}
+    <div class="issue-body">
     {content}
+    </div>
   </article>
 """
     return _shell(f"{num} — CompilerSutra Weekly", body, active="home", depth=2)
@@ -1127,6 +1160,9 @@ def _issue_story_card(g: dict, *, prominent: bool) -> str:
             f'<details class="related-commits"><summary>Related commits '
             f"({len(stories) - 1})</summary><p>{' · '.join(related)}</p></details>"
         )
+    from csweekly.reporters.taxonomy_ui import LEVEL_LABELS, evidence_confidence, project_color_key
+
+    proj = project_color_key(str(g.get("project") or g.get("category") or ""))
     cls = "story-card issue-story" if prominent else "story-row"
     files = []
     for s in stories[:3]:
@@ -1137,11 +1173,10 @@ def _issue_story_card(g: dict, *, prominent: bool) -> str:
     if prominent and files:
         files_p = (
             '<p class="muted"><strong>Implementation surface.</strong> '
-            + html.escape(", ".join(files[:6]))
-            + "</p>"
+            f'<code class="path-list">{html.escape(", ".join(files[:6]))}</code></p>'
         )
     unc_p = (
-        f'<p class="muted"><em>Limitations.</em> {uncertain}</p>'
+        f'<div class="callout callout-warning"><strong>Limitations.</strong> {uncertain}</div>'
         if uncertain and (prominent or g.get("impact_uncertain"))
         else ""
     )
@@ -1154,24 +1189,22 @@ def _issue_story_card(g: dict, *, prominent: bool) -> str:
     )
     if prominent:
         body = f"""  {prev_p}
-  <p><strong>Change.</strong> {what}</p>
+  <div class="callout callout-insight"><strong>What changed.</strong> {what}</div>
   <p class="muted"><strong>Implementation.</strong> {ctx}</p>
-  <p><strong>Why it matters.</strong> {why}</p>
+  <div class="callout callout-verified"><strong>Why it matters.</strong> {why}</div>
   <p class="muted"><strong>Who should care.</strong> {who}</p>
   {files_p}
   {unc_p}"""
     else:
         body = f"""  <p class="secondary">{why}</p>
   {unc_p if g.get("impact_uncertain") else ""}"""
-    from csweekly.reporters.taxonomy_ui import LEVEL_LABELS, evidence_confidence
-
     level_disp = LEVEL_LABELS.get(level, level.replace("_", " "))
     ev_label, _ = evidence_confidence(g)
-    return f"""<article class="{cls}" id="{html.escape(anchor)}">
-  <h3>{title}</h3>
+    return f"""<article class="{cls}" id="{html.escape(anchor)}" data-project="{html.escape(proj)}">
   {taxonomy_badges_html(g, include_type=True)}
+  <h3>{title}</h3>
 {body}
-  <p class="meta">{html.escape(level_disp)} · {html.escape(ev_label)}{html.escape(score_bit)} · Primary source:
+  <p class="meta"><span class="mono-meta">{html.escape(level_disp)} · {html.escape(ev_label)}{html.escape(score_bit)}</span> · Primary source:
     <a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a></p>
   {related_block}
 </article>"""
@@ -1195,29 +1228,28 @@ def _deep_dive_html(g: dict) -> str:
         )
     hw = html.escape(", ".join((g.get("hardware_targets") or [])[:3]) or "see paths")
     who = html.escape(", ".join(g.get("who_should_care") or []) or "Compiler engineers")
-    from csweekly.reporters.taxonomy_ui import evidence_confidence
+    from csweekly.reporters.taxonomy_ui import evidence_confidence, project_color_key
 
     ev_label, _ = evidence_confidence(g)
+    proj = project_color_key(str(g.get("project") or g.get("category") or ""))
     return f"""<section id="deep-dive" class="issue-section deep-dive">
   <h2>Deep dive</h2>
-  <article class="feature-card" id="{html.escape(anchor)}-dive">
+  <article class="feature-card" id="{html.escape(anchor)}-dive" data-project="{html.escape(proj)}">
+    <p class="card-kicker">Technical deep dive</p>
     <h3>{title}</h3>
     {taxonomy_badges_html(g)}
-    <ol class="deep-list">
-      <li><strong>Background</strong> — {n("background", "See primary commit evidence.")}</li>
-      <li><strong>Problem</strong> — {n("problem")}</li>
-      <li><strong>Previous behavior</strong> — {n("previous_behavior")}</li>
-      <li><strong>Change</strong> — {html.escape(g.get("what_changed") or "")}</li>
-      <li><strong>Implementation</strong> — {n("implementation")}</li>
-      <li><strong>Example / validation</strong> — {n("example", n("validation"))}</li>
-      <li><strong>Impact</strong> — {n("implications", g.get("why_it_matters") or "")}</li>
-      <li><strong>Who should care</strong> — {who}</li>
-      <li><strong>Target</strong> — {hw}</li>
-      <li><strong>Confidence</strong> — {html.escape(ev_label)} ({n("confidence", "unknown")}; fact-check {n("factcheck", "n/a")})</li>
-      <li><strong>Limitations</strong> — {n("limits", g.get("uncertainty_note") or "")}</li>
-    </ol>
+    <div class="callout callout-insight"><strong>Background.</strong> {n("background", "See primary commit evidence.")}</div>
+    <div class="callout callout-warning"><strong>Problem.</strong> {n("problem")}</div>
+    <p><strong>Previous behavior.</strong> {n("previous_behavior")}</p>
+    <div class="callout callout-insight"><strong>What changed.</strong> {html.escape(g.get("what_changed") or "")}</div>
+    <p><strong>Implementation.</strong> {n("implementation")}</p>
+    <div class="callout callout-verified"><strong>Validation.</strong> {n("example", n("validation"))}</div>
+    <div class="callout callout-verified"><strong>Why it matters.</strong> {n("implications", g.get("why_it_matters") or "")}</div>
+    <p class="muted"><strong>Who should care.</strong> {who} · <strong>Target.</strong> {hw}</p>
+    <div class="callout callout-cite"><strong>Confidence.</strong> {html.escape(ev_label)} ({n("confidence", "unknown")}; fact-check {n("factcheck", "n/a")})</div>
+    <div class="callout callout-warning"><strong>Limitations.</strong> {n("limits", g.get("uncertainty_note") or "")}</div>
     <h4>Evidence (primary sources)</h4>
-    <ul>{''.join(sources)}</ul>
+    <ul class="source-list">{''.join(sources)}</ul>
   </article>
 </section>"""
 
@@ -1350,7 +1382,7 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
   <script src="{prefix}/theme.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{prefix}/site.css"/>
 </head>
 <body>

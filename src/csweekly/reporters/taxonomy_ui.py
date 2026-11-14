@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import html
+import re
 from typing import Any
 
 LEVEL_LABELS = {
@@ -19,7 +20,38 @@ PROJECT_LABELS = {
     "mlir": "MLIR",
     "ai": "AI",
     "gpu": "GPU",
+    "research": "Research",
 }
+
+# Map display / alias names onto the ecosystem colour tokens.
+PROJECT_COLOR_KEYS = {
+    "llvm": "llvm",
+    "clang": "clang",
+    "gcc": "gcc",
+    "mlir": "mlir",
+    "ai": "ai",
+    "gpu": "gpu",
+    "research": "research",
+    "iree": "ai",
+    "tvm": "ai",
+    "xla": "ai",
+    "triton": "ai",
+    "circt": "mlir",
+}
+
+
+def css_slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-")
+
+
+def project_color_key(raw: str) -> str:
+    key = css_slug(raw)
+    if key in PROJECT_COLOR_KEYS:
+        return PROJECT_COLOR_KEYS[key]
+    for alias, mapped in PROJECT_COLOR_KEYS.items():
+        if alias in key:
+            return mapped
+    return key or "other"
 
 
 def _uniq(items: list[str], *, limit: int = 3) -> list[str]:
@@ -85,7 +117,10 @@ def taxonomy_badges_html(
     g: dict[str, Any] | None, *, include_type: bool = False, include_evidence: bool = True
 ) -> str:
     """Compact chips with dimension hints — never concatenates bare words."""
+    g = g or {}
     fields = taxonomy_fields(g)
+    raw_project = str(g.get("project") or g.get("category") or "")
+    project_key = project_color_key(raw_project)
     order = [
         ("project", fields["project"]),
         ("stage", fields["stage"]),
@@ -99,8 +134,13 @@ def taxonomy_badges_html(
     chips: list[str] = []
     for dim, values in order:
         for value in values:
+            extra = ""
+            if dim == "project":
+                extra = f" project-{html.escape(project_key)}"
+            elif dim == "stage":
+                extra = f" stage-{html.escape(css_slug(value))}"
             chips.append(
-                f'<span class="badge tax-{html.escape(dim)}" '
+                f'<span class="badge tax-{html.escape(dim)}{extra}" '
                 f'data-dim="{html.escape(dim)}" title="{html.escape(dim)}">'
                 f'<span class="tax-dim">{html.escape(dim)}</span>'
                 f"{html.escape(value)}</span>"
