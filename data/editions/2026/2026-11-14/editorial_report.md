@@ -6,21 +6,21 @@ Timezone: Asia/Kolkata
 
 ## Collection
 
-- Raw items: 0
-- Unique normalized: 0
+- Raw items: 489
+- Unique normalized: 489
 
 ## Processing
 
-- Clusters / candidates: 0
+- Clusters / candidates: 398
 
 ## Editorial
 
 - Featured / selected: 0
 - Worth knowing: 0
-- Research: 0
+- Research: 40
 - Rejected: 0
 - Deferred: 0
-- New / candidate: 0
+- New / candidate: 358
 
 ## Quality gate
 

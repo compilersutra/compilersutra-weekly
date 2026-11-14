@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 from csweekly.config import load_sources, sources_dir
@@ -79,6 +79,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_process.add_argument("--as-of", type=str, default=None)
     p_process.add_argument("--edition", type=Path, default=None, help="Edition directory")
+    p_process.add_argument(
+        "--closed",
+        action="store_true",
+        help="Process the closed publishable week (Saturday publish path)",
+    )
 
     p_review = sub.add_parser(
         "review",
@@ -86,6 +91,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_review.add_argument("--as-of", type=str, default=None)
     p_review.add_argument("--edition", type=Path, default=None)
+    p_review.add_argument(
+        "--closed",
+        action="store_true",
+        help="Review the closed publishable week",
+    )
 
     p_analyze = sub.add_parser(
         "analyze",
@@ -123,10 +133,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_freeze.add_argument("--as-of", type=str, default=None)
     p_freeze.add_argument("--edition", type=Path, default=None)
+    p_freeze.add_argument(
+        "--closed",
+        action="store_true",
+        help="Freeze the closed publishable week (Saturday catch-up)",
+    )
 
     p_validate = sub.add_parser("validate", help="Pre-publish quality gates")
     p_validate.add_argument("--as-of", type=str, default=None)
     p_validate.add_argument("--edition", type=Path, default=None)
+    p_validate.add_argument(
+        "--closed",
+        action="store_true",
+        help="Validate the closed publishable week",
+    )
     p_validate.add_argument(
         "--reports-dir", type=Path, default=Path("reports"), help="Optional issue cross-check"
     )
@@ -198,6 +218,22 @@ def main(argv: list[str] | None = None) -> int:
 
 def _parse_as_of(value: str | None) -> date | None:
     return date.fromisoformat(value) if value else None
+
+
+def _editorial_today(as_of: date | None = None) -> date:
+    """Calendar day in Asia/Kolkata (editorial timezone)."""
+    if as_of is not None:
+        return as_of
+    from csweekly.window import IST
+
+    return datetime.now(IST).date()
+
+
+def _lifecycle_mode(as_of: date | None = None, *, closed: bool = False) -> str:
+    """On Saturday (or --closed), target the publishable week; else collecting."""
+    if closed:
+        return "publishable"
+    return "publishable" if _editorial_today(as_of).weekday() == 5 else "collecting"
 
 
 def _resolve_edition(args: argparse.Namespace, *, mode: str) -> Path:
@@ -276,8 +312,11 @@ def cmd_collect(args: argparse.Namespace) -> int:
 
 
 def cmd_process(args: argparse.Namespace) -> int:
-    # Process the week being closed (collecting), not the prior published week.
-    edir = _resolve_edition(args, mode="collecting")
+    # Saturday / --closed → publishable week; mid-week → collecting.
+    mode = _lifecycle_mode(
+        _parse_as_of(args.as_of), closed=bool(getattr(args, "closed", False))
+    )
+    edir = _resolve_edition(args, mode=mode)
     meta = load_meta(edir)
     if meta.status == EditionStatus.published:
         print(f"edition {meta.id} already published — refuse process", file=sys.stderr)
@@ -339,7 +378,10 @@ def cmd_process(args: argparse.Namespace) -> int:
 
 
 def cmd_review(args: argparse.Namespace) -> int:
-    edir = _resolve_edition(args, mode="collecting")
+    mode = _lifecycle_mode(
+        _parse_as_of(args.as_of), closed=bool(getattr(args, "closed", False))
+    )
+    edir = _resolve_edition(args, mode=mode)
     raw = load_raw_stories(edir)
     candidates = load_candidates(edir)
     path = write_editorial_report(
@@ -440,7 +482,10 @@ def cmd_analyze(args: argparse.Namespace) -> int:
 
 
 def cmd_freeze(args: argparse.Namespace) -> int:
-    edir = _resolve_edition(args, mode="collecting")
+    mode = _lifecycle_mode(
+        _parse_as_of(args.as_of), closed=bool(getattr(args, "closed", False))
+    )
+    edir = _resolve_edition(args, mode=mode)
     if load_meta(edir).status == EditionStatus.published:
         print("edition already published — refuse freeze", file=sys.stderr)
         return 1
@@ -450,9 +495,9 @@ def cmd_freeze(args: argparse.Namespace) -> int:
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
-    # Saturday validate targets the closed publishable week; mid-week uses collecting.
+    # Saturday / --closed → publishable week; mid-week → collecting.
     as_of = _parse_as_of(args.as_of)
-    mode = "publishable" if as_of and as_of.weekday() == 5 else "collecting"
+    mode = _lifecycle_mode(as_of, closed=bool(getattr(args, "closed", False)))
     edir = _resolve_edition(args, mode=mode)
     issue = None
     meta = load_meta(edir)
@@ -482,7 +527,9 @@ def cmd_publish(args: argparse.Namespace) -> int:
     if not args.skip_validate:
         # Ensure candidates exist for gates
         if not load_candidates(edir):
-            cmd_process(argparse.Namespace(as_of=args.as_of, edition=edir))
+            cmd_process(
+                argparse.Namespace(as_of=args.as_of, edition=edir, closed=True)
+            )
         gate = validate_edition(edir)
         sys.stdout.write(format_gate_report(gate))
         if not gate.ok:

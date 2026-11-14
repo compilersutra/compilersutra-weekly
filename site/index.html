@@ -62,13 +62,13 @@
         <p class="lede">LLVM · GCC · MLIR · GPU · AI Compilers — LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
         
         <div class="latest-card">
-          <p class="hero-kicker">Edition #001 · 7 Nov 2026</p>
+          <p class="hero-kicker">Edition #002 · 14 Nov 2026</p>
           <h2>This week&rsquo;s engineering highlights</h2>
           <p class="latest-cover">9 high-signal · 12 worth knowing</p>
           <p class="muted">LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
-          <ul class='overview-list'><li>Extract subvectors via vec_perm_const — This patch adds a const-perm recoginzer for subvector extractions. The implementation is exactly the same as… (Backend · CPU)</li><li>Implement support for matrix splat cast — Extends Clang IR (CIR) for matrix splat casts, including HLSL matrix lowering paths. This is frontend/CIR… (Frontend · Languages)</li><li>Add RISCVABI helper functions for single/doubleFP and purecap — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not… (Backend · CPU)</li><li>Add nvvm.mulf Op — Widens NVIDIA GPU IR in the MLIR NVVM dialect used when lowering GPU kernels. This is an IR/target-op change… (Middle-end · GPU)</li><li>Use runCodeGenPipeline in SPIRVTranslate — SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU… (Backend · GPU)</li></ul>
+          <ul class='overview-list'><li>Remove clearKillFlags calls — RuntimeLibcalls interface change — how the compiler declares or emits library calls. (Backend · CPU)</li><li>Add support for direct with align in calling convention lowering — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not… (Frontend · Languages)</li><li>fix dump_printf_loc without dump_enabled_p — Subject explicitly concerns auto-vectorization / SIMD lowering. Do not assume measured speedups without… (Middle-end · CPU)</li><li>Fix return value ABI handling for nullptr_t — Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not… (Backend · CPU)</li><li>tree-optimization/128514 - wrong bitfield vectorization with SSO — Subject explicitly concerns auto-vectorization / SIMD lowering. Do not assume measured speedups without… (Middle-end · CPU)</li></ul>
           <div class="cta-row">
-            <a class="btn btn-primary" href="issues/2026/2026-11-07.html">Read this week&rsquo;s edition →</a>
+            <a class="btn btn-primary" href="issues/2026/2026-11-14.html">Read this week&rsquo;s edition →</a>
             <a class="btn btn-ghost" href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe by email</a>
           </div>
         </div>
@@ -79,19 +79,16 @@
       <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
         <h2 id="featured-heading" class="section-label">Deep dive</h2>
         <article class="feature-card">
-          <h2>Extract subvectors via vec_perm_const.</h2>
-          <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>RISC-V</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>deep_dive</span></div>
-          <p class="secondary"><strong>Problem.</strong> This patch adds a const-perm recoginzer for subvector extractions.  The
-implementation is exactly the same as what vec_extract is doing, just
-that we&#x27;re independent of optab modes here and can extract arbitrary
-pieces.</p>
-          <p class="secondary"><strong>Why engineers should care.</strong> This patch adds a const-perm recoginzer for subvector extractions.  The
-implementation is exactly the same as what vec_extract is doing, just
-that we&#x27;re independent of optab modes here and can extract arbitrary
-pieces.</p>
+          <h2>Remove clearKillFlags calls</h2>
+          <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>deep_dive</span></div>
+          <p class="secondary"><strong>Problem.</strong> Upstream states: AArch64: Remove clearKillFlags calls (#239892). Kill flags are no longer permitted on virtual registers, but these
+contexts may also see physical registers. Those physical register
+kills are either never set by the time this code runs or are on
+reserved or constant registers where they carry no informa</p>
+          <p class="secondary"><strong>Why engineers should care.</strong> RuntimeLibcalls interface change — how the compiler declares or emits library calls.</p>
           <div class="cta-row" style="margin-top:0.85rem">
-            <a class="btn btn-primary" href="issues/2026/2026-11-07.html#deep-dive">Full technical analysis →</a>
-            <a class="btn btn-ghost" href="https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91" rel="noopener noreferrer">Primary source</a>
+            <a class="btn btn-primary" href="issues/2026/2026-11-14.html#deep-dive">Full technical analysis →</a>
+            <a class="btn btn-ghost" href="https://github.com/llvm/llvm-project/commit/ae4efc08a68f926d4558adcd7d2566e2d9563e7d" rel="noopener noreferrer">Primary source</a>
           </div>
         </article>
       </section>
@@ -101,57 +98,44 @@ pieces.</p>
         <h2 id="latest-dev" class="section-label">This week&rsquo;s engineering highlights</h2>
         <p class="muted">Showing 6 of 8 high-signal developments · 2 more in the edition · 9 total including deep dive</p>
         <div class="story-grid"><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer">[CIR] Implement support for matrix splat cast (#239299)</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>CLANG</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
-  <p class="secondary">Implement support for the matrix splat cast</p>
-  <p>Implement support for the matrix splat cast</p>
-  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/6fff663f89dc211d695d6597573a2f9698c2944f" rel="noopener noreferrer">Investigate source →</a></div>
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/04a69e68bb4c6334595f0e7da837ea0944ae0dcd" rel="noopener noreferrer">Port NEON widening shifts by an immediate to the pragma-based framework</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span></div>
+  <p class="secondary">Port NEON widening shifts by an immediate to the pragma-based framework. (22 related commits) Cluster of 22 related commits treated as one development.</p>
+  <p>Source subject: “Port NEON widening shifts by an immediate to the pragma-based framework”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
+  <div class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/04a69e68bb4c6334595f0e7da837ea0944ae0dcd" rel="noopener noreferrer">Investigate source →</a></div>
 </article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer">[RISCV] Add RISCVABI helper functions for single/doubleFP and purecap (#238962)</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>RISC-V</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
-  <p class="secondary">Use them to simplify code that checks for individual enum values.</p>
-  <p>Use them to simplify code that checks for individual enum values.</p>
-  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/1507a9b2e51b07de1a8e4c5956e449f242ff4263" rel="noopener noreferrer">Investigate source →</a></div>
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/94e294dbcd421bc8980795896d830c855163dbb1" rel="noopener noreferrer">Add SVE2p3/SME2p3 pairwise intrinsics</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span></div>
+  <p class="secondary">SVE2p3/SME2p3 pairwise intrinsics was added. (5 related commits) Cluster of 5 related commits treated as one development.</p>
+  <p>Source subject: “Add SVE2p3/SME2p3 pairwise intrinsics”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
+  <div class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/94e294dbcd421bc8980795896d830c855163dbb1" rel="noopener noreferrer">Investigate source →</a></div>
 </article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer">[MLIR][NVVM] Add nvvm.mulf Op (#238395)</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>MLIR</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>NVPTX</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
-  <p class="secondary">Adds `nvvm.mulf` Op to the NVVM dialect. `nvvm.mulf` performs a
-floating-point multiplication between two operands of the same type and
-lowers to the `llvm.nvvm</p>
-  <p>Adds `nvvm.mulf` Op to the NVVM dialect. `nvvm.mulf` performs a
-floating-point multiplication between two operands of the same type and
-lowers to the `llvm.nvvm.fmul` family of intrinsics.</p>
-  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/aa1bf8977e2f3b78e4452e56f287d2c4f0561125" rel="noopener noreferrer">Investigate source →</a></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/a997ed4e98e89817804a5dc2b9456617e3654f72" rel="noopener noreferrer">Port PostLegalizerCombiner to NewPM</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span></div>
+  <p class="secondary">Port PostLegalizerCombiner to NewPM. (5 related commits) Cluster of 5 related commits treated as one development.</p>
+  <p>Source subject: “Port PostLegalizerCombiner to NewPM”. Apparent component: LLVM. Broader impact is not established from the commit message alone.</p>
+  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/a997ed4e98e89817804a5dc2b9456617e3654f72" rel="noopener noreferrer">Investigate source →</a></div>
 </article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer">[SPIR-V][NewPM] Use runCodeGenPipeline in SPIRVTranslate (#238451)</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>SPIR-V</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
-  <p class="secondary">SPIRVTranslate will be able to pick NewPM once SPIR-V defaults to it</p>
-  <p>SPIRVTranslate will be able to pick NewPM once SPIR-V defaults to it</p>
-  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/e5a911fa73cde620d98cf103a2b5771191f1d992" rel="noopener noreferrer">Investigate source →</a></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/6cfe6ebf4469ed2865aa501901b9970e75b84970" rel="noopener noreferrer">Add support for direct with align in calling convention lowering</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>MLIR</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>AI / ML</span></div>
+  <p class="secondary">Support for direct with align in calling convention lowering was added.</p>
+  <p>Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator change.</p>
+  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/6cfe6ebf4469ed2865aa501901b9970e75b84970" rel="noopener noreferrer">Investigate source →</a></div>
 </article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer">[lldb][Fortran] Added support for functions to DWARFASTParserFortran (#234312)</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLDB</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
-  <p class="secondary">Adds handling for the `DW_TAG_subprogram` and `DW_TAG_subroutine_type`
-DWARF tags in ParseTypeFromDWARF as well as implementing the
-ParseFunctionFromDWARF funct</p>
-  <p>Adds handling for the `DW_TAG_subprogram` and `DW_TAG_subroutine_type`
-DWARF tags in ParseTypeFromDWARF as well as implementing the
-ParseFunctionFromDWARF function, which is necessary for the `frame
-v</p>
-  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/e799d5c4614b1fb2bbf0145697e80e6b0ccb2cf7" rel="noopener noreferrer">Investigate source →</a></div>
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/75b4e997414d415fe61016fff963a3f5dbc49ce6" rel="noopener noreferrer">fix dump_printf_loc without dump_enabled_p</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span></div>
+  <p class="secondary">Dump_printf_loc without dump_enabled_p was fixed.</p>
+  <p>Subject explicitly concerns auto-vectorization / SIMD lowering. Do not assume measured speedups without benchmarks.</p>
+  <div class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/75b4e997414d415fe61016fff963a3f5dbc49ce6" rel="noopener noreferrer">Investigate source →</a></div>
 </article><article class="story-card">
-  <h4><a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer">[AMDGPU] Clear NoPHIs after SIFixSGPRCopies under the new pass manager (#238531)</a></h4>
-  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AMDGPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>engineering_analysis</span></div>
-  <p class="secondary">SIFixSGPRCopies can build waterfall loops, which add PHIs. The legacy
-pass declares that it clears NoPHIs, but the new pass manager&#x27;s
-SIFixSGPRCopiesPass declar</p>
-  <p>SIFixSGPRCopies can build waterfall loops, which add PHIs. The legacy
-pass declares that it clears NoPHIs, but the new pass manager&#x27;s
-SIFixSGPRCopiesPass declared no properties and never applied them.</p>
-  <div class="meta"><a href="https://github.com/llvm/llvm-project/commit/e2e487dfa68ae0fa223e369300132cd270c43576" rel="noopener noreferrer">Investigate source →</a></div>
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/c6ebf01257c2c1d8ceeec6273076544a336cccc9" rel="noopener noreferrer">Fix return value ABI handling for nullptr_t</a></h4>
+  <div class="badge-row"><span class="badge tax-project" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span></div>
+  <p class="secondary">Return value ABI handling for nullptr_t was fixed.</p>
+  <p>Touches ABI / calling-convention helpers. Wrong ABI lowering can break interoperability; this is not automatically a register-allocator change.</p>
+  <div class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/c6ebf01257c2c1d8ceeec6273076544a336cccc9" rel="noopener noreferrer">Investigate source →</a></div>
 </article></div>
         <p class="muted" style="margin-top:0.85rem">
-          <a href="issues/2026/2026-11-07.html">Open the full edition for every selected story →</a>
+          <a href="issues/2026/2026-11-14.html">Open the full edition for every selected story →</a>
         </p>
       </section>
 
@@ -188,6 +172,13 @@ SIFixSGPRCopiesPass declared no properties and never applied them.</p>
       <section class="panel" aria-labelledby="archive-heading">
         <h2 id="archive-heading">Archive</h2>
         <ul class="issue-list"><li>
+  <a class="issue-row" href="issues/2026/2026-11-14.html">
+    <span class="issue-date">14 Nov 2026</span>
+    <span class="title">#002 · 9 high-signal · 12 worth knowing</span>
+    <span class="issue-window">2026-11-07 → 2026-11-14 (UTC, Fri→Fri, end exclusive)</span>
+  </a>
+</li>
+<li>
   <a class="issue-row" href="issues/2026/2026-11-07.html">
     <span class="issue-date">7 Nov 2026</span>
     <span class="title">#001 · 9 high-signal · 12 worth knowing</span>

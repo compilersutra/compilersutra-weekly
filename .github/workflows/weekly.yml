@@ -1,61 +1,141 @@
-name: Weekly report
+name: Weekly publish
 on:
   schedule:
-    - cron: "0 3 * * 6"   # Saturday 03:00 UTC
+    # Saturday 03:00 UTC = 08:30 Asia/Kolkata (publish day)
+    - cron: "0 3 * * 6"
   workflow_dispatch:
     inputs:
       as_of:
-        description: "UTC date YYYY-MM-DD (default: today)"
+        description: "Editorial as-of date YYYY-MM-DD (default: today IST)"
         required: false
       mode:
-        description: "fixture | network-light | full-mirrors"
-        default: "network-light"
+        description: "full-git | network-light | fixture"
+        default: "full-git"
         type: choice
-        options: [fixture, network-light, full-mirrors]
+        options: [full-git, network-light, fixture]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-publish
+  cancel-in-progress: false
 
 jobs:
-  report:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -e .
-      - name: Generate
+
+      - name: Install
+        run: pip install -e .
+
+      - name: Show week windows
         env:
-          AS_OF: ${{ inputs.as_of }}
-          MODE: ${{ inputs.mode || 'network-light' }}
+          AS_OF: ${{ github.event.inputs.as_of }}
+        run: |
+          if [ -n "${AS_OF:-}" ]; then csweekly week --as-of "$AS_OF"; else csweekly week; fi
+
+      - name: Prepare git mirrors (full-git)
+        if: ${{ github.event.inputs.mode != 'network-light' && github.event.inputs.mode != 'fixture' }}
+        env:
+          AS_OF: ${{ github.event.inputs.as_of }}
+        run: |
+          set -euo pipefail
+          chmod +x scripts/ci_prepare_mirrors.sh
+          if [ -n "${AS_OF:-}" ]; then
+            SINCE=$(python3 -c "from datetime import date; from csweekly.window import publishable_window; print(publishable_window(as_of=date.fromisoformat('$AS_OF')).start.date().isoformat())")
+          else
+            SINCE=$(python3 -c "from csweekly.window import publishable_window; print(publishable_window().start.date().isoformat())")
+          fi
+          scripts/ci_prepare_mirrors.sh "$SINCE"
+
+      - name: Fixture repo
+        if: ${{ github.event.inputs.mode == 'fixture' }}
+        run: bash scripts/make_fixture_repo.sh
+
+      - name: Collect → process → freeze → validate → publish
+        env:
+          AS_OF: ${{ github.event.inputs.as_of }}
+          MODE: ${{ github.event.inputs.mode || 'full-git' }}
           CSWEEKLY_GITHUB_TOKEN: ${{ secrets.CSWEEKLY_GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           AS_OF_ARG=""
           if [ -n "${AS_OF:-}" ]; then AS_OF_ARG="--as-of $AS_OF"; fi
+          MODE="${MODE:-full-git}"
+
           case "$MODE" in
             fixture)
-              bash scripts/make_fixture_repo.sh
-              csweekly collect $AS_OF_ARG --no-fetch --kind git \
+              csweekly collect $AS_OF_ARG --closed --no-fetch --kind git \
                 --repo tests/fixtures/tiny_repo --source llvm \
                 --out data/last_collect.json
               ;;
             network-light)
-              # No giant clones on hosted runners — releases + RSS + arXiv only.
-              csweekly collect $AS_OF_ARG \
+              csweekly collect $AS_OF_ARG --closed \
                 --kind github_releases --kind rss --kind arxiv \
                 --out data/last_collect.json
               ;;
-            full-mirrors)
-              csweekly collect $AS_OF_ARG --mirrors-dir data/mirrors \
+            full-git)
+              csweekly collect $AS_OF_ARG --closed \
+                --mirrors-dir data/mirrors \
+                --kind git --kind github_releases --kind rss --kind arxiv \
                 --out data/last_collect.json
               ;;
+            *)
+              echo "unknown MODE=$MODE" >&2
+              exit 2
+              ;;
           esac
-          csweekly report --in data/last_collect.json --reports-dir reports
-          csweekly index --reports-dir reports --site-dir site
+
+          EDIR=$(python3 -c "import json; print(json.load(open('data/last_collect.json'))['edition_dir'])")
+          RAW=0
+          if [ -f "$EDIR/raw/stories.jsonl" ]; then
+            RAW=$(grep -c . "$EDIR/raw/stories.jsonl" || true)
+          fi
+          echo "raw_stories=$RAW edition=$EDIR"
+          if [ "$MODE" != "fixture" ] && [ "${RAW:-0}" -lt 1 ]; then
+            echo "ERROR: empty collection — refusing publish" >&2
+            exit 1
+          fi
+
+          csweekly process $AS_OF_ARG --closed
+          csweekly review $AS_OF_ARG --closed
+          csweekly freeze $AS_OF_ARG --closed
+          csweekly validate $AS_OF_ARG --closed
+          csweekly publish $AS_OF_ARG --reports-dir reports --site-dir site
+
+      - name: Commit published edition
+        run: |
+          set -euo pipefail
+          git config user.name "compilersutra-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports site data/editions data/last_collect.json || true
+          git reset -- data/mirrors 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No publish artifacts to commit"
+            exit 0
+          fi
+          git commit -m "$(cat <<'EOF'
+          Publish weekly edition from Saturday bot
+
+          Automated collect → process → validate → publish.
+          EOF
+          )"
+          git push origin HEAD
+
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: weekly-report
+          name: weekly-publish
           path: |
             reports/
             site/
             data/last_collect.json
+            data/editions/
+          if-no-files-found: warn

@@ -44,9 +44,17 @@ SECTION_SPECS = SECTION_ORDER
 
 
 def issue_number(published_on, reports_dir: Path | None = None) -> int:
+    """Edition ordinal from published report stems (YYYY-MM-DD.md only)."""
+    import re
+
     if reports_dir and reports_dir.is_dir():
+        date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
         dates = sorted(
-            {p.stem for p in reports_dir.glob("**/*.md") if p.name != "README.md"}
+            {
+                p.stem
+                for p in reports_dir.glob("**/*.md")
+                if date_re.match(p.stem)
+            }
             | {published_on.isoformat()}
         )
         try:

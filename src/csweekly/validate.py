@@ -49,6 +49,12 @@ def validate_edition(edir: Path, issue: WeeklyIssue | None = None) -> GateResult
         f"{meta.period_start} → {meta.period_end} publish {meta.published_at}",
     )
 
+    result.add(
+        "Raw collection non-empty",
+        len(raw) > 0,
+        f"raw={len(raw)}",
+    )
+
     # Duplicate raw keys
     keys = []
     for s in raw:
