@@ -1,10 +1,18 @@
 # SPDX-License-Identifier: Apache-2.0
 """Public URLs for CompilerSutra Weekly."""
 
+from __future__ import annotations
+
+import os
+
 REPO_URL = "https://github.com/compilersutra/compilersutra-weekly"
 PAGES_URL = "https://compilersutra.github.io/compilersutra-weekly/"
 EDU_URL = "https://www.compilersutra.com/"
 ISSUES_URL = f"{REPO_URL}/issues"
+# Cloudflare Web Analytics (cookieless). Set via env in Pages deploy, or leave empty.
+CLOUDFLARE_WEB_ANALYTICS_TOKEN = (
+    os.environ.get("CSWEEKLY_CF_BEACON_TOKEN", "").strip()
+)
 PROJECT_NAME = "CompilerSutra Weekly"
 # Short nav chip — specific, not a slogan about "the ecosystem"
 BRAND_TAG = "LLVM · GCC · MLIR · GPU — curated weekly"

@@ -28,7 +28,11 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -e .
-      - run: csweekly index --reports-dir reports --site-dir site
+      - name: Rebuild site
+        env:
+          # Optional: Cloudflare Web Analytics token (repo secret).
+          CSWEEKLY_CF_BEACON_TOKEN: ${{ secrets.CSWEEKLY_CF_BEACON_TOKEN }}
+        run: csweekly index --reports-dir reports --site-dir site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

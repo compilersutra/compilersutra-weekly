@@ -44,6 +44,11 @@ Because.
     assert ">Topics<" in home
     assert ">Subscribe<" in home
     assert "Explore by engineering domain" in home
+    # Home body order: Archive → Explore domains → This week's edition (#002…)
+    i_archive = home.index('id="archive-heading"')
+    i_explore = home.index("Explore by engineering domain")
+    i_week = home.index('id="this-week-heading"')
+    assert i_archive < i_explore < i_week
     assert "theme-toggle" in home
     assert "data-theme" in home
     assert "application/atom+xml" not in home
@@ -68,3 +73,11 @@ Because.
     explore = (site / "explore" / "index.html").read_text(encoding="utf-8")
     assert "filters.js" in explore
     assert ">Explore<" in explore
+    sitemap = (site / "sitemap.xml").read_text(encoding="utf-8")
+    assert "https://compilersutra.github.io/compilersutra-weekly/" in sitemap
+    assert "issues/2026/2026-11-07.html" in sitemap
+    assert "topics/llvm.html" in sitemap
+    robots = (site / "robots.txt").read_text(encoding="utf-8")
+    assert "Allow: /" in robots
+    assert "Sitemap: https://compilersutra.github.io/compilersutra-weekly/sitemap.xml" in robots
+    assert "cloudflareinsights.com" not in home

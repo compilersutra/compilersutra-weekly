@@ -15,6 +15,7 @@ from csweekly.analyzers.taxonomy import DOMAINS, STAGES, TECH_AREAS
 from csweekly.brand import (
     BRAND_TAG,
     CADENCE,
+    CLOUDFLARE_WEB_ANALYTICS_TOKEN,
     CONTACT_NOTE,
     EDU_URL,
     HERO_KICKER,
@@ -254,7 +255,68 @@ def write_archive_index(reports_dir: Path, site_dir: Path) -> Path:
     (site_dir / "index.md").write_text(
         f"# {PROJECT_NAME}\n\nOpen [{PAGES_URL}]({PAGES_URL}).\n", encoding="utf-8"
     )
+    _write_sitemap_and_robots(site_dir, metas)
     return archive
+
+
+def _abs_page_url(rel: str) -> str:
+    base = PAGES_URL.rstrip("/")
+    path = rel.lstrip("/")
+    if path in {"", "index.html"}:
+        return f"{base}/"
+    return f"{base}/{path}"
+
+
+def _write_sitemap_and_robots(site_dir: Path, metas: list[IssueMeta]) -> None:
+    """Emit sitemap.xml + robots.txt for GitHub Pages / Search Console."""
+    urls: list[tuple[str, str | None, str]] = [
+        ("index.html", None, "1.0"),
+        ("archive.html", None, "0.8"),
+        ("about.html", None, "0.5"),
+        ("changelog.html", None, "0.6"),
+        ("subscribe.html", None, "0.4"),
+        ("topics/index.html", None, "0.7"),
+        ("explore/index.html", None, "0.7"),
+    ]
+    for topic in TOPICS:
+        urls.append((f"topics/{topic['id']}.html", None, "0.6"))
+    for stage in STAGES:
+        urls.append((f"explore/stage-{_slug(stage)}.html", None, "0.5"))
+    for domain in DOMAINS:
+        urls.append((f"explore/domain-{_slug(domain)}.html", None, "0.5"))
+    for area in TECH_AREAS:
+        urls.append((f"explore/area-{_slug(area)}.html", None, "0.4"))
+    for meta in metas:
+        urls.append((meta.href_html, meta.date, "0.9"))
+
+    seen: set[str] = set()
+    body_parts = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    for rel, lastmod, priority in urls:
+        loc = _abs_page_url(rel)
+        if loc in seen:
+            continue
+        seen.add(loc)
+        body_parts.append("  <url>")
+        body_parts.append(f"    <loc>{html.escape(loc)}</loc>")
+        if lastmod:
+            body_parts.append(f"    <lastmod>{html.escape(lastmod)}</lastmod>")
+        body_parts.append(f"    <priority>{priority}</priority>")
+        body_parts.append("  </url>")
+    body_parts.append("</urlset>")
+    body_parts.append("")
+    (site_dir / "sitemap.xml").write_text("\n".join(body_parts), encoding="utf-8")
+
+    sitemap_abs = _abs_page_url("sitemap.xml")
+    robots = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        f"Sitemap: {sitemap_abs}\n"
+    )
+    (site_dir / "robots.txt").write_text(robots, encoding="utf-8")
 
 
 def _load_changelog(md_path: Path) -> dict:
@@ -1461,9 +1523,23 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
       </div>
     </div>
   </footer>
+  {_analytics_snippet()}
 </body>
 </html>
 """
+
+
+def _analytics_snippet() -> str:
+    """Optional Cloudflare Web Analytics beacon (cookieless)."""
+    token = CLOUDFLARE_WEB_ANALYTICS_TOKEN
+    if not token:
+        return ""
+    # Token is alphanumeric; still escape for attribute safety.
+    safe = html.escape(token, quote=True)
+    return (
+        "<script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" "
+        f"data-cf-beacon='{{\"token\": \"{safe}\"}}'></script>\n"
+    )
 
 
 def _window_from_file(path: Path) -> str | None:
