@@ -12,12 +12,14 @@
   document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
   </script>
   <script src="../assets/theme.js" defer></script>
+  <script src="../assets/ui.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../assets/site.css"/>
 </head>
 <body>
+  <div class="read-progress" id="read-progress" hidden aria-hidden="true"></div>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
@@ -32,6 +34,7 @@
         <a href="../about.html">About</a>
       </nav>
       <div class="header-actions">
+        <button type="button" class="icon-btn search-trigger" id="search-open" aria-label="Open search (Control K)">Search <span class="kbd">Ctrl K</span></button>
         <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
         <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Switch to light theme">Theme</button>
         <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
@@ -81,6 +84,13 @@
   </main>
 
   </div>
+  <div class="search-backdrop" id="site-search" hidden>
+    <div class="search-panel" role="dialog" aria-modal="true" aria-label="Site search">
+      <input id="site-search-input" type="search" placeholder="Jump to a page or section…" autocomplete="off" aria-autocomplete="list" aria-controls="site-search-results"/>
+      <ul class="search-results" id="site-search-results" role="listbox"></ul>
+    </div>
+  </div>
+  <script type="application/json" id="site-search-index">[{"label": "Latest edition", "href": "../index.html", "hint": "Home"}, {"label": "Explore", "href": "index.html", "hint": "Filters"}, {"label": "Topics", "href": "../topics/index.html", "hint": "Ecosystems"}, {"label": "Research papers", "href": "../topics/research.html", "hint": "Papers"}, {"label": "Archive", "href": "../archive.html", "hint": "Editions"}, {"label": "Change log", "href": "../changelog.html", "hint": "Full dataset"}, {"label": "About", "href": "../about.html", "hint": "How it works"}, {"label": "Subscribe", "href": "https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform", "hint": "Email"}, {"label": "GitHub repository", "href": "https://github.com/compilersutra/compilersutra-weekly", "hint": "Source"}]</script>
   <footer class="site-footer">
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · Published every Saturday. Each edition covers Saturday→Friday (Asia/Kolkata), frozen at end of Friday. Raw collection stays private; only the curated edition is published.</div>

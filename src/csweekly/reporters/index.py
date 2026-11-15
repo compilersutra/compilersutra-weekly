@@ -1366,6 +1366,20 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
         return ' aria-current="page"' if active == name else ""
 
     topic_active = active in {"topics"} | {t["id"] for t in TOPICS}
+    search_index = json.dumps(
+        [
+            {"label": "Latest edition", "href": home, "hint": "Home"},
+            {"label": "Explore", "href": explore, "hint": "Filters"},
+            {"label": "Topics", "href": topics, "hint": "Ecosystems"},
+            {"label": "Research papers", "href": research, "hint": "Papers"},
+            {"label": "Archive", "href": archive, "hint": "Editions"},
+            {"label": "Change log", "href": changelog, "hint": "Full dataset"},
+            {"label": "About", "href": about, "hint": "How it works"},
+            {"label": "Subscribe", "href": NEWSLETTER_FORM_URL, "hint": "Email"},
+            {"label": "GitHub repository", "href": REPO_URL, "hint": "Source"},
+        ],
+        ensure_ascii=True,
+    )
     return f"""<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -1380,12 +1394,14 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
   document.documentElement.setAttribute('data-theme',t);}}catch(e){{}}}})();
   </script>
   <script src="{prefix}/theme.js" defer></script>
+  <script src="{prefix}/ui.js" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{prefix}/site.css"/>
 </head>
 <body>
+  <div class="read-progress" id="read-progress" hidden aria-hidden="true"></div>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
@@ -1400,6 +1416,7 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
         <a href="{about}"{cur("about")}>About</a>
       </nav>
       <div class="header-actions">
+        <button type="button" class="icon-btn search-trigger" id="search-open" aria-label="Open search (Control K)">Search <span class="kbd">Ctrl K</span></button>
         <a class="icon-btn" href="{html.escape(REPO_URL)}" rel="noopener noreferrer" title="GitHub">GitHub</a>
         <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Switch to light theme">Theme</button>
         <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
@@ -1423,6 +1440,13 @@ def _shell(title: str, body: str, *, active: str, depth: int) -> str:
   <div id="main">
   {body}
   </div>
+  <div class="search-backdrop" id="site-search" hidden>
+    <div class="search-panel" role="dialog" aria-modal="true" aria-label="Site search">
+      <input id="site-search-input" type="search" placeholder="Jump to a page or section…" autocomplete="off" aria-autocomplete="list" aria-controls="site-search-results"/>
+      <ul class="search-results" id="site-search-results" role="listbox"></ul>
+    </div>
+  </div>
+  <script type="application/json" id="site-search-index">{search_index}</script>
   <footer class="site-footer">
     <div class="wrap">
       <div>© CompilerSutra · Apache-2.0 · {html.escape(CADENCE)}</div>
