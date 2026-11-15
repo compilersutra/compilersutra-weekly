@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://compilersutra.github.io/compilersutra-weekly/sitemap.xml
+Sitemap: https://www.compilersutra.com/weekly/sitemap.xml

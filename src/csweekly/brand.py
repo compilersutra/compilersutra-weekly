@@ -6,7 +6,9 @@ from __future__ import annotations
 import os
 
 REPO_URL = "https://github.com/compilersutra/compilersutra-weekly"
-PAGES_URL = "https://compilersutra.github.io/compilersutra-weekly/"
+# Canonical public URL (proxied on compilersutra.com). GitHub Pages remains the origin.
+PAGES_URL = "https://www.compilersutra.com/weekly/"
+GITHUB_PAGES_URL = "https://compilersutra.github.io/compilersutra-weekly/"
 EDU_URL = "https://www.compilersutra.com/"
 ISSUES_URL = f"{REPO_URL}/issues"
 # Cloudflare Web Analytics (cookieless). Set via env in Pages deploy, or leave empty.

@@ -1,3 +1,3 @@
 # CompilerSutra Weekly
 
-Open [https://compilersutra.github.io/compilersutra-weekly/](https://compilersutra.github.io/compilersutra-weekly/).
+Open [https://www.compilersutra.com/weekly/](https://www.compilersutra.com/weekly/).

@@ -1,188 +1,188 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/</loc>
+    <loc>https://www.compilersutra.com/weekly/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/archive.html</loc>
+    <loc>https://www.compilersutra.com/weekly/archive.html</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/about.html</loc>
+    <loc>https://www.compilersutra.com/weekly/about.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/changelog.html</loc>
+    <loc>https://www.compilersutra.com/weekly/changelog.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/subscribe.html</loc>
+    <loc>https://www.compilersutra.com/weekly/subscribe.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/topics/index.html</loc>
+    <loc>https://www.compilersutra.com/weekly/topics/index.html</loc>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/index.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/index.html</loc>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/topics/llvm.html</loc>
+    <loc>https://www.compilersutra.com/weekly/topics/llvm.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/topics/gcc.html</loc>
+    <loc>https://www.compilersutra.com/weekly/topics/gcc.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/topics/mlir.html</loc>
+    <loc>https://www.compilersutra.com/weekly/topics/mlir.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/topics/ai.html</loc>
+    <loc>https://www.compilersutra.com/weekly/topics/ai.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/topics/gpu.html</loc>
+    <loc>https://www.compilersutra.com/weekly/topics/gpu.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/topics/research.html</loc>
+    <loc>https://www.compilersutra.com/weekly/topics/research.html</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/stage-frontend.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/stage-frontend.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/stage-middle-end.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/stage-middle-end.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/stage-backend.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/stage-backend.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/stage-runtime-toolchain.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/stage-runtime-toolchain.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/domain-cpu.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/domain-cpu.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/domain-gpu.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/domain-gpu.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/domain-ai-ml.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/domain-ai-ml.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/domain-accelerators.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/domain-accelerators.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/domain-fpga.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/domain-fpga.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/domain-dsp.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/domain-dsp.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/domain-quantum.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/domain-quantum.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/domain-languages.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/domain-languages.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/domain-research.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/domain-research.html</loc>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-language.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-language.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-parsing.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-parsing.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-semantics.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-semantics.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-ir.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-ir.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-analysis.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-analysis.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-optimization.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-optimization.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-vectorization.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-vectorization.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-code-generation.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-code-generation.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-register-allocation.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-register-allocation.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-scheduling.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-scheduling.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-memory.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-memory.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-parallelism.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-parallelism.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-runtime.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-runtime.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-performance.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-performance.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-security.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-security.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-debugging.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-debugging.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-tooling.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-tooling.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/explore/area-research.html</loc>
+    <loc>https://www.compilersutra.com/weekly/explore/area-research.html</loc>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/issues/2026/2026-11-14.html</loc>
+    <loc>https://www.compilersutra.com/weekly/issues/2026/2026-11-14.html</loc>
     <lastmod>2026-11-14</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://compilersutra.github.io/compilersutra-weekly/issues/2026/2026-11-07.html</loc>
+    <loc>https://www.compilersutra.com/weekly/issues/2026/2026-11-07.html</loc>
     <lastmod>2026-11-07</lastmod>
     <priority>0.9</priority>
   </url>

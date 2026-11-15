@@ -74,10 +74,10 @@ Because.
     assert "filters.js" in explore
     assert ">Explore<" in explore
     sitemap = (site / "sitemap.xml").read_text(encoding="utf-8")
-    assert "https://compilersutra.github.io/compilersutra-weekly/" in sitemap
+    assert "https://www.compilersutra.com/weekly/" in sitemap
     assert "issues/2026/2026-11-07.html" in sitemap
     assert "topics/llvm.html" in sitemap
     robots = (site / "robots.txt").read_text(encoding="utf-8")
     assert "Allow: /" in robots
-    assert "Sitemap: https://compilersutra.github.io/compilersutra-weekly/sitemap.xml" in robots
+    assert "Sitemap: https://www.compilersutra.com/weekly/sitemap.xml" in robots
     assert "cloudflareinsights.com" not in home
