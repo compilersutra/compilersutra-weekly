@@ -418,23 +418,26 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
           <span class="eco-pill eco-ai">AI Compilers</span>
           <span class="eco-pill eco-research">Research</span>
         </div>
-        {latest_block}
       </div>
     </section>
-    {featured}
-    {recent}
-    <div class="wrap" style="padding-top:2rem">
-      <h2 class="section-label">Explore by engineering domain</h2>
+    <div class="wrap" style="padding-top:1.75rem">
+      <section class="panel" aria-labelledby="archive-heading">
+        <h2 id="archive-heading">Archive</h2>
+        <ul class="issue-list">{items if items else '<li class="topic-empty">No editions yet.</li>'}</ul>
+      </section>
+      <h2 class="section-label" style="margin-top:2rem">Explore by engineering domain</h2>
       <p class="muted" style="margin-bottom:0.85rem">
         Independent filters for project, compiler stage, and hardware —
         <a href="explore/index.html">open Explore</a>.
       </p>
       <div class="buckets">{domain_cards}</div>
-      <section class="panel" aria-labelledby="archive-heading">
-        <h2 id="archive-heading">Archive</h2>
-        <ul class="issue-list">{items if items else '<li class="topic-empty">No editions yet.</li>'}</ul>
-      </section>
     </div>
+    <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="this-week-heading">
+      <h2 id="this-week-heading" class="section-label">This week&rsquo;s edition</h2>
+      {latest_block}
+    </section>
+    {featured}
+    {recent}
   </main>
 """
     return _shell("CompilerSutra Weekly", body, active="home", depth=0)
