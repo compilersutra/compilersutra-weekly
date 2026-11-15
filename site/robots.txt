@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /changelog.html
 
 Sitemap: https://www.compilersutra.com/weekly/sitemap.xml

@@ -77,7 +77,10 @@ Because.
     assert "https://www.compilersutra.com/weekly/" in sitemap
     assert "issues/2026/2026-11-07.html" in sitemap
     assert "topics/llvm.html" in sitemap
+    assert "changelog.html" not in sitemap
+    assert "<priority>" not in sitemap
     robots = (site / "robots.txt").read_text(encoding="utf-8")
     assert "Allow: /" in robots
+    assert "Disallow: /changelog.html" in robots
     assert "Sitemap: https://www.compilersutra.com/weekly/sitemap.xml" in robots
     assert "cloudflareinsights.com" not in home

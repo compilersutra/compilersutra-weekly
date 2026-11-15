@@ -268,33 +268,38 @@ def _abs_page_url(rel: str) -> str:
 
 
 def _write_sitemap_and_robots(site_dir: Path, metas: list[IssueMeta]) -> None:
-    """Emit sitemap.xml + robots.txt for GitHub Pages / Search Console."""
-    urls: list[tuple[str, str | None, str]] = [
-        ("index.html", None, "1.0"),
-        ("archive.html", None, "0.8"),
-        ("about.html", None, "0.5"),
-        ("changelog.html", None, "0.6"),
-        ("subscribe.html", None, "0.4"),
-        ("topics/index.html", None, "0.7"),
-        ("explore/index.html", None, "0.7"),
+    """Emit sitemap.xml + robots.txt for Search Console.
+
+    Keep this lean: only stable public pages Google can fetch quickly.
+    Exclude changelog.html (multi‑MB interactive dataset) — it often causes
+    "Sitemap can be read, but has errors" when Googlebot times out.
+    """
+    latest_mod = metas[0].date if metas else None
+    # (path, lastmod)
+    urls: list[tuple[str, str | None]] = [
+        ("index.html", latest_mod),
+        ("archive.html", latest_mod),
+        ("about.html", latest_mod),
+        ("subscribe.html", latest_mod),
+        ("topics/index.html", latest_mod),
+        ("explore/index.html", latest_mod),
     ]
     for topic in TOPICS:
-        urls.append((f"topics/{topic['id']}.html", None, "0.6"))
+        urls.append((f"topics/{topic['id']}.html", latest_mod))
     for stage in STAGES:
-        urls.append((f"explore/stage-{_slug(stage)}.html", None, "0.5"))
-    for domain in DOMAINS:
-        urls.append((f"explore/domain-{_slug(domain)}.html", None, "0.5"))
-    for area in TECH_AREAS:
-        urls.append((f"explore/area-{_slug(area)}.html", None, "0.4"))
+        urls.append((f"explore/stage-{_slug(stage)}.html", latest_mod))
+    # Domains that usually have content in editions; skip empty niche shells.
+    for domain in ("CPU", "GPU", "AI / ML", "Languages", "Research"):
+        urls.append((f"explore/domain-{_slug(domain)}.html", latest_mod))
     for meta in metas:
-        urls.append((meta.href_html, meta.date, "0.9"))
+        urls.append((meta.href_html, meta.date))
 
     seen: set[str] = set()
     body_parts = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ]
-    for rel, lastmod, priority in urls:
+    for rel, lastmod in urls:
         loc = _abs_page_url(rel)
         if loc in seen:
             continue
@@ -303,7 +308,6 @@ def _write_sitemap_and_robots(site_dir: Path, metas: list[IssueMeta]) -> None:
         body_parts.append(f"    <loc>{html.escape(loc)}</loc>")
         if lastmod:
             body_parts.append(f"    <lastmod>{html.escape(lastmod)}</lastmod>")
-        body_parts.append(f"    <priority>{priority}</priority>")
         body_parts.append("  </url>")
     body_parts.append("</urlset>")
     body_parts.append("")
@@ -313,6 +317,7 @@ def _write_sitemap_and_robots(site_dir: Path, metas: list[IssueMeta]) -> None:
     robots = (
         "User-agent: *\n"
         "Allow: /\n"
+        "Disallow: /changelog.html\n"
         "\n"
         f"Sitemap: {sitemap_abs}\n"
     )
