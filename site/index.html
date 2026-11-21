@@ -77,6 +77,13 @@
       <section class="panel" aria-labelledby="archive-heading">
         <h2 id="archive-heading">Archive</h2>
         <ul class="issue-list"><li>
+  <a class="issue-row" href="issues/2026/2026-11-21.html">
+    <span class="issue-date">21 Nov 2026</span>
+    <span class="title">#003 · 9 high-signal · 16 worth knowing</span>
+    <span class="issue-window">2026-11-14 → 2026-11-21 (Asia/Kolkata, Saturday→Friday, end exclusive)</span>
+  </a>
+</li>
+<li>
   <a class="issue-row" href="issues/2026/2026-11-14.html">
     <span class="issue-date">14 Nov 2026</span>
     <span class="title">#002 · 9 high-signal · 12 worth knowing</span>
@@ -125,18 +132,18 @@
       <h2 id="this-week-heading" class="section-label">This week&rsquo;s edition</h2>
       
         <div class="latest-card">
-          <p class="hero-kicker">Latest edition · #002 · 14 Nov 2026</p>
-          <h2>Edition #002</h2>
+          <p class="hero-kicker">Latest edition · #003 · 21 Nov 2026</p>
+          <h2>Edition #003</h2>
           <div class="stat-row" aria-label="Edition counts">
             <div class="stat"><strong>8</strong><span>High signal</span></div>
             <div class="stat"><strong>1</strong><span>Deep dive</span></div>
-            <div class="stat"><strong>12</strong><span>Worth knowing</span></div>
+            <div class="stat"><strong>16</strong><span>Worth knowing</span></div>
           </div>
-          <p class="latest-cover">8 listed high-signal · 1 deep dive · 12 worth knowing</p>
+          <p class="latest-cover">8 listed high-signal · 1 deep dive · 16 worth knowing</p>
           <p class="muted">LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
-          <ol class='briefing-list'><li class='briefing-item'>01 — The biggest development: Remove clearKillFlags calls (#239892). Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend… (Backend · CPU)</li><li class='briefing-item'>02 — GPU / accelerator compilers: [CIR] Add support for direct with align in calling convention lowering…. Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches… (Frontend · Languages)</li><li class='briefing-item'>03 — Backend and code generation: fix dump_printf_loc without dump_enabled_p. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. Primary audience: CPU… (Middle-end · CPU)</li><li class='briefing-item'>04 — Also on the radar: Fix return value ABI handling for nullptr_t. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests … (Backend · CPU)</li><li class='briefing-item'>05 — Also on the radar: tree-optimization/128514 - wrong bitfield vectorization with SSO. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests … (Middle-end · CPU)</li></ol>
+          <ol class='briefing-list'><li class='briefing-item'>01 — The biggest development: [lldb][test] Skip more tests that don&#x27;t work with WebAssembly (#244248). Affects WebAssembly, AArch64 lowering / target code generation. Matters for Languages compiler engineering… (Runtime &amp; Toolchain · Languages)</li><li class='briefing-item'>02 — GPU / accelerator compilers: [AMDGPU] Add an async barrier arrival workaround (#238539). Affects AMDGPU lowering / target code generation. Matters for GPU compiler engineering. Lives in the Backend… (Backend · GPU)</li><li class='briefing-item'>03 — Backend and code generation: [LoopVectorize] Add llvm.loop.vectorize.fp_unsafe.{enable,disable}…. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests … (Middle-end · CPU)</li><li class='briefing-item'>04 — Also on the radar: [NVPTX] Add support for s2f6x2 conversion on sm_107a (#243416). Affects NVPTX lowering / target code generation. Matters for GPU compiler engineering. Lives in the Backend of… (Backend · GPU)</li><li class='briefing-item'>05 — Also on the radar: [VectorUtils] Allow trivial vectorization of llvm.{sshl,ushl}.sat…. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests … (Middle-end · CPU)</li></ol>
           <div class="cta-row">
-            <a class="btn btn-primary" href="issues/2026/2026-11-14.html">Read this week&rsquo;s edition →</a>
+            <a class="btn btn-primary" href="issues/2026/2026-11-21.html">Read this week&rsquo;s edition →</a>
             <a class="btn btn-ghost" href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe by email</a>
           </div>
         </div>
@@ -145,18 +152,17 @@
     
       <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
         <h2 id="featured-heading" class="section-label">Deep dive</h2>
-        <article class="feature-card" data-project="llvm">
+        <article class="feature-card" data-project="lldb">
           <p class="card-kicker">Featured technical analysis</p>
-          <h2>Remove clearKillFlags calls (#239892)</h2>
-          <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Deep dive</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
-          <div class="callout callout-insight"><strong>What changed.</strong> Kill flags are no longer permitted on virtual registers, but these
-contexts may also see physical registers. Those physical register
-kills are either never set by the time this code runs or are on
-reserved or constant registers where they carry no information.</div>
-          <div class="callout callout-verified"><strong>Why engineers should care.</strong> Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, AArch64 backend engineers, Backend engineers.</div>
+          <h2>[lldb][test] Skip more tests that don&#x27;t work with WebAssembly (#244248)</h2>
+          <div class="badge-row"><span class="badge tax-project project-lldb" data-dim="project" title="project"><span class="tax-dim">project</span>LLDB</span><span class="badge tax-stage stage-runtime-toolchain" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>WebAssembly</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Deep dive</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+          <div class="callout callout-insight"><strong>What changed.</strong> These are breaking the new Green Dragon matrix bot that now also tests
+WebAssembly. This patch just adds skipIfWasm to all broken tests I could
+see in the log to unbreak the bot.</div>
+          <div class="callout callout-verified"><strong>Why engineers should care.</strong> Affects WebAssembly, AArch64 lowering / target code generation. Matters for Languages compiler engineering. Lives in the Runtime &amp; Toolchain of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: Languages developers, CPU develo</div>
           <div class="cta-row" style="margin-top:0.85rem">
-            <a class="btn btn-primary" href="issues/2026/2026-11-14.html#deep-dive">Full technical analysis →</a>
-            <a class="btn btn-ghost" href="https://github.com/llvm/llvm-project/commit/ae4efc08a68f926d4558adcd7d2566e2d9563e7d" rel="noopener noreferrer">Primary source</a>
+            <a class="btn btn-primary" href="issues/2026/2026-11-21.html#deep-dive">Full technical analysis →</a>
+            <a class="btn btn-ghost" href="https://github.com/llvm/llvm-project/commit/8e1359f419e7c7b6bf5c3ac9ff34f7c459f43eeb" rel="noopener noreferrer">Primary source</a>
           </div>
         </article>
       </section>
@@ -166,52 +172,55 @@ reserved or constant registers where they carry no information.</div>
         <h2 id="latest-dev" class="section-label">This week&rsquo;s engineering highlights</h2>
         <p class="muted">Showing 6 of 8 listed high-signal developments · 2 more in the full edition · deep dive featured above</p>
         <div class="story-grid"><article class="story-card" data-project="gcc">
-  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/gcc-mirror/gcc/commit/04a69e68bb4c6334595f0e7da837ea0944ae0dcd" rel="noopener noreferrer">Port NEON widening shifts by an immediate to the pragma-based framework</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> Port the following families of NEON intrinsics to the pragma-based framework:
-* vshll_n
-* vshll_high_n</p>
-  <p class="card-summary"><strong>Why it matters.</strong> Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. P</p>
-  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/04a69e68bb4c6334595f0e7da837ea0944ae0dcd" rel="noopener noreferrer">Primary source →</a></div>
-</article><article class="story-card" data-project="gcc">
-  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/gcc-mirror/gcc/commit/94e294dbcd421bc8980795896d830c855163dbb1" rel="noopener noreferrer">Add SVE2p3/SME2p3 pairwise intrinsics</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> Add support for these new pairwise intrinsic operations: svaddqp, svaddsubp and
-svsubp.</p>
-  <p class="card-summary"><strong>Why it matters.</strong> Affects AArch64 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. P</p>
-  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/94e294dbcd421bc8980795896d830c855163dbb1" rel="noopener noreferrer">Primary source →</a></div>
+  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>X86</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/01f482bf9819d591c6d1cdbecef2fa30512b8ab4" rel="noopener noreferrer">Avoid false dependency for BSF [PR128662]</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> BSF, like BSR, leaves its destination unmodified when the source is
+zero, so the hardware treats the destination as an input.  The new
+X86_TUNE_AVOID_FALSE_DEP_</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Affects X86 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Prima</p>
+  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/01f482bf9819d591c6d1cdbecef2fa30512b8ab4" rel="noopener noreferrer">Primary source →</a></div>
 </article><article class="story-card" data-project="llvm">
-  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
-  <h4><a href="https://github.com/llvm/llvm-project/commit/a997ed4e98e89817804a5dc2b9456617e3654f72" rel="noopener noreferrer">[Mips] Port PostLegalizerCombiner to NewPM</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> Standard NewPM pass porting.</p>
-  <p class="card-summary"><strong>Why it matters.</strong> Matters for CPU compiler engineering. Lives in the Backend of the pipeline. Primary audience: CPU developers, Backend engineers.</p>
-  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/a997ed4e98e89817804a5dc2b9456617e3654f72" rel="noopener noreferrer">Primary source →</a></div>
-</article><article class="story-card" data-project="mlir">
-  <div class="badge-row"><span class="badge tax-project project-mlir" data-dim="project" title="project"><span class="tax-dim">project</span>MLIR</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>AI / ML</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/llvm/llvm-project/commit/6cfe6ebf4469ed2865aa501901b9970e75b84970" rel="noopener noreferrer">[CIR] Add support for direct with align in calling convention lowering (#238929)</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> This change adds the infrastructure for handling arguments that are
-classified as `Direct` with a required alignment. These arguments are
-passed unmodified but </p>
-  <p class="card-summary"><strong>Why it matters.</strong> Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: Languages developers, AI / </p>
-  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/6cfe6ebf4469ed2865aa501901b9970e75b84970" rel="noopener noreferrer">Primary source →</a></div>
-</article><article class="story-card" data-project="gcc">
-  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
-  <h4><a href="https://github.com/gcc-mirror/gcc/commit/75b4e997414d415fe61016fff963a3f5dbc49ce6" rel="noopener noreferrer">fix dump_printf_loc without dump_enabled_p</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> dump_printf_loc has to be guarded by dump_enabled_p.
-asserted by VERIFY_DUMP_ENABLED_P</p>
-  <p class="card-summary"><strong>Why it matters.</strong> Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. Primary audience: CPU developers, Middle-end engineers.</p>
-  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/75b4e997414d415fe61016fff963a3f5dbc49ce6" rel="noopener noreferrer">Primary source →</a></div>
-</article><article class="story-card" data-project="gcc">
-  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/gcc-mirror/gcc/commit/c6ebf01257c2c1d8ceeec6273076544a336cccc9" rel="noopener noreferrer">Fix return value ABI handling for nullptr_t</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> Starting with r0-104773-g0d697034b7eecd in GCC 4.6 (which introduced
-initial C++11 and std::nullptr_t support), arguments of type nullptr_t,
-std::nullptr_t, and</p>
-  <p class="card-summary"><strong>Why it matters.</strong> Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: CPU developers, Backend engineers.</p>
-  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/c6ebf01257c2c1d8ceeec6273076544a336cccc9" rel="noopener noreferrer">Primary source →</a></div>
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AMDGPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/63b8d2fd94ba3b1a80023dae7139949dd5be6b78" rel="noopener noreferrer">[AMDGPU] Add an async barrier arrival workaround (#238539)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround
+when XNACK is enabled or unspecified.</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Affects AMDGPU lowering / target code generation. Matters for GPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Pr</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/63b8d2fd94ba3b1a80023dae7139949dd5be6b78" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/68d7a32f97c0a2b921d18d8a4d58c6fa2f00bc79" rel="noopener noreferrer">[SandboxVec][DAG] Fix moveInstrNotifier on empty DAG (#243747)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> This patch fixes a crash inside an assertion in the DAG move instruction
+notifier, when the DAG was empty.
+The fix is trivial: if the DAG is empty there is noth</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engi</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/68d7a32f97c0a2b921d18d8a4d58c6fa2f00bc79" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/6516d75ae90d2e2a682d974ea8ec7e483609c1d8" rel="noopener noreferrer">[CIR] Implement relative-vtable-lookups (#243798)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> This patch handles lookups from a relative-vtable. While the rest of the
+relative V-table work is quite large, this ends up being pretty easy to
+split up. Effec</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: Languages developers, Front</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/6516d75ae90d2e2a682d974ea8ec7e483609c1d8" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/1d73203488050b947d7fab760f76de8990a4d937" rel="noopener noreferrer">[CIR][OpenMP] Specify target triple in OpenMP loop codegen tests (#244278)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> Add `-triple x86_64-unknown-linux-gnu` to tests added in 
+61067a5096e (#229256) to avoid defaulting to the host target triple
+and failing on non-x86 builders li</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: Languages developers, Front</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/1d73203488050b947d7fab760f76de8990a4d937" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/a2f1d1aeb6f5c700ac9a15592b6f81c3ec41e6c6" rel="noopener noreferrer">[LoopVectorize] Add llvm.loop.vectorize.fp_unsafe.{enable,disable} metadata (#219167)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> Add a new per-loop metadata key llvm.loop.vectorize.fp_unsafe to
+explicitly control whether the Loop Vectorizer may apply floating-point
+transforms that change </p>
+  <p class="card-summary"><strong>Why it matters.</strong> Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engi</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/a2f1d1aeb6f5c700ac9a15592b6f81c3ec41e6c6" rel="noopener noreferrer">Primary source →</a></div>
 </article></div>
         <p class="muted" style="margin-top:0.85rem">
-          <a href="issues/2026/2026-11-14.html">Open the full edition for every selected story →</a>
+          <a href="issues/2026/2026-11-21.html">Open the full edition for every selected story →</a>
         </p>
       </section>
 

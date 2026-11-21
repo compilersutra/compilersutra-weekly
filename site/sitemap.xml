@@ -2,87 +2,91 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.compilersutra.com/weekly/</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/archive.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/about.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/subscribe.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/topics/index.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/index.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/topics/llvm.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/topics/gcc.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/topics/mlir.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/topics/ai.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/topics/gpu.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/topics/research.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/stage-frontend.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/stage-middle-end.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/stage-backend.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/stage-runtime-toolchain.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/domain-cpu.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/domain-gpu.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/domain-ai-ml.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/domain-languages.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/explore/domain-research.html</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-21</lastmod>
+  </url>
+  <url>
+    <loc>https://www.compilersutra.com/weekly/issues/2026/2026-11-21.html</loc>
+    <lastmod>2026-11-21</lastmod>
   </url>
   <url>
     <loc>https://www.compilersutra.com/weekly/issues/2026/2026-11-14.html</loc>
