@@ -76,336 +76,258 @@
     <div class="issue-nav"><a class="back" href="../../archive.html">← Archive</a> · <a class="back" href="../2026/2026-11-14.html">← Prev</a></div>
     <p class="hero-kicker">CompilerSutra Weekly · Edition #003</p>
     <h1 class="page-title">The week in compiler engineering</h1>
-    <p class="lede">A curated engineering briefing covering compiler infrastructure,
-      optimization, code generation, and GPU architectures — with primary-source evidence.</p>
-    <p class="muted">21 Nov 2026 · 2026-11-14 → 2026-11-21 (Asia/Kolkata, Saturday→Friday, end exclusive) · GCC · IREE · LLVM · MLIR · Circt</p>
-    <p class="promise muted">Understand what changed, why it matters, and how it works under the hood.
-      Claims never exceed the underlying source evidence.</p>
-    <nav class="toc" aria-label="On this page"><a href="#briefing">Five-minute briefing</a><a href="#featured">Featured</a><a href="#deep-dive">Deep dive</a><a href="#worth-knowing">Signals</a><a href="#themes">Themes</a><a href="#worth-reading">Research</a><a href="#topic-index">Topic index</a></nav>
+    <p class="muted issue-meta-line">21 Nov 2026 · 2026-11-14 → 2026-11-21 (Asia/Kolkata, Saturday→Friday, end exclusive) · GCC · IREE · LLVM · MLIR · Circt</p>
+    <p class="lede">Understand what changed, why it matters, and how it works under the hood.</p>
+    <nav class="toc" aria-label="On this page"><a href="#briefing">Briefing</a><a href="#featured">Featured</a><a href="#deep-dive">Deep dive</a><a href="#worth-knowing">Signals</a><a href="#themes">Themes</a><a href="#worth-reading">Research</a><a href="#topic-index">Index</a></nav>
     <div class="issue-body">
-    <section id="briefing" class="issue-section"><h2>This week’s five-minute briefing</h2><p class="muted">Start here. Five developments in plain engineering language — takeaways checked against commit evidence, not titles alone.</p><div class="briefing-grid"><article class="briefing-card" data-evidence="verified">
-  <p class="brief-kicker">01 · FEATURED · <span class="stage-pill">Runtime &amp; Toolchain</span></p>
-  <h3><a href="#llvm-lldb-lldb-test">Skip more tests that don&#x27;t work with WebAssembly</a></h3>
-  <p class="brief-summary">These are breaking the new Green Dragon matrix bot that now also tests WebAssembly.</p>
-  <p class="brief-takeaway"><strong>Engineering takeaway.</strong> These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. Engineering focus: Runtime &amp; Toolchain (WebAssembly) — Languages teams should confirm behavior in the linked source.</p>
-  <div class="brief-meta"><span class="brief-chip">LLDB</span><span class="brief-chip">Runtime &amp; Toolchain</span><span class="brief-chip">WebAssembly</span>
-    <span class="badge tax-evidence evidence-verified">Verified</span>
-    <a class="mono-meta" href="https://github.com/llvm/llvm-project/commit/8e1359f419e7c7b6bf5c3ac9ff34f7c459f43eeb" rel="noopener noreferrer">Commit 8e1359f4</a>
-    <a class="brief-link" href="#llvm-lldb-lldb-test">Read technical breakdown →</a>
+    <section id="briefing" class="issue-section section-briefing"><div class="section-head"><h2>This week’s five-minute briefing</h2><p class="section-count muted">5 stories</p></div><div class="brief-list"><article class="brief-row" data-evidence="verified">
+  <span class="brief-num" aria-hidden="true">01</span>
+  <div class="brief-body">
+    <h3><a href="#llvm-lldb-lldb-test">Skip more tests that don&#x27;t work with WebAssembly</a></h3>
+    <p class="brief-line">These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. Engineering focus: Runtime &amp; Toolchain (WebAssembly) …</p>
+    <p class="brief-meta-line">
+      <span>LLDB · Runtime · WebAssembly</span>
+      <span class="evidence-dot evidence-verified">Verified</span>
+      <a href="https://github.com/llvm/llvm-project/commit/8e1359f419e7c7b6bf5c3ac9ff34f7c459f43eeb" rel="noopener noreferrer"><code>8e1359f4</code></a>
+      <a class="brief-jump" href="#llvm-lldb-lldb-test">Story →</a>
+    </p>
   </div>
-</article><article class="briefing-card" data-evidence="verified">
-  <p class="brief-kicker">02 · BACKEND · <span class="stage-pill">Backend</span></p>
-  <h3><a href="#gcc-gcc-i386">Avoid false dependency for BSF</a></h3>
-  <p class="brief-summary">BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input.</p>
-  <p class="brief-takeaway"><strong>Engineering takeaway.</strong> BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. Engineering focus: Backend (X86) — CPU teams should confirm behavior in the linked source.</p>
-  <div class="brief-meta"><span class="brief-chip">GCC</span><span class="brief-chip">Backend</span><span class="brief-chip">X86</span>
-    <span class="badge tax-evidence evidence-verified">Verified</span>
-    <a class="mono-meta" href="https://github.com/gcc-mirror/gcc/commit/01f482bf9819d591c6d1cdbecef2fa30512b8ab4" rel="noopener noreferrer">Commit 01f482bf</a>
-    <a class="brief-link" href="#gcc-gcc-i386">Read technical breakdown →</a>
+</article><article class="brief-row" data-evidence="verified">
+  <span class="brief-num" aria-hidden="true">02</span>
+  <div class="brief-body">
+    <h3><a href="#gcc-gcc-i386">Avoid false dependency for BSF</a></h3>
+    <p class="brief-line">BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. Engineering…</p>
+    <p class="brief-meta-line">
+      <span>GCC · Backend · X86</span>
+      <span class="evidence-dot evidence-verified">Verified</span>
+      <a href="https://github.com/gcc-mirror/gcc/commit/01f482bf9819d591c6d1cdbecef2fa30512b8ab4" rel="noopener noreferrer"><code>01f482bf</code></a>
+      <a class="brief-jump" href="#gcc-gcc-i386">Story →</a>
+    </p>
   </div>
-</article><article class="briefing-card" data-evidence="verified">
-  <p class="brief-kicker">03 · GPU SIGNAL · <span class="stage-pill">Backend</span></p>
-  <h3><a href="#llvm-llvm-amdgpu-add">Add an async barrier arrival workaround</a></h3>
-  <p class="brief-summary">Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified.</p>
-  <p class="brief-takeaway"><strong>Engineering takeaway.</strong> Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. Engineering focus: Backend (AMDGPU) — GPU teams should confirm behavior in the linked source.</p>
-  <div class="brief-meta"><span class="brief-chip">LLVM</span><span class="brief-chip">Backend</span><span class="brief-chip">AMDGPU</span>
-    <span class="badge tax-evidence evidence-verified">Verified</span>
-    <a class="mono-meta" href="https://github.com/llvm/llvm-project/commit/63b8d2fd94ba3b1a80023dae7139949dd5be6b78" rel="noopener noreferrer">Commit 63b8d2fd</a>
-    <a class="brief-link" href="#llvm-llvm-amdgpu-add">Read technical breakdown →</a>
+</article><article class="brief-row" data-evidence="verified">
+  <span class="brief-num" aria-hidden="true">03</span>
+  <div class="brief-body">
+    <h3><a href="#llvm-llvm-amdgpu-add">Add an async barrier arrival workaround</a></h3>
+    <p class="brief-line">Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. Engineering focus: Backend…</p>
+    <p class="brief-meta-line">
+      <span>LLVM · Backend · AMDGPU</span>
+      <span class="evidence-dot evidence-verified">Verified</span>
+      <a href="https://github.com/llvm/llvm-project/commit/63b8d2fd94ba3b1a80023dae7139949dd5be6b78" rel="noopener noreferrer"><code>63b8d2fd</code></a>
+      <a class="brief-jump" href="#llvm-llvm-amdgpu-add">Story →</a>
+    </p>
   </div>
-</article><article class="briefing-card" data-evidence="verified">
-  <p class="brief-kicker">04 · SIGNAL · <span class="stage-pill">Middle-end</span></p>
-  <h3><a href="#llvm-llvm-sandboxvec-dag">Fix moveInstrNotifier on empty DAG</a></h3>
-  <p class="brief-summary">This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty.</p>
-  <p class="brief-takeaway"><strong>Engineering takeaway.</strong> This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. Engineering focus: Middle-end — CPU teams should confirm behavior in the linked source.</p>
-  <div class="brief-meta"><span class="brief-chip">LLVM</span><span class="brief-chip">Middle-end</span>
-    <span class="badge tax-evidence evidence-verified">Verified</span>
-    <a class="mono-meta" href="https://github.com/llvm/llvm-project/commit/68d7a32f97c0a2b921d18d8a4d58c6fa2f00bc79" rel="noopener noreferrer">Commit 68d7a32f</a>
-    <a class="brief-link" href="#llvm-llvm-sandboxvec-dag">Read technical breakdown →</a>
+</article><article class="brief-row" data-evidence="verified">
+  <span class="brief-num" aria-hidden="true">04</span>
+  <div class="brief-body">
+    <h3><a href="#llvm-llvm-sandboxvec-dag">Fix moveInstrNotifier on empty DAG</a></h3>
+    <p class="brief-line">This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. Engineering focus: Middle-end …</p>
+    <p class="brief-meta-line">
+      <span>LLVM · Middle-end</span>
+      <span class="evidence-dot evidence-verified">Verified</span>
+      <a href="https://github.com/llvm/llvm-project/commit/68d7a32f97c0a2b921d18d8a4d58c6fa2f00bc79" rel="noopener noreferrer"><code>68d7a32f</code></a>
+      <a class="brief-jump" href="#llvm-llvm-sandboxvec-dag">Story →</a>
+    </p>
   </div>
-</article><article class="briefing-card" data-evidence="verified">
-  <p class="brief-kicker">05 · FRONTEND · <span class="stage-pill">Frontend</span></p>
-  <h3><a href="#llvm-clang-cir-implement">Implement relative-vtable-lookups</a></h3>
-  <p class="brief-summary">This patch handles lookups from a relative-vtable.</p>
-  <p class="brief-takeaway"><strong>Engineering takeaway.</strong> This patch handles lookups from a relative-vtable. Engineering focus: Frontend — Languages teams should confirm behavior in the linked source.</p>
-  <div class="brief-meta"><span class="brief-chip">LLVM</span><span class="brief-chip">Frontend</span>
-    <span class="badge tax-evidence evidence-verified">Verified</span>
-    <a class="mono-meta" href="https://github.com/llvm/llvm-project/commit/6516d75ae90d2e2a682d974ea8ec7e483609c1d8" rel="noopener noreferrer">Commit 6516d75a</a>
-    <a class="brief-link" href="#llvm-clang-cir-implement">Read technical breakdown →</a>
+</article><article class="brief-row" data-evidence="verified">
+  <span class="brief-num" aria-hidden="true">05</span>
+  <div class="brief-body">
+    <h3><a href="#llvm-clang-cir-implement">Implement relative-vtable-lookups</a></h3>
+    <p class="brief-line">This patch handles lookups from a relative-vtable. Engineering focus: Frontend — Languages teams should confirm behavior in the linked…</p>
+    <p class="brief-meta-line">
+      <span>LLVM · Frontend</span>
+      <span class="evidence-dot evidence-verified">Verified</span>
+      <a href="https://github.com/llvm/llvm-project/commit/6516d75ae90d2e2a682d974ea8ec7e483609c1d8" rel="noopener noreferrer"><code>6516d75a</code></a>
+      <a class="brief-jump" href="#llvm-clang-cir-implement">Story →</a>
+    </p>
   </div>
 </article></div></section>
-<section id="featured" class="issue-section"><h2>Featured developments</h2><p class="muted">What changed and why engineers should care — compact metadata; expand for paths and related commits.</p><p class="muted score-legend">Editorial ranking (not an objective importance score): technical significance 30% · engineering impact 25% · novelty 20% · breadth 15% · evidence quality 10%. Separate from evidence confidence.</p><div class="story-stack"><article class="story-card issue-story" id="gcc-gcc-i386" data-project="gcc" data-evidence="verified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-gcc" data-dim="project" title="project">GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-target" data-dim="target" title="target">X86</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence">Verified</span></div>
+<section id="featured" class="issue-section section-featured"><h2>Featured developments</h2><p class="section-lede muted">What changed, why it matters, and where to read the source.</p><div class="story-grid"><article class="story-card issue-story" id="gcc-gcc-i386" data-project="gcc" data-evidence="verified">
+    <p class="card-kicker-row">
+    <span class="badge tax-evidence evidence-verified">Verified</span>
     <span class="editor-pick">Editor&#x27;s pick · 6.8/10</span>
-  </div>
+  </p>
   <h3>Avoid false dependency for BSF</h3>
-  <div class="story-lead">
-    <p class="what-changed">BSF, like BSR, leaves its destination unmodified when the source is</p>
-    <p class="brief-takeaway"><strong>Why care.</strong> BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. Engineering focus: Backend (X86) — CPU teams should confirm behavior in the linked source.</p>
-  </div>
+  <p class="card-labels">GCC · Backend · X86</p>
+  <p class="what-changed"><strong>What changed.</strong> BSF, like BSR, leaves its destination unmodified when the source is</p>
+  <p class="meta card-source">
+    <a href="https://github.com/gcc-mirror/gcc/commit/01f482bf9819d591c6d1cdbecef2fa30512b8ab4" rel="noopener noreferrer"><code>01f482bf</code></a> · +75/−15
+  </p>
   <details class="story-details"><summary>Technical details</summary><p><strong>Implementation.</strong> BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. The new X86_TUNE_AVOID_FALSE_DEP_FOR_BSR tuning already clears the destination before BSR, but BSF was not handled:. The change touches 4 files under gcc/ (+75/−15). Open the primary commit for the exact hunks — this section explains the mechanism, not the file list.</p><p class="dive-commit">Primary commit: <a href="https://github.com/gcc-mirror/gcc/commit/01f482bf9819d591c6d1cdbecef2fa30512b8ab4" rel="noopener noreferrer"><code>01f482bf</code></a> · +75/−15</p><p class="muted"><strong>Surface.</strong> 7 listed paths (expand source for full tree).</p><p><strong>Who should care.</strong> CPU developers, X86 backend engineers, Backend engineers</p><div class="callout callout-warning"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</div></details>
-  <p class="meta"><span class="badge tax-evidence evidence-verified">Verified</span>
-    · Primary source:
-    <a href="https://github.com/gcc-mirror/gcc/commit/01f482bf9819d591c6d1cdbecef2fa30512b8ab4" rel="noopener noreferrer"><code>01f482bf</code></a></p>
   <details class="related-commits"><summary>Related commits (4)</summary><p><a href="https://github.com/gcc-mirror/gcc/commit/44f26668c6b35ef7f6d71fdc4c89e667bec9a80f" rel="noopener noreferrer"><code>44f26668</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/3d528cfb4b7952d6bb506a60314966e465a31944" rel="noopener noreferrer"><code>3d528cfb</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/92a95b5e20929eb363f849170236271ce6973b43" rel="noopener noreferrer"><code>92a95b5e</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/050413681696ce80483e183d59e5580ec74b73ec" rel="noopener noreferrer"><code>05041368</code></a></p></details>
 </article><article class="story-card issue-story" id="llvm-llvm-amdgpu-add" data-project="llvm" data-evidence="verified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-llvm" data-dim="project" title="project">LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-target" data-dim="target" title="target">AMDGPU</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence">Verified</span></div>
+    <p class="card-kicker-row">
+    <span class="badge tax-evidence evidence-verified">Verified</span>
     <span class="editor-pick">Editor&#x27;s pick · 6.5/10</span>
-  </div>
+  </p>
   <h3>Add an async barrier arrival workaround</h3>
-  <div class="story-lead">
-    <p class="what-changed">Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround</p>
-    <p class="brief-takeaway"><strong>Why care.</strong> Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. Engineering focus: Backend (AMDGPU) — GPU teams should confirm behavior in the linked source.</p>
-  </div>
+  <p class="card-labels">LLVM · Backend · AMDGPU</p>
+  <p class="what-changed"><strong>What changed.</strong> Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround</p>
+  <p class="meta card-source">
+    <a href="https://github.com/llvm/llvm-project/commit/63b8d2fd94ba3b1a80023dae7139949dd5be6b78" rel="noopener noreferrer"><code>63b8d2fd</code></a> · +1266/−41
+  </p>
   <details class="story-details"><summary>Technical details</summary><p><strong>Implementation.</strong> Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. The change touches 20 files under llvm/ (+1266/−41). Open the primary commit for the exact hunks — this section explains the mechanism, not the file list.</p><p class="dive-commit">Primary commit: <a href="https://github.com/llvm/llvm-project/commit/63b8d2fd94ba3b1a80023dae7139949dd5be6b78" rel="noopener noreferrer"><code>63b8d2fd</code></a> · +1266/−41</p><p class="muted"><strong>Surface.</strong> 6 listed paths (expand source for full tree).</p><p><strong>Who should care.</strong> GPU developers, AMDGPU backend engineers, Backend engineers</p><div class="callout callout-warning"><strong>Limitations.</strong> Explanation grounded in the commit subject; open the source for details.</div></details>
-  <p class="meta"><span class="badge tax-evidence evidence-verified">Verified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/63b8d2fd94ba3b1a80023dae7139949dd5be6b78" rel="noopener noreferrer"><code>63b8d2fd</code></a></p>
   <details class="related-commits"><summary>Related commits (1)</summary><p><a href="https://github.com/llvm/llvm-project/commit/5c101348eb1c8f680d4e07a5cfb6f9148904c08d" rel="noopener noreferrer"><code>5c101348</code></a></p></details>
 </article><article class="story-card issue-story" id="llvm-llvm-sandboxvec-dag" data-project="llvm" data-evidence="verified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-llvm" data-dim="project" title="project">LLVM</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage">Middle-end</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence">Verified</span></div>
+    <p class="card-kicker-row">
+    <span class="badge tax-evidence evidence-verified">Verified</span>
     <span class="editor-pick">Editor&#x27;s pick · 6.2/10</span>
-  </div>
+  </p>
   <h3>Fix moveInstrNotifier on empty DAG</h3>
-  <div class="story-lead">
-    <p class="what-changed">This patch fixes a crash inside an assertion in the DAG move instruction</p>
-    <p class="brief-takeaway"><strong>Why care.</strong> This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. Engineering focus: Middle-end — CPU teams should confirm behavior in the linked source.</p>
-  </div>
+  <p class="card-labels">LLVM · Middle-end</p>
+  <p class="what-changed"><strong>What changed.</strong> This patch fixes a crash inside an assertion in the DAG move instruction</p>
+  <p class="meta card-source">
+    <a href="https://github.com/llvm/llvm-project/commit/68d7a32f97c0a2b921d18d8a4d58c6fa2f00bc79" rel="noopener noreferrer"><code>68d7a32f</code></a> · +24/−0
+  </p>
   <details class="story-details"><summary>Technical details</summary><p><strong>Implementation.</strong> This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. The fix is trivial: if the DAG is empty there is nothing to be done, so we should early return. The change touches 2 test files (+24/−0). Open the primary commit for the exact hunks — this section explains the mechanism, not the file list.</p><p class="dive-commit">Primary commit: <a href="https://github.com/llvm/llvm-project/commit/68d7a32f97c0a2b921d18d8a4d58c6fa2f00bc79" rel="noopener noreferrer"><code>68d7a32f</code></a> · +24/−0</p><p class="muted"><strong>Surface.</strong> 4 listed paths (expand source for full tree).</p><p><strong>Who should care.</strong> CPU developers, Middle-end engineers</p><div class="callout callout-warning"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</div></details>
-  <p class="meta"><span class="badge tax-evidence evidence-verified">Verified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/68d7a32f97c0a2b921d18d8a4d58c6fa2f00bc79" rel="noopener noreferrer"><code>68d7a32f</code></a></p>
   <details class="related-commits"><summary>Related commits (1)</summary><p><a href="https://github.com/llvm/llvm-project/commit/554cb782f3b83de0a5c2d934e48bf9fd026eb5db" rel="noopener noreferrer"><code>554cb782</code></a></p></details>
 </article><article class="story-card issue-story" id="llvm-clang-cir-implement" data-project="llvm" data-evidence="verified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-llvm" data-dim="project" title="project">LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage">Frontend</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence">Verified</span></div>
+    <p class="card-kicker-row">
+    <span class="badge tax-evidence evidence-verified">Verified</span>
     <span class="editor-pick">Editor&#x27;s pick · 6.5/10</span>
-  </div>
+  </p>
   <h3>Implement relative-vtable-lookups</h3>
-  <div class="story-lead">
-    <p class="what-changed">This patch handles lookups from a relative-vtable. While the rest of the</p>
-    <p class="brief-takeaway"><strong>Why care.</strong> This patch handles lookups from a relative-vtable. Engineering focus: Frontend — Languages teams should confirm behavior in the linked source.</p>
-  </div>
+  <p class="card-labels">LLVM · Frontend</p>
+  <p class="what-changed"><strong>What changed.</strong> This patch handles lookups from a relative-vtable. While the rest of the</p>
+  <p class="meta card-source">
+    <a href="https://github.com/llvm/llvm-project/commit/6516d75ae90d2e2a682d974ea8ec7e483609c1d8" rel="noopener noreferrer"><code>6516d75a</code></a> · +268/−22
+  </p>
   <details class="story-details"><summary>Technical details</summary><p><strong>Implementation.</strong> This patch handles lookups from a relative-vtable. While the rest of the relative V-table work is quite large, this ends up being pretty easy to split up. The change touches 3 test files (+268/−22). Open the primary commit for the exact hunks — this section explains the mechanism, not the file list.</p><p class="dive-commit">Primary commit: <a href="https://github.com/llvm/llvm-project/commit/6516d75ae90d2e2a682d974ea8ec7e483609c1d8" rel="noopener noreferrer"><code>6516d75a</code></a> · +268/−22</p><p class="muted"><strong>Surface.</strong> 7 listed paths (expand source for full tree).</p><p><strong>Who should care.</strong> Languages developers, Frontend engineers</p><div class="callout callout-warning"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</div></details>
-  <p class="meta"><span class="badge tax-evidence evidence-verified">Verified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/6516d75ae90d2e2a682d974ea8ec7e483609c1d8" rel="noopener noreferrer"><code>6516d75a</code></a></p>
   <details class="related-commits"><summary>Related commits (1)</summary><p><a href="https://github.com/llvm/llvm-project/commit/e38f564515d2fa9133da9db71984abe36192f669" rel="noopener noreferrer"><code>e38f5645</code></a></p></details>
-</article></div></section>
-<section id="deep-dive" class="issue-section deep-dive">
+</article></div><p class="muted score-legend">Editorial ranking (not an objective importance score): technical significance 30% · engineering impact 25% · novelty 20% · breadth 15% · evidence quality 10%. Separate from evidence confidence.</p></section>
+<section id="deep-dive" class="issue-section deep-dive section-dive">
   <h2>Engineering deep dive</h2>
-  <p class="muted">One implementation, explained properly — problem → implementation →
+  <p class="section-lede muted">One implementation, explained properly — problem → implementation →
     validation → implications. Unanswered questions stay marked as unknown.</p>
-  <article class="feature-card" id="llvm-lldb-lldb-test" data-project="lldb">
-    <p class="card-kicker">Technical deep dive · <span class="badge tax-evidence evidence-verified">Verified</span></p>
+  <article class="dive-panel" id="llvm-lldb-lldb-test" data-project="lldb">
+    <p class="card-kicker-row">
+      <span class="badge tax-evidence evidence-verified">Verified</span>
+      <span class="card-labels">LLDB · Runtime · WebAssembly</span>
+    </p>
     <h3>Skip more tests that don&#x27;t work with WebAssembly</h3>
-    <div class="badge-row compact"><span class="badge tax-project project-lldb" data-dim="project" title="project">LLDB</span><span class="badge tax-stage stage-runtime-toolchain" data-dim="stage" title="stage">Runtime &amp; Toolchain</span><span class="badge tax-target" data-dim="target" title="target">WebAssembly</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence">Verified</span></div>
-    <p class="muted"><strong>Target.</strong> WebAssembly ·
-      <strong>Confidence.</strong> Verified
+    <p class="muted dive-confidence">Confidence Verified
       (high;
       fact-check pass)</p>
     <div class="dive-sections">
       <div class="dive-section" id="dive-problem"><h4>01. Problem</h4><p>These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. This patch just adds skipIfWasm to all broken tests I could see in the log to unbreak the bot.</p></div><div class="dive-section" id="dive-implementation"><h4>03. Implementation</h4><p>These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. This patch just adds skipIfWasm to all broken tests I could see in the log to unbreak the bot. The change touches 17 LLDB API test modules (+24/−1).</p><p class="dive-commit">Primary commit: <a href="https://github.com/llvm/llvm-project/commit/8e1359f419e7c7b6bf5c3ac9ff34f7c459f43eeb" rel="noopener noreferrer"><code>8e1359f4</code></a> · +24/−1</p></div><div class="dive-section" id="dive-reproduce"><h4>05. How to reproduce</h4><p>Inspect primary commit <a href="https://github.com/llvm/llvm-project/commit/8e1359f419e7c7b6bf5c3ac9ff34f7c459f43eeb" rel="noopener noreferrer"><code>8e1359f4</code></a> and run the touched 17 LLDB API test modules with the project’s standard test runner.</p></div><div class="dive-section" id="dive-validation"><h4>06. Validation</h4><p>Validation is carried by 17 LLDB API test modules. Run the project’s usual LLDB API / lit invocation for the paths in the primary commit — that is the reproduce entry point.</p></div><div class="dive-section" id="dive-implications"><h4>07. Engineering implications</h4><p>These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. Engineering focus: Runtime &amp; Toolchain (WebAssembly) — Languages teams should confirm behavior in the linked source. Who should care: Languages developers, WebAssembly backend engineers, Runtime &amp; Toolchain engineers.</p></div><div class="dive-section" id="dive-evidence"><h4>08. Evidence and limitations</h4><p>Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.</p></div>
     </div>
-    <h4>Primary sources</h4>
-    <ul class="source-list"><li><a href="https://github.com/llvm/llvm-project/commit/8e1359f419e7c7b6bf5c3ac9ff34f7c459f43eeb" rel="noopener noreferrer"><code>8e1359f4</code></a> — [lldb][test] Skip more tests that don&#x27;t work with WebAssembly (#244248)</li><li><a href="https://github.com/llvm/llvm-project/commit/44e231e5c7a9670fb9c770127fffe2a6cb69add5" rel="noopener noreferrer"><code>44e231e5</code></a> — [lldb][test] Add type name test for various C++ scopes (#243878)</li><li><a href="https://github.com/llvm/llvm-project/commit/0de2d8e8de4c024fdaf37bc52648e9622d3b283f" rel="noopener noreferrer"><code>0de2d8e8</code></a> — [lldb][test] Avoid double new lines in test output (#244191)</li><li><a href="https://github.com/llvm/llvm-project/commit/0c9b33c9f6611aa7eede6c7c23f5794356eaa04e" rel="noopener noreferrer"><code>0c9b33c9</code></a> — [lldb][test] Report the launch error in test_breakpoint_one_shot (#243803)</li><li><a href="https://github.com/llvm/llvm-project/commit/aa98878979a76a24194bb98b767cb4494804e037" rel="noopener noreferrer"><code>aa988789</code></a> — [lldb][test] Mark tests that cannot build for Wasm as unsupported (#243729)</li><li><a href="https://github.com/llvm/llvm-project/commit/9648ab5b2f3968b5d183a940dedd063c6076fca2" rel="noopener noreferrer"><code>9648ab5b</code></a> — [lldb][test] Skip TestInlinedFunctionStatic.py on older Clang (#243728)</li><li><a href="https://github.com/llvm/llvm-project/commit/90b68bdf708168b785c078c17104b9b59770b62b" rel="noopener noreferrer"><code>90b68bdf</code></a> — [lldb][test] Don&#x27;t let the build dictionary clobber the Makefile&#x27;s CF… (#243273)</li></ul>
+    <details class="story-details dive-sources">
+      <summary>Primary sources (7)</summary>
+      <ul class="source-list"><li><a href="https://github.com/llvm/llvm-project/commit/8e1359f419e7c7b6bf5c3ac9ff34f7c459f43eeb" rel="noopener noreferrer"><code>8e1359f4</code></a> — [lldb][test] Skip more tests that don&#x27;t work with WebAssembly (#244248)</li><li><a href="https://github.com/llvm/llvm-project/commit/44e231e5c7a9670fb9c770127fffe2a6cb69add5" rel="noopener noreferrer"><code>44e231e5</code></a> — [lldb][test] Add type name test for various C++ scopes (#243878)</li><li><a href="https://github.com/llvm/llvm-project/commit/0de2d8e8de4c024fdaf37bc52648e9622d3b283f" rel="noopener noreferrer"><code>0de2d8e8</code></a> — [lldb][test] Avoid double new lines in test output (#244191)</li><li><a href="https://github.com/llvm/llvm-project/commit/0c9b33c9f6611aa7eede6c7c23f5794356eaa04e" rel="noopener noreferrer"><code>0c9b33c9</code></a> — [lldb][test] Report the launch error in test_breakpoint_one_shot (#243803)</li><li><a href="https://github.com/llvm/llvm-project/commit/aa98878979a76a24194bb98b767cb4494804e037" rel="noopener noreferrer"><code>aa988789</code></a> — [lldb][test] Mark tests that cannot build for Wasm as unsupported (#243729)</li><li><a href="https://github.com/llvm/llvm-project/commit/9648ab5b2f3968b5d183a940dedd063c6076fca2" rel="noopener noreferrer"><code>9648ab5b</code></a> — [lldb][test] Skip TestInlinedFunctionStatic.py on older Clang (#243728)</li><li><a href="https://github.com/llvm/llvm-project/commit/90b68bdf708168b785c078c17104b9b59770b62b" rel="noopener noreferrer"><code>90b68bdf</code></a> — [lldb][test] Don&#x27;t let the build dictionary clobber the Makefile&#x27;s CF… (#243273)</li></ul>
+    </details>
   </article>
 </section>
-<section id="worth-knowing" class="issue-section"><h2>Worth knowing</h2><h3 class='signal-tier'>Watchlist</h3><p class="muted">Interesting, but source evidence is incomplete — treat claims cautiously.</p><div class="story-stack watchlist"><article class="story-row watchlist-item" id="gcc-gcc-risc-v" data-project="gcc" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-gcc" data-dim="project" title="project">GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-target" data-dim="target" title="target">RISC-V</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Reuse legal VTYPE for whole-register moves</h3>
+<section id="worth-knowing" class="issue-section section-signals"><h2>Worth knowing</h2><h3 class='signal-tier'>Watchlist</h3><p class="muted">Interesting, but source evidence is incomplete — treat claims cautiously.</p><div class="story-stack watchlist"><article class="story-row watchlist-item" id="gcc-gcc-risc-v" data-project="gcc" data-evidence="unverified">
+    <p class="card-labels">GCC · Backend · RISC-V</p>
   <p class="secondary">Source subject: “Reuse legal VTYPE for whole-register moves”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/gcc-mirror/gcc/commit/6b770d84867c112bbe0db9176da6f860705e99c5" rel="noopener noreferrer"><code>6b770d84</code></a></p>
-  <details class="related-commits"><summary>Related commits (23)</summary><p><a href="https://github.com/gcc-mirror/gcc/commit/27a363607ed79235c112c044daa8501e9d1b4d6d" rel="noopener noreferrer"><code>27a36360</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/a281e745eea86b87466febb2cb6b63548daa31c3" rel="noopener noreferrer"><code>a281e745</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/b9d46c62015e8cb2e9b896a1d663cd85a0b4690b" rel="noopener noreferrer"><code>b9d46c62</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/3c40c25332c56cc0064a5a848d177ccd1ab44912" rel="noopener noreferrer"><code>3c40c253</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/357b4a26b693fa7b6e6ff8f6609184341737a1f3" rel="noopener noreferrer"><code>357b4a26</code></a></p></details>
+  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/6b770d84867c112bbe0db9176da6f860705e99c5" rel="noopener noreferrer"><code>6b770d84</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="gcc-gcc-aarch64" data-project="gcc" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-gcc" data-dim="project" title="project">GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-target" data-dim="target" title="target">AArch64</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Restore SUBS/CSEL for unsigned conditional subtraction</h3>
+    <p class="card-labels">GCC · Backend · AArch64</p>
   <p class="secondary">Source subject: “Restore SUBS/CSEL for unsigned conditional subtraction”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/gcc-mirror/gcc/commit/abcaae9e947e7de5b4dfeabd852dfb2232fefe07" rel="noopener noreferrer"><code>abcaae9e</code></a></p>
-  <details class="related-commits"><summary>Related commits (18)</summary><p><a href="https://github.com/gcc-mirror/gcc/commit/3216e947d8c964f2a19d19530f16bf0ca6aae807" rel="noopener noreferrer"><code>3216e947</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/edbb6e5e92d5e3e8aec4332e2b15870bd7a6f16d" rel="noopener noreferrer"><code>edbb6e5e</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/e8d2229382cad527abf48ab056122f3afd8c1263" rel="noopener noreferrer"><code>e8d22293</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/42e3c88c8ee994422554b44bdd137522329008d1" rel="noopener noreferrer"><code>42e3c88c</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/1f345d839246bc562d2916c0c97a4f958c413ce8" rel="noopener noreferrer"><code>1f345d83</code></a></p></details>
+  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/abcaae9e947e7de5b4dfeabd852dfb2232fefe07" rel="noopener noreferrer"><code>abcaae9e</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="gcc-gcc-risc-v" data-project="gcc" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-gcc" data-dim="project" title="project">GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-target" data-dim="target" title="target">RISC-V</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Fix big-endian 2*XLEN scalar register-pair order</h3>
+    <p class="card-labels">GCC · Backend · RISC-V</p>
   <p class="secondary">Source subject: “Fix big-endian 2*XLEN scalar register-pair order”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/gcc-mirror/gcc/commit/2666438724c3364795e733f53115af0f7b018770" rel="noopener noreferrer"><code>26664387</code></a></p>
-  <details class="related-commits"><summary>Related commits (16)</summary><p><a href="https://github.com/gcc-mirror/gcc/commit/4d2111cf1070ec23be4411def5df926311bdd3b3" rel="noopener noreferrer"><code>4d2111cf</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/245142cf7e6364a4f2774c3636150473c9e0a93b" rel="noopener noreferrer"><code>245142cf</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/4b41a0b5ad47ed3c7b290dfb1070a48d29005a74" rel="noopener noreferrer"><code>4b41a0b5</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/adbac8a0978e1a985dea4ce3c67ab1d381b8688e" rel="noopener noreferrer"><code>adbac8a0</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/fb66e0c3e24743e415c50eff069e61a935134e92" rel="noopener noreferrer"><code>fb66e0c3</code></a></p></details>
+  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/2666438724c3364795e733f53115af0f7b018770" rel="noopener noreferrer"><code>26664387</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="gcc-gcc-gccrs" data-project="gcc" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-gcc" data-dim="project" title="project">GCC</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage">Middle-end</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Check exhaustiveness of unit variant patterns</h3>
+    <p class="card-labels">GCC · Middle-end</p>
   <p class="secondary">Source subject: “Check exhaustiveness of unit variant patterns”. Apparent component: GCC. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/gcc-mirror/gcc/commit/fceddda853fa2543b6d3ddbbe75f7e2468521a91" rel="noopener noreferrer"><code>fceddda8</code></a></p>
-  <details class="related-commits"><summary>Related commits (3)</summary><p><a href="https://github.com/gcc-mirror/gcc/commit/529da5e40799d2a8c3266829177fbb1be613ccfc" rel="noopener noreferrer"><code>529da5e4</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/8dba7b92ee3d4aba9c0229654302251528e0c8d0" rel="noopener noreferrer"><code>8dba7b92</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/01358ad7540137d78791f45901e7efb408e765bd" rel="noopener noreferrer"><code>01358ad7</code></a></p></details>
+  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/fceddda853fa2543b6d3ddbbe75f7e2468521a91" rel="noopener noreferrer"><code>fceddda8</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="gcc-gcc-sparc" data-project="gcc" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-gcc" data-dim="project" title="project">GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Do not load from the frame in the delay slot of return</h3>
+    <p class="card-labels">GCC · Backend</p>
   <p class="secondary">Source subject: “Do not load from the frame in the delay slot of return”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/gcc-mirror/gcc/commit/2ba457c92c75129f652174aecf2e002e0bddc463" rel="noopener noreferrer"><code>2ba457c9</code></a></p>
-  <details class="related-commits"><summary>Related commits (3)</summary><p><a href="https://github.com/gcc-mirror/gcc/commit/8a26eced09e05fdf090d75783b88bb1ae9630355" rel="noopener noreferrer"><code>8a26eced</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/806799b32698fd509f03254132d6d29eba80ae5d" rel="noopener noreferrer"><code>806799b3</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/8a61f5a39896d4c91acfd34a339f562a946769b4" rel="noopener noreferrer"><code>8a61f5a3</code></a></p></details>
+  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/2ba457c92c75129f652174aecf2e002e0bddc463" rel="noopener noreferrer"><code>2ba457c9</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="llvm-llvm-riscv-p-ext" data-project="llvm" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-llvm" data-dim="project" title="project">LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-target" data-dim="target" title="target">RISC-V</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Fix crash selecting WADDA[U]/WSUBA[U] with a zero accumulator</h3>
+    <p class="card-labels">LLVM · Backend · RISC-V</p>
   <p class="secondary">Source subject: “Fix crash selecting WADDA[U]/WSUBA[U] with a zero accumulator”. Apparent component: RISC-V backend. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/2bada9f2d14d1eb9e96268a7ee24f8f3dcffd8ef" rel="noopener noreferrer"><code>2bada9f2</code></a></p>
-  <details class="related-commits"><summary>Related commits (3)</summary><p><a href="https://github.com/llvm/llvm-project/commit/3e63f704227734dee50603e5e23b45cea2919791" rel="noopener noreferrer"><code>3e63f704</code></a> · <a href="https://github.com/llvm/llvm-project/commit/65406a394f387bedf49fe5caa7291c675d76dbef" rel="noopener noreferrer"><code>65406a39</code></a> · <a href="https://github.com/llvm/llvm-project/commit/6b0a40b56aba4d5c0366054073726fb6e9b8591b" rel="noopener noreferrer"><code>6b0a40b5</code></a></p></details>
+  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/2bada9f2d14d1eb9e96268a7ee24f8f3dcffd8ef" rel="noopener noreferrer"><code>2bada9f2</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="gcc-gcc-fortran" data-project="gcc" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-gcc" data-dim="project" title="project">GCC</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage">Frontend</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>fortran: ICE with transpose(reshape()) of character array ctor</h3>
+    <p class="card-labels">GCC · Frontend</p>
   <p class="secondary">Source subject: “fortran: ICE with transpose(reshape()) of character array ctor”. Apparent component: GCC. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/gcc-mirror/gcc/commit/427be8a054a5f41bb3f0e6c28324f9a9ec8dd262" rel="noopener noreferrer"><code>427be8a0</code></a></p>
-  <details class="related-commits"><summary>Related commits (3)</summary><p><a href="https://github.com/gcc-mirror/gcc/commit/1f03545576b68402efda98a963a0195d9467ca63" rel="noopener noreferrer"><code>1f035455</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/3a2432e858be496b52e661c7083c61859df0b246" rel="noopener noreferrer"><code>3a2432e8</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/90a272c810e9ec199c37856980e6c8bf219b9014" rel="noopener noreferrer"><code>90a272c8</code></a></p></details>
+  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/427be8a054a5f41bb3f0e6c28324f9a9ec8dd262" rel="noopener noreferrer"><code>427be8a0</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="llvm-lldb-lldb-add" data-project="llvm" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-llvm" data-dim="project" title="project">LLVM</span><span class="badge tax-stage stage-runtime-toolchain" data-dim="stage" title="stage">Runtime &amp; Toolchain</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Add a Deprecated attribute for settings, to discourage use</h3>
+    <p class="card-labels">LLVM · Runtime</p>
   <p class="secondary">Debug-info or debugger tooling change. Relevant to Runtime &amp; Toolchain workflows.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/07d600b8dcb50f287ae4adc276f7aea101b80e61" rel="noopener noreferrer"><code>07d600b8</code></a></p>
-  <details class="related-commits"><summary>Related commits (2)</summary><p><a href="https://github.com/llvm/llvm-project/commit/14bdf553e06bfc0c1fbe10c16b6f0fbf6769a426" rel="noopener noreferrer"><code>14bdf553</code></a> · <a href="https://github.com/llvm/llvm-project/commit/3b14d7c370558b46e5f0c6494a05c492e59bf32c" rel="noopener noreferrer"><code>3b14d7c3</code></a></p></details>
+  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/07d600b8dcb50f287ae4adc276f7aea101b80e61" rel="noopener noreferrer"><code>07d600b8</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="llvm-llvm-amdgpu" data-project="llvm" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-llvm" data-dim="project" title="project">LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-target" data-dim="target" title="target">AMDGPU</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Clear stale kills when merging v_mov_b16 pairs</h3>
+    <p class="card-labels">LLVM · Backend · AMDGPU</p>
   <p class="secondary">AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/1c041072c5e4562d2857b75835cee71e2f9b6ffb" rel="noopener noreferrer"><code>1c041072</code></a></p>
-  <details class="related-commits"><summary>Related commits (2)</summary><p><a href="https://github.com/llvm/llvm-project/commit/95f23a1ae335e929987a99521ab7e3e08da54ba4" rel="noopener noreferrer"><code>95f23a1a</code></a> · <a href="https://github.com/llvm/llvm-project/commit/fbb337217dfd86ec015bb731d30251a219efc604" rel="noopener noreferrer"><code>fbb33721</code></a></p></details>
+  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/1c041072c5e4562d2857b75835cee71e2f9b6ffb" rel="noopener noreferrer"><code>1c041072</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="llvm-llvm-amdgpu-fix" data-project="llvm" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-llvm" data-dim="project" title="project">LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-target" data-dim="target" title="target">AMDGPU</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Fix incorrect comments about sinking ExtractElement</h3>
+    <p class="card-labels">LLVM · Backend · AMDGPU</p>
   <p class="secondary">AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/ef02d46bb33d10383f6ba5a5d9a5511416ee790c" rel="noopener noreferrer"><code>ef02d46b</code></a></p>
-  <details class="related-commits"><summary>Related commits (2)</summary><p><a href="https://github.com/llvm/llvm-project/commit/fa21ccb4838c47bd43091c60aa1d968142c5ef77" rel="noopener noreferrer"><code>fa21ccb4</code></a> · <a href="https://github.com/llvm/llvm-project/commit/c580306f0217f6a93a5ffc0a7eb55a05e6e3b9cd" rel="noopener noreferrer"><code>c580306f</code></a></p></details>
+  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/ef02d46bb33d10383f6ba5a5d9a5511416ee790c" rel="noopener noreferrer"><code>ef02d46b</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="llvm-lldb-lldb-let" data-project="llvm" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-llvm" data-dim="project" title="project">LLVM</span><span class="badge tax-stage stage-runtime-toolchain" data-dim="stage" title="stage">Runtime &amp; Toolchain</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Let language plugins explain why a variable is missing</h3>
+    <p class="card-labels">LLVM · Runtime</p>
   <p class="secondary">Debug-info or debugger tooling change. Relevant to Runtime &amp; Toolchain workflows.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/0298b7f7c211e4efceae6a60f68e89ee540f662a" rel="noopener noreferrer"><code>0298b7f7</code></a></p>
-  <details class="related-commits"><summary>Related commits (2)</summary><p><a href="https://github.com/llvm/llvm-project/commit/d5599e38e543d03a6c678ce3f301c8e6d7e03a42" rel="noopener noreferrer"><code>d5599e38</code></a> · <a href="https://github.com/llvm/llvm-project/commit/b9682d71d60050baf7f7d2a48df799c34fd8c9be" rel="noopener noreferrer"><code>b9682d71</code></a></p></details>
+  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/0298b7f7c211e4efceae6a60f68e89ee540f662a" rel="noopener noreferrer"><code>0298b7f7</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="llvm-llvm-gn-build" data-project="llvm" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-llvm" data-dim="project" title="project">LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage">Frontend</span><span class="badge tax-target" data-dim="target" title="target">AMDGPU</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Port commits</h3>
+    <p class="card-labels">LLVM · Frontend · AMDGPU</p>
   <p class="secondary">Touches AMDGPU paths while landing “Port commits”.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/daaf225aa1582ae43c13b6867e42072c0059ae15" rel="noopener noreferrer"><code>daaf225a</code></a></p>
-  <details class="related-commits"><summary>Related commits (2)</summary><p><a href="https://github.com/llvm/llvm-project/commit/a3b779a7e134c2a25bab720a5f21bf2bf35fb25b" rel="noopener noreferrer"><code>a3b779a7</code></a> · <a href="https://github.com/llvm/llvm-project/commit/55ad7cd33f26894f1826248da5240c4e64e17722" rel="noopener noreferrer"><code>55ad7cd3</code></a></p></details>
+  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/daaf225aa1582ae43c13b6867e42072c0059ae15" rel="noopener noreferrer"><code>daaf225a</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="iree-integrate-llvm-to-llvm" data-project="ai" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-ai" data-dim="project" title="project">IREE</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Integrate LLVM to llvm/llvm-project@2cc5b84402a8</h3>
+    <p class="card-labels">IREE · Backend</p>
   <p class="secondary">Source subject: “Integrate LLVM to llvm/llvm-project@2cc5b84402a8”. Apparent component: IREE. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/iree-org/iree/commit/14e6942619648d02aa17520a4eeecb933e5c9420" rel="noopener noreferrer"><code>14e69426</code></a></p>
-  <details class="related-commits"><summary>Related commits (2)</summary><p><a href="https://github.com/iree-org/iree/commit/56b167944b815d9860608c4a27451e2e4d546e8d" rel="noopener noreferrer"><code>56b16794</code></a> · <a href="https://github.com/iree-org/iree/commit/c10695699c9f36b3b86b81d7f88a651618d45547" rel="noopener noreferrer"><code>c1069569</code></a></p></details>
+  <p class="meta"><a href="https://github.com/iree-org/iree/commit/14e6942619648d02aa17520a4eeecb933e5c9420" rel="noopener noreferrer"><code>14e69426</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="iree-dispatchcreation-add-an" data-project="ai" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-ai" data-dim="project" title="project">IREE</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage">Backend</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Add an option to limit the bytes a dispatch binds</h3>
+    <p class="card-labels">IREE · Backend</p>
   <p class="secondary">Source subject: “Add an option to limit the bytes a dispatch binds”. Apparent component: MLIR. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/iree-org/iree/commit/98f463ce01569d3b08ea00e40e7b79289f887bd6" rel="noopener noreferrer"><code>98f463ce</code></a></p>
+  <p class="meta"><a href="https://github.com/iree-org/iree/commit/98f463ce01569d3b08ea00e40e7b79289f887bd6" rel="noopener noreferrer"><code>98f463ce</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
   
 </article><article class="story-row watchlist-item" id="mlir-mlir-mlir-arith" data-project="mlir" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-mlir" data-dim="project" title="project">MLIR</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage">Middle-end</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Keep only nnan on the widening in the f8E8M0FNU truncf</h3>
+    <p class="card-labels">MLIR · Middle-end</p>
   <p class="secondary">Source subject: “Keep only nnan on the widening in the f8E8M0FNU truncf”. Apparent component: MLIR. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/ad6aa354ee4f555cbe2d5572759cc58267de9371" rel="noopener noreferrer"><code>ad6aa354</code></a></p>
-  <details class="related-commits"><summary>Related commits (2)</summary><p><a href="https://github.com/llvm/llvm-project/commit/21d24b719786997542156418d39a1b409c69663e" rel="noopener noreferrer"><code>21d24b71</code></a> · <a href="https://github.com/llvm/llvm-project/commit/5e9c4e0c1fe5b1546508df898a08d83e566bfc1a" rel="noopener noreferrer"><code>5e9c4e0c</code></a></p></details>
+  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/ad6aa354ee4f555cbe2d5572759cc58267de9371" rel="noopener noreferrer"><code>ad6aa354</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article><article class="story-row watchlist-item" id="mlir-mlir-mlir-vector" data-project="mlir" data-evidence="unverified">
-  <div class="story-top">
-    <div class="badge-row compact"><span class="badge tax-project project-mlir" data-dim="project" title="project">MLIR</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage">Middle-end</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence">Unverified</span></div>
-    
-  </div>
-  <h3>Check the parent reduction&#x27;s kind and uses before folding</h3>
+    <p class="card-labels">MLIR · Middle-end</p>
   <p class="secondary">Source subject: “Check the parent reduction&#x27;s kind and uses before folding”. Apparent component: MLIR. Broader impact is not established from the commit message alone.</p>
   <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><span class="badge tax-evidence evidence-unverified">Unverified</span>
-    · Primary source:
-    <a href="https://github.com/llvm/llvm-project/commit/ce6731bc6a7cc6c49ed74d88297d9f52ecde9ba5" rel="noopener noreferrer"><code>ce6731bc</code></a></p>
-  <details class="related-commits"><summary>Related commits (1)</summary><p><a href="https://github.com/llvm/llvm-project/commit/ae9b54f0ebfe606123f5a0762bb9cd12cc46fa69" rel="noopener noreferrer"><code>ae9b54f0</code></a></p></details>
+  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/ce6731bc6a7cc6c49ed74d88297d9f52ecde9ba5" rel="noopener noreferrer"><code>ce6731bc</code></a>
+    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
+  
 </article></div></section>
 <section id="themes" class="issue-section"><h2>Themes this week</h2><p class="muted">Project index only — details are in the sections above.</p><h3>AI Compilers</h3><ul class='theme-index'><li><a href="#iree-integrate-llvm-to-llvm">Integrate LLVM to llvm/llvm-project@2cc5b84402a8</a></li><li><a href="#iree-dispatchcreation-add-an">Add an option to limit the bytes a dispatch binds</a></li></ul><h3>Clang</h3><ul class='theme-index'><li><a href="#llvm-clang-cir-implement">Implement relative-vtable-lookups</a></li><li><a href="#llvm-clang-cir-openmp">Specify target triple in OpenMP loop codegen tests</a></li></ul><h3>GCC</h3><ul class='theme-index'><li><a href="#gcc-gcc-i386">Avoid false dependency for BSF · X86</a></li><li><a href="#gcc-gcc-risc-v">Reuse legal VTYPE for whole-register moves · RISC-V</a></li><li><a href="#gcc-gcc-aarch64">Restore SUBS/CSEL for unsigned conditional subtraction · AArch64</a></li><li><a href="#gcc-gcc-risc-v">Fix big-endian 2*XLEN scalar register-pair order · RISC-V</a></li><li><a href="#gcc-gcc-gccrs">Check exhaustiveness of unit variant patterns</a></li><li><a href="#gcc-gcc-sparc">Do not load from the frame in the delay slot of return</a></li></ul><h3>LLVM</h3><ul class='theme-index'><li><a href="#llvm-llvm-amdgpu-add">Add an async barrier arrival workaround · AMDGPU</a></li><li><a href="#llvm-llvm-sandboxvec-dag">Fix moveInstrNotifier on empty DAG</a></li><li><a href="#llvm-llvm-loopvectorize-add">Add llvm.loop.vectorize.fp_unsafe.{enable,disable} metadata</a></li><li><a href="#llvm-llvm-nvptx-add">Add support for s2f6x2 conversion on sm_107a · NVPTX</a></li><li><a href="#llvm-llvm-vectorutils-allow">Allow trivial vectorization of llvm.{sshl,ushl}.sat</a></li><li><a href="#llvm-llvm-riscv-p-ext">Fix crash selecting WADDA[U]/WSUBA[U] with a zero accumulator · RISC-V</a></li></ul><h3>LLVM tooling/runtime</h3><ul class='theme-index'><li><a href="#llvm-lldb-lldb-test">Skip more tests that don&#x27;t work with WebAssembly · WebAssembly, AArch64</a></li><li><a href="#llvm-lldb-lldb-add">Add a Deprecated attribute for settings, to discourage use</a></li><li><a href="#llvm-lldb-lldb-let">Let language plugins explain why a variable is missing</a></li></ul><h3>MLIR</h3><ul class='theme-index'><li><a href="#mlir-mlir-mlir-arith">Keep only nnan on the widening in the f8E8M0FNU truncf</a></li><li><a href="#mlir-mlir-mlir-vector">Check the parent reduction&#x27;s kind and uses before folding</a></li></ul></section>
 <section id="topic-index" class="issue-section"><h2>Topic index</h2><p class="muted">Jump links only — details are in the sections above.</p><h3>LLVM</h3><ul class='theme-index'><li><a href="#llvm-lldb-lldb-test">[lldb][test] Skip more tests that don&#x27;t work with WebAssembly (#244248)</a> <span class="meta">Runtime &amp; Toolchain, Frontend · Languages, CPU</span></li><li><a href="#llvm-llvm-amdgpu-add">[AMDGPU] Add an async barrier arrival workaround (#238539)</a> <span class="meta">Backend · GPU</span></li><li><a href="#llvm-llvm-sandboxvec-dag">[SandboxVec][DAG] Fix moveInstrNotifier on empty DAG (#243747)</a> <span class="meta">Middle-end, Backend · CPU</span></li><li><a href="#llvm-llvm-loopvectorize-add">[LoopVectorize] Add llvm.loop.vectorize.fp_unsafe.{enable,disable} metadata (#219167)</a> <span class="meta">Middle-end · CPU</span></li><li><a href="#llvm-llvm-nvptx-add">[NVPTX] Add support for s2f6x2 conversion on sm_107a (#243416)</a> <span class="meta">Backend · GPU</span></li><li><a href="#llvm-llvm-vectorutils-allow">[VectorUtils] Allow trivial vectorization of llvm.{sshl,ushl}.sat (#241219)</a> <span class="meta">Middle-end · CPU</span></li><li><a href="#llvm-llvm-riscv-p-ext">Fix crash selecting WADDA[U]/WSUBA[U] with a zero accumulator</a> <span class="meta">Backend · CPU</span></li><li><a href="#llvm-lldb-lldb-add">Add a Deprecated attribute for settings, to discourage use</a> <span class="meta">Runtime &amp; Toolchain, Frontend · Languages</span></li></ul><h3>Clang</h3><ul class='theme-index'><li><a href="#llvm-clang-cir-implement">[CIR] Implement relative-vtable-lookups (#243798)</a> <span class="meta">Frontend · Languages</span></li><li><a href="#llvm-clang-cir-openmp">[CIR][OpenMP] Specify target triple in OpenMP loop codegen tests (#244278)</a> <span class="meta">Frontend · Languages</span></li><li><a href="#llvm-llvm-gn-build">Port commits</a> <span class="meta">Frontend, Backend · GPU, CPU</span></li></ul><h3>GCC</h3><ul class='theme-index'><li><a href="#gcc-gcc-i386">Avoid false dependency for BSF [PR128662]</a> <span class="meta">Backend · CPU</span></li><li><a href="#gcc-gcc-risc-v">Reuse legal VTYPE for whole-register moves</a> <span class="meta">Backend, Middle-end · CPU</span></li><li><a href="#gcc-gcc-aarch64">Restore SUBS/CSEL for unsigned conditional subtraction</a> <span class="meta">Backend · CPU, GPU</span></li><li><a href="#gcc-gcc-risc-v">Fix big-endian 2*XLEN scalar register-pair order</a> <span class="meta">Backend, Middle-end · CPU</span></li><li><a href="#gcc-gcc-gccrs">Check exhaustiveness of unit variant patterns</a> <span class="meta">Middle-end, Frontend · Languages</span></li><li><a href="#gcc-gcc-sparc">Do not load from the frame in the delay slot of return</a> <span class="meta">Backend · CPU</span></li><li><a href="#gcc-gcc-fortran">fortran: ICE with transpose(reshape()) of character array ctor</a> <span class="meta">Frontend · Languages</span></li></ul><h3>MLIR</h3><ul class='theme-index'><li><a href="#mlir-mlir-mlir-arith">Keep only nnan on the widening in the f8E8M0FNU truncf</a> <span class="meta">Middle-end · AI / ML</span></li><li><a href="#mlir-mlir-mlir-vector">Check the parent reduction&#x27;s kind and uses before folding</a> <span class="meta">Middle-end · AI / ML</span></li></ul><h3>AI Compilers</h3><ul class='theme-index'><li><a href="#iree-integrate-llvm-to-llvm">Integrate LLVM to llvm/llvm-project@2cc5b84402a8</a> <span class="meta">Backend · AI / ML, GPU</span></li><li><a href="#iree-dispatchcreation-add-an">Add an option to limit the bytes a dispatch binds</a> <span class="meta">Backend · AI / ML</span></li></ul></section>

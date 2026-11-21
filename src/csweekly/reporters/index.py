@@ -1073,13 +1073,13 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
     if payload.get("high_signal") or payload.get("groups"):
         content = _render_issue_html(meta, payload)
         toc_ids = [
-            ("briefing", "Five-minute briefing"),
+            ("briefing", "Briefing"),
             ("featured", "Featured"),
             ("deep-dive", "Deep dive"),
             ("worth-knowing", "Signals"),
             ("themes", "Themes"),
             ("worth-reading", "Research"),
-            ("topic-index", "Topic index"),
+            ("topic-index", "Index"),
         ]
         toc_links = "".join(f'<a href="#{i}">{html.escape(l)}</a>' for i, l in toc_ids)
         toc = f'<nav class="toc" aria-label="On this page">{toc_links}</nav>'
@@ -1109,11 +1109,8 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
     <div class="issue-nav">{" · ".join(nav_bits)}</div>
     <p class="hero-kicker">CompilerSutra Weekly · Edition {html.escape(num)}</p>
     <h1 class="page-title">The week in compiler engineering</h1>
-    <p class="lede">A curated engineering briefing covering compiler infrastructure,
-      optimization, code generation, and GPU architectures — with primary-source evidence.</p>
-    <p class="muted">{html.escape(format_issue_date(meta.date))} · {html.escape(meta.window)} · {html.escape(proj_line)}</p>
-    <p class="promise muted">Understand what changed, why it matters, and how it works under the hood.
-      Claims never exceed the underlying source evidence.</p>
+    <p class="muted issue-meta-line">{html.escape(format_issue_date(meta.date))} · {html.escape(meta.window)} · {html.escape(proj_line)}</p>
+    <p class="lede">Understand what changed, why it matters, and how it works under the hood.</p>
     {toc}
     <div class="issue-body">
     {content}
@@ -1148,12 +1145,12 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
     if featured:
         cards_html = "".join(_issue_story_card(g, prominent=True) for g in featured)
         parts.append(
-            f'<section id="featured" class="issue-section">'
+            f'<section id="featured" class="issue-section section-featured">'
             f"<h2>Featured developments</h2>"
-            f'<p class="muted">What changed and why engineers should care — '
-            f"compact metadata; expand for paths and related commits.</p>"
+            f'<p class="section-lede muted">What changed, why it matters, and where to read the source.</p>'
+            f'<div class="story-grid">{cards_html}</div>'
             f'<p class="muted score-legend">{html.escape(editorial_score_legend())}</p>'
-            f'<div class="story-stack">{cards_html}</div></section>'
+            f"</section>"
         )
 
     if deep:
@@ -1182,7 +1179,7 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         )
     if signal_blocks:
         parts.append(
-            f'<section id="worth-knowing" class="issue-section">'
+            f'<section id="worth-knowing" class="issue-section section-signals">'
             f"<h2>Worth knowing</h2>"
             f"{''.join(signal_blocks)}</section>"
         )
@@ -1243,40 +1240,51 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
 
 
 def _briefing_cards_html(cards: list[dict]) -> str:
+    from csweekly.processors.editorial import _clip_words
+
     items = []
     for c in cards:
-        chips = []
+        meta_bits = []
         proj = str(c.get("project") or "")
         if proj:
-            chips.append(html.escape(proj.upper() if len(proj) <= 4 else proj))
+            meta_bits.append(proj.upper() if len(proj) <= 4 else str(proj).title())
         if c.get("stage"):
-            chips.append(html.escape(str(c["stage"])))
-        for t in c.get("targets") or []:
-            chips.append(html.escape(str(t)))
-        chip_html = "".join(f'<span class="brief-chip">{ch}</span>' for ch in chips)
+            stage = str(c["stage"])
+            # Short stage labels for the compact row
+            stage = stage.replace("Runtime & Toolchain", "Runtime").replace("Middle-end", "Middle-end")
+            meta_bits.append(stage)
+        for t in (c.get("targets") or [])[:1]:
+            meta_bits.append(str(t))
         ev = html.escape(c.get("evidence_label") or "Unverified")
         ev_slug = html.escape(c.get("evidence_slug") or "unverified")
         sha = html.escape(c.get("sha") or "link")
         src = html.escape(c.get("source_url") or "#")
+        num = f"{c['index'] + 1:02d}"
+        takeaway = _clip_words(c.get("takeaway") or "", 140)
+        meta_line = " · ".join(meta_bits)
         items.append(
-            f"""<article class="briefing-card" data-evidence="{ev_slug}">
-  <p class="brief-kicker">{html.escape(c["kicker"])} · <span class="stage-pill">{html.escape(c.get("stage") or "")}</span></p>
-  <h3><a href="#{html.escape(c["anchor"])}">{html.escape(c["headline"])}</a></h3>
-  <p class="brief-summary">{html.escape(c["summary"])}</p>
-  <p class="brief-takeaway"><strong>Engineering takeaway.</strong> {html.escape(c["takeaway"])}</p>
-  <div class="brief-meta">{chip_html}
-    <span class="badge tax-evidence evidence-{ev_slug}">{ev}</span>
-    <a class="mono-meta" href="{src}" rel="noopener noreferrer">Commit {sha}</a>
-    <a class="brief-link" href="#{html.escape(c["anchor"])}">Read technical breakdown →</a>
+            f"""<article class="brief-row" data-evidence="{ev_slug}">
+  <span class="brief-num" aria-hidden="true">{html.escape(num)}</span>
+  <div class="brief-body">
+    <h3><a href="#{html.escape(c["anchor"])}">{html.escape(c["headline"])}</a></h3>
+    <p class="brief-line">{html.escape(takeaway)}</p>
+    <p class="brief-meta-line">
+      <span>{html.escape(meta_line)}</span>
+      <span class="evidence-dot evidence-{ev_slug}">{ev}</span>
+      <a href="{src}" rel="noopener noreferrer"><code>{sha}</code></a>
+      <a class="brief-jump" href="#{html.escape(c["anchor"])}">Story →</a>
+    </p>
   </div>
 </article>"""
         )
+    n = len(cards)
     return (
-        '<section id="briefing" class="issue-section">'
-        "<h2>This week’s five-minute briefing</h2>"
-        '<p class="muted">Start here. Five developments in plain engineering language — '
-        "takeaways checked against commit evidence, not titles alone.</p>"
-        f'<div class="briefing-grid">{"".join(items)}</div></section>'
+        f'<section id="briefing" class="issue-section section-briefing">'
+        f'<div class="section-head">'
+        f"<h2>This week’s five-minute briefing</h2>"
+        f'<p class="section-count muted">{n} stor{"y" if n == 1 else "ies"}</p>'
+        f"</div>"
+        f'<div class="brief-list">{"".join(items)}</div></section>'
     )
 
 
@@ -1357,30 +1365,41 @@ def _issue_story_card(g: dict, *, prominent: bool, watchlist: bool = False) -> s
         '<details class="story-details"><summary>Technical details</summary>'
         f"{''.join(details_bits)}</details>"
     )
-    pick_html = f'<span class="editor-pick">{html.escape(pick)}</span>' if pick and prominent else ""
     ev_label, ev_slug = evidence_confidence(g)
+    # Compact labels: project · stage · target (no badge wall)
+    fields_proj = (g.get("project") or g.get("category") or "").strip()
+    fields_stage = ((g.get("stages") or [""])[0] or "").replace("Runtime & Toolchain", "Runtime")
+    fields_target = ((g.get("hardware_targets") or [""])[0] or "")
+    label_bits = [b for b in (fields_proj.upper() if len(fields_proj) <= 4 else fields_proj.title(),
+                              fields_stage, fields_target) if b]
+    label_line = html.escape(" · ".join(label_bits))
     if prominent:
-        body = f"""  <div class="story-lead">
-    <p class="what-changed">{what}</p>
-    <p class="brief-takeaway"><strong>Why care.</strong> {why}</p>
-  </div>
+        size_show = f" · {size}" if size else ""
+        body = f"""  <p class="card-kicker-row">
+    <span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span>
+    {f'<span class="editor-pick">{html.escape(pick)}</span>' if pick else ""}
+  </p>
+  <h3>{title}</h3>
+  <p class="card-labels">{label_line}</p>
+  <p class="what-changed"><strong>What changed.</strong> {what}</p>
+  <p class="meta card-source">
+    <a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a>{size_show}
+  </p>
   {details}"""
     elif watchlist:
-        body = f"""  <p class="secondary">{why}</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>"""
+        body = f"""  <p class="card-labels">{label_line}</p>
+  <p class="secondary">{why}</p>
+  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
+  <p class="meta"><a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a>
+    · <span class="evidence-dot evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span></p>"""
     else:
-        body = f"""  <p class="secondary">{why}</p>"""
+        body = f"""  <p class="card-labels">{label_line}</p>
+  <p class="secondary">{why}</p>
+  <p class="meta"><a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a>
+    · <span class="evidence-dot evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span></p>"""
     return f"""<article class="{cls}" id="{html.escape(anchor)}" data-project="{html.escape(proj)}" data-evidence="{html.escape(ev_slug)}">
-  <div class="story-top">
-    {taxonomy_badges_html(g, compact=True)}
-    {pick_html}
-  </div>
-  <h3>{title}</h3>
-{body}
-  <p class="meta"><span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span>
-    · Primary source:
-    <a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a></p>
-  {related_block}
+  {body}
+  {related_block if prominent else ""}
 </article>"""
 
 
@@ -1445,23 +1464,37 @@ def _deep_dive_html(g: dict) -> str:
             f"<h4>{html.escape(heading)}</h4>"
             f"{body_html}</div>"
         )
-    return f"""<section id="deep-dive" class="issue-section deep-dive">
+    dive_labels = " · ".join(
+        b
+        for b in (
+            (g.get("project") or g.get("category") or "").upper()
+            if len(str(g.get("project") or g.get("category") or "")) <= 4
+            else str(g.get("project") or g.get("category") or "").title(),
+            ((g.get("stages") or [""])[0] or "").replace("Runtime & Toolchain", "Runtime"),
+            hw if hw != "see paths" else "",
+        )
+        if b
+    )
+    return f"""<section id="deep-dive" class="issue-section deep-dive section-dive">
   <h2>Engineering deep dive</h2>
-  <p class="muted">One implementation, explained properly — problem → implementation →
+  <p class="section-lede muted">One implementation, explained properly — problem → implementation →
     validation → implications. Unanswered questions stay marked as unknown.</p>
-  <article class="feature-card" id="{html.escape(anchor)}" data-project="{html.escape(proj)}">
-    <p class="card-kicker">Technical deep dive · <span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span></p>
+  <article class="dive-panel" id="{html.escape(anchor)}" data-project="{html.escape(proj)}">
+    <p class="card-kicker-row">
+      <span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span>
+      <span class="card-labels">{html.escape(dive_labels)}</span>
+    </p>
     <h3>{title}</h3>
-    {taxonomy_badges_html(g, compact=True)}
-    <p class="muted"><strong>Target.</strong> {html.escape(hw)} ·
-      <strong>Confidence.</strong> {html.escape(ev_label)}
+    <p class="muted dive-confidence">Confidence {html.escape(ev_label)}
       ({html.escape(str(notes.get("confidence") or "unknown"))};
       fact-check {html.escape(str(notes.get("factcheck") or "n/a"))})</p>
     <div class="dive-sections">
       {''.join(section_html)}
     </div>
-    <h4>Primary sources</h4>
-    <ul class="source-list">{''.join(sources)}</ul>
+    <details class="story-details dive-sources">
+      <summary>Primary sources ({len(sources)})</summary>
+      <ul class="source-list">{''.join(sources)}</ul>
+    </details>
   </article>
 </section>"""
 

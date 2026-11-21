@@ -34,12 +34,19 @@ Public URL: https://www.compilersutra.com/weekly/
 
 ## Page architecture (required order)
 
-1. Hero — “The week in compiler engineering” + promise  
-2. **Five-minute briefing** — editorial cards (not numbered commit dumps)  
-3. **Featured** — what changed + why care; compact chips; details expandable  
-4. **Engineering deep dive** — 8-section template; do not repeat Featured verbatim  
-5. **Worth knowing** — Quick signals vs Watchlist (by evidence confidence)  
+1. Hero — “The week in compiler engineering” + short lede  
+2. **Five-minute briefing** — compact numbered list (headline + one-line takeaway + muted meta/source). Screenshot-friendly top.  
+3. **Featured** — responsive **2-column** card grid; consistent borders; evidence badge + muted labels; details expandable  
+4. **Engineering deep dive** — dedicated panel; 8-section template; sources collapsed  
+5. **Worth knowing** — Quick signals vs Watchlist  
 6. Themes / Research / Topic index — navigation only  
+
+## Layout / visual rules (do not shrink fonts)
+
+- Preserve current typography sizes (`body` 1.0625rem). Optimize width/spacing/hierarchy instead.  
+- Issue column uses `--issue-read: 62rem` (wider than blog `--read`).  
+- Prefer fewer colored badges; muted mono labels for project · stage · target.  
+- Compact TOC sidebar; sticky; main content stays the focus.  
 
 ## Hard “do not” rules
 
