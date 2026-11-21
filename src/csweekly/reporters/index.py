@@ -375,14 +375,31 @@ def _page_home(metas: list[IssueMeta], latest: IssueMeta | None) -> str:
         hs_stat = int(latest.stats.get("high_signal") or 0)
         wk = int(latest.stats.get("worth_knowing") or 0)
         pub_human = format_issue_date(latest.date)
-        bullets = payload.get("week_overview") or []
-        overview = (
-            "<ol class='briefing-list'>"
-            + "".join(f"<li class='briefing-item'>{html.escape(b)}</li>" for b in bullets[:5])
-            + "</ol>"
-            if bullets
-            else ""
-        )
+        from csweekly.reporters.publication import briefing_cards_from_payload
+
+        home_cards = briefing_cards_from_payload(payload, limit=5)
+        if home_cards:
+            overview = (
+                "<div class='briefing-grid home-briefing'>"
+                + "".join(
+                    "<article class='briefing-card compact'>"
+                    f"<p class='brief-kicker'>{html.escape(c['kicker'])}</p>"
+                    f"<h3>{html.escape(c['headline'])}</h3>"
+                    f"<p class='brief-takeaway'>{html.escape(c['takeaway'])}</p>"
+                    "</article>"
+                    for c in home_cards
+                )
+                + "</div>"
+            )
+        else:
+            bullets = payload.get("week_overview") or []
+            overview = (
+                "<ol class='briefing-list'>"
+                + "".join(f"<li class='briefing-item'>{html.escape(b)}</li>" for b in bullets[:5])
+                + "</ol>"
+                if bullets
+                else ""
+            )
         cover_bits = [f"{hs_listed} listed high-signal"]
         if dive_n:
             cover_bits.append(f"{dive_n} deep dive")
@@ -1056,12 +1073,12 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
     if payload.get("high_signal") or payload.get("groups"):
         content = _render_issue_html(meta, payload)
         toc_ids = [
-            ("briefing", "Briefing"),
+            ("briefing", "Five-minute briefing"),
             ("featured", "Featured"),
-            ("worth-knowing", "Worth knowing"),
+            ("deep-dive", "Deep dive"),
+            ("worth-knowing", "Signals"),
             ("themes", "Themes"),
             ("worth-reading", "Research"),
-            ("deep-dive", "Deep dive"),
             ("topic-index", "Topic index"),
         ]
         toc_links = "".join(f'<a href="#{i}">{html.escape(l)}</a>' for i, l in toc_ids)
@@ -1082,14 +1099,21 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
         nav_bits.append(
             f'<a class="back" href="../{html.escape(next_m.path.parent.name)}/{html.escape(next_m.date)}.html">Next →</a>'
         )
+    projects = payload.get("stats", {}).get("projects") or []
+    proj_line = " · ".join(str(p).upper() if len(str(p)) <= 4 else str(p).title() for p in projects[:6])
+    if not proj_line:
+        proj_line = "LLVM · GCC · MLIR · GPU"
     body = f"""
   {_topic_bar(depth=2)}
   <article class="article issue-article" id="main">
     <div class="issue-nav">{" · ".join(nav_bits)}</div>
-    <p class="hero-kicker">Edition {html.escape(num)}</p>
-    <h1 class="page-title">CompilerSutra Weekly — {html.escape(num)}</h1>
-    <p class="muted">Published {html.escape(format_issue_date(meta.date))} · Window {html.escape(meta.window)}</p>
-    <p class="muted">{html.escape(CADENCE)}</p>
+    <p class="hero-kicker">CompilerSutra Weekly · Edition {html.escape(num)}</p>
+    <h1 class="page-title">The week in compiler engineering</h1>
+    <p class="lede">A curated engineering briefing covering compiler infrastructure,
+      optimization, code generation, and GPU architectures — with primary-source evidence.</p>
+    <p class="muted">{html.escape(format_issue_date(meta.date))} · {html.escape(meta.window)} · {html.escape(proj_line)}</p>
+    <p class="promise muted">Understand what changed, why it matters, and how it works under the hood.
+      Claims never exceed the underlying source evidence.</p>
     {toc}
     <div class="issue-body">
     {content}
@@ -1100,45 +1124,67 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
 
 
 def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
+    from csweekly.reporters.publication import (
+        briefing_cards_from_payload,
+        coverage_tier,
+        editorial_score_legend,
+    )
+
     parts: list[str] = []
-    overview = payload.get("week_overview") or []
-    if overview:
-        items = "".join(
-            f'<li class="briefing-item">{html.escape(b)}</li>' for b in overview
-        )
-        parts.append(
-            f'<section id="briefing" class="issue-section">'
-            f"<h2>The week in compiler engineering</h2>"
-            f'<p class="muted">Five-minute briefing — start here. '
-            f"Evidence-backed; primary sources in each story.</p>"
-            f'<ol class="briefing-list">{items}</ol></section>'
-        )
+    cards = briefing_cards_from_payload(payload, limit=5)
+    if cards:
+        parts.append(_briefing_cards_html(cards))
 
     high = payload.get("high_signal") or []
     deep = payload.get("deep_dive")
     featured = list(high[:4])
-    if deep and not any((g.get("story_id") or g.get("id")) == (deep.get("story_id") or deep.get("id")) for g in featured):
-        featured = [deep] + featured[:3]
+    deep_id = (deep or {}).get("story_id") or (deep or {}).get("id")
+    # Featured grid excludes the deep-dive story (that lives in the deep-dive section).
+    featured = [
+        g
+        for g in featured
+        if (g.get("story_id") or g.get("id")) != deep_id
+    ][:4]
     if featured:
-        cards = "".join(_issue_story_card(g, prominent=True) for g in featured)
+        cards_html = "".join(_issue_story_card(g, prominent=True) for g in featured)
         parts.append(
             f'<section id="featured" class="issue-section">'
             f"<h2>Featured developments</h2>"
-            f'<p class="muted">What changed, why it matters, and where to read the source.</p>'
-            f'<div class="story-stack">{cards}</div></section>'
+            f'<p class="muted">What changed and why engineers should care — '
+            f"compact metadata; expand for paths and related commits.</p>"
+            f'<p class="muted score-legend">{html.escape(editorial_score_legend())}</p>'
+            f'<div class="story-stack">{cards_html}</div></section>'
         )
 
+    if deep:
+        parts.append(_deep_dive_html(deep))
+
     worth = payload.get("worth_knowing") or []
-    # Avoid reprinting featured IDs
     feat_ids = {(g.get("story_id") or g.get("id")) for g in featured}
+    if deep_id:
+        feat_ids.add(deep_id)
     worth = [g for g in worth if (g.get("story_id") or g.get("id")) not in feat_ids]
-    if worth:
-        rows = "".join(_issue_story_card(g, prominent=False) for g in worth)
+    quick = [g for g in worth if coverage_tier(g) != "watchlist"]
+    watch = [g for g in worth if coverage_tier(g) == "watchlist"]
+
+    signal_blocks = []
+    if quick:
+        signal_blocks.append(
+            "<h3 class='signal-tier'>Quick signals</h3>"
+            '<p class="muted">Relevant, partially investigated — 2–3 sentences each.</p>'
+            f'<div class="story-stack compact">{"".join(_issue_story_card(g, prominent=False) for g in quick)}</div>'
+        )
+    if watch:
+        signal_blocks.append(
+            "<h3 class='signal-tier'>Watchlist</h3>"
+            '<p class="muted">Interesting, but source evidence is incomplete — treat claims cautiously.</p>'
+            f'<div class="story-stack watchlist">{"".join(_issue_story_card(g, prominent=False, watchlist=True) for g in watch)}</div>'
+        )
+    if signal_blocks:
         parts.append(
             f'<section id="worth-knowing" class="issue-section">'
             f"<h2>Worth knowing</h2>"
-            f'<p class="muted">Shorter notes for changes that still deserve a look.</p>'
-            f'<div class="story-stack compact">{rows}</div></section>'
+            f"{''.join(signal_blocks)}</section>"
         )
 
     moving = payload.get("moving_stories") or {}
@@ -1161,7 +1207,7 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         parts.append(
             f'<section id="themes" class="issue-section">'
             f"<h2>Themes this week</h2>"
-            f'<p class="muted">Same stories as above, grouped by project. Useful for scanning.</p>'
+            f'<p class="muted">Project index only — details are in the sections above.</p>'
             f"{''.join(blocks)}</section>"
         )
 
@@ -1175,10 +1221,6 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
             f"{markdown_to_html(reading)}</section>"
         )
 
-    if deep:
-        parts.append(_deep_dive_html(deep))
-
-    # Topic index from groups — compact, link to anchors
     groups = payload.get("groups") or payload.get("high_signal") or []
     if groups:
         parts.append(_topic_index_html(groups))
@@ -1192,11 +1234,50 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         '<li><a href="../../topics/index.html">Topic pages</a></li>'
         '<li><a href="../../archive.html">Archive</a></li>'
         "</ul>"
-        '<p class="muted" style="margin-top:1.5rem">CompilerSutra Weekly explains '
-        "<em>why you should care</em> — we do not invent benchmarks or completion status.</p>"
+        '<p class="muted" style="margin-top:1.5rem"><strong>Editorial invariant.</strong> '
+        "Never let generated explanations claim more than the underlying source evidence establishes. "
+        "We do not invent benchmarks or completion status.</p>"
         "</section>"
     )
     return "\n".join(parts)
+
+
+def _briefing_cards_html(cards: list[dict]) -> str:
+    items = []
+    for c in cards:
+        chips = []
+        proj = str(c.get("project") or "")
+        if proj:
+            chips.append(html.escape(proj.upper() if len(proj) <= 4 else proj))
+        if c.get("stage"):
+            chips.append(html.escape(str(c["stage"])))
+        for t in c.get("targets") or []:
+            chips.append(html.escape(str(t)))
+        chip_html = "".join(f'<span class="brief-chip">{ch}</span>' for ch in chips)
+        ev = html.escape(c.get("evidence_label") or "Unverified")
+        ev_slug = html.escape(c.get("evidence_slug") or "unverified")
+        sha = html.escape(c.get("sha") or "link")
+        src = html.escape(c.get("source_url") or "#")
+        items.append(
+            f"""<article class="briefing-card" data-evidence="{ev_slug}">
+  <p class="brief-kicker">{html.escape(c["kicker"])} · <span class="stage-pill">{html.escape(c.get("stage") or "")}</span></p>
+  <h3><a href="#{html.escape(c["anchor"])}">{html.escape(c["headline"])}</a></h3>
+  <p class="brief-summary">{html.escape(c["summary"])}</p>
+  <p class="brief-takeaway"><strong>Engineering takeaway.</strong> {html.escape(c["takeaway"])}</p>
+  <div class="brief-meta">{chip_html}
+    <span class="badge tax-evidence evidence-{ev_slug}">{ev}</span>
+    <a class="mono-meta" href="{src}" rel="noopener noreferrer">Commit {sha}</a>
+    <a class="brief-link" href="#{html.escape(c["anchor"])}">Read technical breakdown →</a>
+  </div>
+</article>"""
+        )
+    return (
+        '<section id="briefing" class="issue-section">'
+        "<h2>This week’s five-minute briefing</h2>"
+        '<p class="muted">Start here. Five developments in plain engineering language — '
+        "takeaways checked against commit evidence, not titles alone.</p>"
+        f'<div class="briefing-grid">{"".join(items)}</div></section>'
+    )
 
 
 def _story_anchor(g: dict) -> str:
@@ -1204,17 +1285,23 @@ def _story_anchor(g: dict) -> str:
     return re.sub(r"[^a-zA-Z0-9_-]+", "-", str(sid))[:80]
 
 
-def _issue_story_card(g: dict, *, prominent: bool) -> str:
+def _issue_story_card(g: dict, *, prominent: bool, watchlist: bool = False) -> str:
+    from csweekly.reporters.publication import (
+        editorial_headline,
+        engineering_takeaway,
+        sanitize_group_for_display,
+        score_caption,
+    )
+    from csweekly.reporters.taxonomy_ui import evidence_confidence, project_color_key
+
+    g = sanitize_group_for_display(g)
     anchor = _story_anchor(g)
-    title = html.escape((g.get("title") or "")[:140])
-    what = html.escape(g.get("what_changed") or "")
-    ctx = html.escape(g.get("technical_context") or "")
-    why = html.escape(g.get("why_it_matters") or "Impact not yet clear from the source alone.")
-    who = html.escape(", ".join(g.get("who_should_care") or []) or "Compiler engineers")
+    title = html.escape(editorial_headline(g))
+    what = html.escape((g.get("what_changed") or "").split("\n")[0][:400])
+    why = html.escape(engineering_takeaway(g))
     uncertain = html.escape(g.get("uncertainty_note") or "")
-    level = html.escape(g.get("editorial_level") or ("engineering_analysis" if prominent else "quick_signal"))
     score = g.get("impact_score")
-    score_bit = f" · editorial priority {score:.1f}/10" if isinstance(score, (int, float)) else ""
+    pick = score_caption(score if isinstance(score, (int, float)) else None)
     stories = g.get("stories") or []
     primary = stories[0] if stories else {}
     primary_url = html.escape(primary.get("source_url") or "#")
@@ -1230,64 +1317,86 @@ def _issue_story_card(g: dict, *, prominent: bool) -> str:
             f'<details class="related-commits"><summary>Related commits '
             f"({len(stories) - 1})</summary><p>{' · '.join(related)}</p></details>"
         )
-    from csweekly.reporters.taxonomy_ui import LEVEL_LABELS, evidence_confidence, project_color_key
-
     proj = project_color_key(str(g.get("project") or g.get("category") or ""))
     cls = "story-card issue-story" if prominent else "story-row"
+    if watchlist:
+        cls += " watchlist-item"
     files = []
     for s in stories[:3]:
         for p in (s.get("paths") or [])[:4]:
             if p not in files:
                 files.append(p)
-    files_p = ""
-    if prominent and files:
-        files_p = (
-            '<p class="muted"><strong>Implementation surface.</strong> '
-            f'<code class="path-list">{html.escape(", ".join(files[:6]))}</code></p>'
+    from csweekly.reporters.publication import implementation_explanation, primary_commit
+
+    details_bits = []
+    impl = implementation_explanation(g)
+    commit = primary_commit(g)
+    sha = html.escape(commit.get("short") or "commit")
+    curl = html.escape(commit.get("url") or "#")
+    size = html.escape(commit.get("size") or "")
+    size_bit = f" · {size}" if size else ""
+    details_bits.append(f"<p><strong>Implementation.</strong> {html.escape(impl)}</p>")
+    details_bits.append(
+        f'<p class="dive-commit">Primary commit: '
+        f'<a href="{curl}" rel="noopener noreferrer"><code>{sha}</code></a>{size_bit}</p>'
+    )
+    if files:
+        details_bits.append(
+            f'<p class="muted"><strong>Surface.</strong> '
+            f'{html.escape(str(len(files)))} listed paths'
+            f'{" (expand source for full tree)" if len(files) >= 4 else ""}.</p>'
         )
-    unc_p = (
-        f'<div class="callout callout-warning"><strong>Limitations.</strong> {uncertain}</div>'
-        if uncertain and (prominent or g.get("impact_uncertain"))
-        else ""
+    who = ", ".join(g.get("who_should_care") or [])
+    if who:
+        details_bits.append(f"<p><strong>Who should care.</strong> {html.escape(who)}</p>")
+    if uncertain:
+        details_bits.append(
+            f'<div class="callout callout-warning"><strong>Limitations.</strong> {uncertain}</div>'
+        )
+    details = (
+        '<details class="story-details"><summary>Technical details</summary>'
+        f"{''.join(details_bits)}</details>"
     )
-    notes = g.get("deep_dive_notes") or {}
-    prev = html.escape(notes.get("previous_behavior") or "")
-    prev_p = (
-        f'<p class="muted"><strong>Previous behavior.</strong> {prev}</p>'
-        if prev and "not established" not in prev.lower() and prominent
-        else ""
-    )
+    pick_html = f'<span class="editor-pick">{html.escape(pick)}</span>' if pick and prominent else ""
+    ev_label, ev_slug = evidence_confidence(g)
     if prominent:
-        body = f"""  {prev_p}
-  <div class="callout callout-insight"><strong>What changed.</strong> {what}</div>
-  <p class="muted"><strong>Implementation.</strong> {ctx}</p>
-  <div class="callout callout-verified"><strong>Why it matters.</strong> {why}</div>
-  <p class="muted"><strong>Who should care.</strong> {who}</p>
-  {files_p}
-  {unc_p}"""
-    else:
+        body = f"""  <div class="story-lead">
+    <p class="what-changed">{what}</p>
+    <p class="brief-takeaway"><strong>Why care.</strong> {why}</p>
+  </div>
+  {details}"""
+    elif watchlist:
         body = f"""  <p class="secondary">{why}</p>
-  {unc_p if g.get("impact_uncertain") else ""}"""
-    level_disp = LEVEL_LABELS.get(level, level.replace("_", " "))
-    ev_label, _ = evidence_confidence(g)
-    return f"""<article class="{cls}" id="{html.escape(anchor)}" data-project="{html.escape(proj)}">
-  {taxonomy_badges_html(g, include_type=True)}
+  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>"""
+    else:
+        body = f"""  <p class="secondary">{why}</p>"""
+    return f"""<article class="{cls}" id="{html.escape(anchor)}" data-project="{html.escape(proj)}" data-evidence="{html.escape(ev_slug)}">
+  <div class="story-top">
+    {taxonomy_badges_html(g, compact=True)}
+    {pick_html}
+  </div>
   <h3>{title}</h3>
 {body}
-  <p class="meta"><span class="mono-meta">{html.escape(level_disp)} · {html.escape(ev_label)}{html.escape(score_bit)}</span> · Primary source:
+  <p class="meta"><span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span>
+    · Primary source:
     <a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a></p>
   {related_block}
 </article>"""
 
 
 def _deep_dive_html(g: dict) -> str:
-    notes = g.get("deep_dive_notes") or {}
-    title = html.escape((g.get("title") or "")[:160])
+    from csweekly.reporters.publication import (
+        deep_dive_sections,
+        editorial_headline,
+        primary_commit,
+        sanitize_group_for_display,
+    )
+    from csweekly.reporters.taxonomy_ui import evidence_confidence, project_color_key
+
+    g = sanitize_group_for_display(g)
+    title = html.escape(editorial_headline(g))
     anchor = _story_anchor(g)
-
-    def n(key: str, fallback: str = "") -> str:
-        return html.escape(notes.get(key) or fallback)
-
+    commit = primary_commit(g)
     sources = []
     for s in (g.get("stories") or [])[:8]:
         sha = html.escape((s.get("related_ref") or "")[:8])
@@ -1296,29 +1405,62 @@ def _deep_dive_html(g: dict) -> str:
         sources.append(
             f'<li><a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a> — {summary}</li>'
         )
-    hw = html.escape(", ".join((g.get("hardware_targets") or [])[:3]) or "see paths")
-    who = html.escape(", ".join(g.get("who_should_care") or []) or "Compiler engineers")
-    from csweekly.reporters.taxonomy_ui import evidence_confidence, project_color_key
-
-    ev_label, _ = evidence_confidence(g)
+    hw = ", ".join((g.get("hardware_targets") or [])[:3]) or "see paths"
+    notes = g.get("deep_dive_notes") or {}
+    ev_label, ev_slug = evidence_confidence(g)
     proj = project_color_key(str(g.get("project") or g.get("category") or ""))
+    section_html = []
+    sha = html.escape(commit.get("short") or "commit")
+    url = html.escape(commit.get("url") or "#")
+    size = html.escape(commit.get("size") or "")
+    commit_link = (
+        f'<a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a>'
+    )
+    for sid, heading, body in deep_dive_sections(g):
+        if sid == "implementation":
+            size_bit = f" · {size}" if size else ""
+            # Drop trailing "Open the primary commit…" — the hyperlink covers that.
+            prose = re.sub(
+                r"\s*Open the primary commit for the exact hunks[^.]*\.\s*$",
+                "",
+                body,
+            ).strip()
+            body_html = (
+                f"<p>{html.escape(prose)}</p>"
+                f'<p class="dive-commit">Primary commit: {commit_link}{size_bit}</p>'
+            )
+        elif sid == "reproduce" and commit.get("short"):
+            # Turn bare sha mentions into the same hyperlink.
+            linked = html.escape(body)
+            if commit.get("short"):
+                linked = linked.replace(
+                    html.escape(commit["short"]),
+                    commit_link,
+                )
+            body_html = f"<p>{linked}</p>"
+        else:
+            body_html = f"<p>{html.escape(body)}</p>"
+        section_html.append(
+            f'<div class="dive-section" id="dive-{html.escape(sid)}">'
+            f"<h4>{html.escape(heading)}</h4>"
+            f"{body_html}</div>"
+        )
     return f"""<section id="deep-dive" class="issue-section deep-dive">
-  <h2>Deep dive</h2>
-  <article class="feature-card" id="{html.escape(anchor)}-dive" data-project="{html.escape(proj)}">
-    <p class="card-kicker">Technical deep dive</p>
+  <h2>Engineering deep dive</h2>
+  <p class="muted">One implementation, explained properly — problem → implementation →
+    validation → implications. Unanswered questions stay marked as unknown.</p>
+  <article class="feature-card" id="{html.escape(anchor)}" data-project="{html.escape(proj)}">
+    <p class="card-kicker">Technical deep dive · <span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span></p>
     <h3>{title}</h3>
-    {taxonomy_badges_html(g)}
-    <div class="callout callout-insight"><strong>Background.</strong> {n("background", "See primary commit evidence.")}</div>
-    <div class="callout callout-warning"><strong>Problem.</strong> {n("problem")}</div>
-    <p><strong>Previous behavior.</strong> {n("previous_behavior")}</p>
-    <div class="callout callout-insight"><strong>What changed.</strong> {html.escape(g.get("what_changed") or "")}</div>
-    <p><strong>Implementation.</strong> {n("implementation")}</p>
-    <div class="callout callout-verified"><strong>Validation.</strong> {n("example", n("validation"))}</div>
-    <div class="callout callout-verified"><strong>Why it matters.</strong> {n("implications", g.get("why_it_matters") or "")}</div>
-    <p class="muted"><strong>Who should care.</strong> {who} · <strong>Target.</strong> {hw}</p>
-    <div class="callout callout-cite"><strong>Confidence.</strong> {html.escape(ev_label)} ({n("confidence", "unknown")}; fact-check {n("factcheck", "n/a")})</div>
-    <div class="callout callout-warning"><strong>Limitations.</strong> {n("limits", g.get("uncertainty_note") or "")}</div>
-    <h4>Evidence (primary sources)</h4>
+    {taxonomy_badges_html(g, compact=True)}
+    <p class="muted"><strong>Target.</strong> {html.escape(hw)} ·
+      <strong>Confidence.</strong> {html.escape(ev_label)}
+      ({html.escape(str(notes.get("confidence") or "unknown"))};
+      fact-check {html.escape(str(notes.get("factcheck") or "n/a"))})</p>
+    <div class="dive-sections">
+      {''.join(section_html)}
+    </div>
+    <h4>Primary sources</h4>
     <ul class="source-list">{''.join(sources)}</ul>
   </article>
 </section>"""

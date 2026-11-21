@@ -390,16 +390,25 @@ def write_issue(issue: WeeklyIssue, reports_dir: Path) -> Path:
 
 
 def _story_card(group: ChangeGroup, *, index: int, compact: bool = False) -> list[str]:
-    proj = (group.project or group.category or "compiler").upper()
-    title = group.title[:120]
-    what = group.what_changed or title
-    why = group.why_it_matters or "The practical impact is not yet clear from the commit message alone."
-    who = ", ".join(group.who_should_care) if group.who_should_care else "Compiler engineers"
-    ctype = group.change_type or "Other"
-    stage = ", ".join(group.stages[:2]) if group.stages else "—"
-    domain = ", ".join(group.domains[:2]) if group.domains else "—"
-    sha = (group.stories[0].related_ref or "")[:8]
-    url = group.stories[0].source_url
+    from csweekly.reporters.publication import (
+        editorial_headline,
+        engineering_takeaway,
+        implementation_explanation,
+        sanitize_group_for_display,
+    )
+
+    raw = sanitize_group_for_display(group.model_dump(mode="json"))
+    proj = (raw.get("project") or raw.get("category") or "compiler").upper()
+    title = editorial_headline(raw)
+    what = re.sub(r"\s+", " ", (raw.get("what_changed") or title)).strip()
+    why = engineering_takeaway(raw)
+    who = ", ".join(raw.get("who_should_care") or []) or "Compiler engineers"
+    ctype = raw.get("change_type") or "Other"
+    stage = ", ".join((raw.get("stages") or [])[:2]) or "—"
+    domain = ", ".join((raw.get("domains") or [])[:2]) or "—"
+    stories = raw.get("stories") or []
+    sha = ((stories[0].get("related_ref") if stories else "") or "")[:8]
+    url = (stories[0].get("source_url") if stories else "") or "#"
     lines = [
         f"### {index}. [{proj}] {title}",
         "",
@@ -413,6 +422,9 @@ def _story_card(group: ChangeGroup, *, index: int, compact: bool = False) -> lis
     if not compact:
         lines.extend(
             [
+                f"**Implementation**  ",
+                implementation_explanation(raw),
+                "",
                 f"**Who should care**  ",
                 who,
                 "",
@@ -423,13 +435,14 @@ def _story_card(group: ChangeGroup, *, index: int, compact: bool = False) -> lis
     else:
         lines.append(f"**Who:** {who} · **Type:** {ctype}")
         lines.append("")
-    if len(group.stories) == 1:
+    if len(stories) <= 1:
         lines.append(f"**Source:** [`{sha}`]({url})")
     else:
         links = ", ".join(
-            f"[`{(s.related_ref or '')[:7]}`]({s.source_url})" for s in group.stories[:4]
+            f"[`{(s.get('related_ref') or '')[:7]}`]({s.get('source_url') or '#'})"
+            for s in stories[:4]
         )
-        extra = f" (+{len(group.stories) - 4})" if len(group.stories) > 4 else ""
+        extra = f" (+{len(stories) - 4})" if len(stories) > 4 else ""
         lines.append(f"**Source:** {links}{extra}")
     lines.append("")
     return lines

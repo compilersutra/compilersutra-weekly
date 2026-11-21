@@ -57,11 +57,11 @@
     }
   },
   "week_overview": [
-    "01 \u2014 The biggest development: [lldb][test] Skip more tests that don't work with WebAssembly (#244248). Affects WebAssembly, AArch64 lowering / target code generation. Matters for Languages compiler engineering\u2026 (Runtime & Toolchain \u00b7 Languages)",
-    "02 \u2014 GPU / accelerator compilers: [AMDGPU] Add an async barrier arrival workaround (#238539). Affects AMDGPU lowering / target code generation. Matters for GPU compiler engineering. Lives in the Backend\u2026 (Backend \u00b7 GPU)",
-    "03 \u2014 Backend and code generation: [LoopVectorize] Add llvm.loop.vectorize.fp_unsafe.{enable,disable}\u2026. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2026 (Middle-end \u00b7 CPU)",
-    "04 \u2014 Also on the radar: [NVPTX] Add support for s2f6x2 conversion on sm_107a (#243416). Affects NVPTX lowering / target code generation. Matters for GPU compiler engineering. Lives in the Backend of\u2026 (Backend \u00b7 GPU)",
-    "05 \u2014 Also on the radar: [VectorUtils] Allow trivial vectorization of llvm.{sshl,ushl}.sat\u2026. Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2026 (Middle-end \u00b7 CPU)"
+    "01 \u2014 The biggest development: Skip more tests that don't work with WebAssembly. These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. Engineering focus: Runtime & Toolchain (WebAssembly) \u2026 (Runtime & Toolchain)",
+    "02 \u2014 Backend and code generation: Avoid false dependency for BSF. BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. Engineering\u2026 (Backend)",
+    "03 \u2014 GPU / accelerator compilers: Add an async barrier arrival workaround. Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. Engineering focus: Backend\u2026 (Backend)",
+    "04 \u2014 Also on the radar: Fix moveInstrNotifier on empty DAG. This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. Engineering focus: Middle-end \u2026 (Middle-end)",
+    "05 \u2014 Frontend and language infrastructure: Implement relative-vtable-lookups. This patch handles lookups from a relative-vtable. Engineering focus: Frontend \u2014 Languages teams should confirm behavior in the linked\u2026 (Frontend)"
   ],
   "stories": [
     {
@@ -80398,13 +80398,11 @@
       ],
       "story_id": "llvm-lldb-lldb-test",
       "what_changed": "These are breaking the new Green Dragon matrix bot that now also tests\nWebAssembly. This patch just adds skipIfWasm to all broken tests I could\nsee in the log to unbreak the bot.",
-      "technical_context": "Primary `8e1359f419e7` (+24/\u22121). Files: lldb/test/API/commands/frame/recognizer/step-through/TestFrameRecognizerStepThrough.py, lldb/test/API/commands/process/detach-launched/TestDetachLaunched.py, lldb/test/API/functionalities/breakpoint/breakpoint_while_running/TestBreakpointWhileRunning.py, lldb/test/API/functionalities/breakpoint/consecutive_breakpoints/TestConsecutiveBreakpoints.py, lldb/test/API/functionalities/breakpoint/step_over_breakpoint/TestStepOverBreakpoint.py, lldb/test/API/functionalities/breakpoint/thread_plan_user_breakpoint/TestThreadPlanUserBreakpoint.py, lldb/test/API/functionalities/location-list-lookup/TestLocationListLookup.py, lldb/test/API/functionalities/scripted_extensions/TestScriptedExtensionsDiagnostics.py. Diff-referenced symbols include: DetachLaunchedTestCase, ConsecutiveBreakpointsTestCase, StepOverBreakpointsTestCase, ThreadPlanUserBreakpointsTestCase, LocationListLookupTestCase, TestScriptedExtensionsDiagnostics, StepAvoidsNoDebugTestCase, StepUntilTestCase. Diff inspected locally; see primary source for full hunks.",
-      "why_it_matters": "Affects WebAssembly, AArch64 lowering / target code generation. Matters for Languages compiler engineering. Lives in the Runtime & Toolchain of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: Languages developers, CPU developers, WebAssembly backend engineers.",
+      "technical_context": "These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. This patch just adds skipIfWasm to all broken tests I could see in the log to unbreak the bot. The change touches 17 LLDB API test modules (+24/\u22121). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. Engineering focus: Runtime & Toolchain (WebAssembly) \u2014 Languages teams should confirm behavior in the linked source.",
       "who_should_care": [
         "Languages developers",
-        "CPU developers",
         "WebAssembly backend engineers",
-        "AArch64 backend engineers",
         "Runtime & Toolchain engineers"
       ],
       "uncertainty_note": "Explanation grounded in the commit subject; open the source for details.",
@@ -80424,8 +80422,7 @@
         "Tooling"
       ],
       "hardware_targets": [
-        "WebAssembly",
-        "AArch64"
+        "WebAssembly"
       ],
       "impact_uncertain": false,
       "deep_dive_notes": {
@@ -80849,8 +80846,8 @@
       ],
       "story_id": "gcc-gcc-i386",
       "what_changed": "BSF, like BSR, leaves its destination unmodified when the source is\nzero, so the hardware treats the destination as an input.  The new\nX86_TUNE_AVOID_FALSE_DEP_FOR_BSR tuning already clears the destination\nbefore BSR, but BSF was not handled:",
-      "technical_context": "Primary `01f482bf9819` (+75/\u221215). Files: gcc/config/i386/i386.md, gcc/config/i386/x86-tune.def, gcc/testsuite/gcc.target/i386/pr128662-1.c, gcc/testsuite/gcc.target/i386/pr128662-2.c. Diff-referenced symbols include: optimize_function_for_speed_p, compare:CCZ, ctz:SWI48, TARGET_CPU_P, optimize_function_for_size_p, DEF_TUNE.",
-      "why_it_matters": "Affects X86 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, X86 backend engineers, Backend engineers.",
+      "technical_context": "BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. The new X86_TUNE_AVOID_FALSE_DEP_FOR_BSR tuning already clears the destination before BSR, but BSF was not handled:. The change touches 4 files under gcc/ (+75/\u221215). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. Engineering focus: Backend (X86) \u2014 CPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "CPU developers",
         "X86 backend engineers",
@@ -81115,8 +81112,8 @@
       ],
       "story_id": "llvm-llvm-amdgpu-add",
       "what_changed": "Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround\nwhen XNACK is enabled or unspecified.",
-      "technical_context": "Primary `63b8d2fd94ba` (+1266/\u221241). Files: llvm/docs/ReleaseNotes.md, llvm/lib/Target/AMDGPU/AMDGPU.h, llvm/lib/Target/AMDGPU/AMDGPUInsertDelayAlu.cpp, llvm/lib/Target/AMDGPU/AMDGPUMCInstLower.cpp, llvm/lib/Target/AMDGPU/AMDGPUPassRegistry.def, llvm/lib/Target/AMDGPU/AMDGPUTargetMachine.cpp, llvm/lib/Target/AMDGPU/CMakeLists.txt, llvm/lib/Target/AMDGPU/FLATInstructions.td. Diff-referenced symbols include: createSIAnnotateControlFlowLegacyPass, getOpcode, AMDGPUAsmPrinter::emitInstruction, MACHINE_FUNCTION_PASS, SIInsertAsyncBarrierArriveWorkaroundPass, LLVMInitializeAMDGPUTarget, GCNPassConfig::addPreSched2, mayNeedAsyncBarrierArriveWorkaround.",
-      "why_it_matters": "Affects AMDGPU lowering / target code generation. Matters for GPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: GPU developers, AMDGPU backend engineers, Backend engineers.",
+      "technical_context": "Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. The change touches 20 files under llvm/ (+1266/\u221241). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. Engineering focus: Backend (AMDGPU) \u2014 GPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "GPU developers",
         "AMDGPU backend engineers",
@@ -81354,8 +81351,8 @@
       ],
       "story_id": "llvm-llvm-sandboxvec-dag",
       "what_changed": "This patch fixes a crash inside an assertion in the DAG move instruction\nnotifier, when the DAG was empty.\nThe fix is trivial: if the DAG is empty there is nothing to be done, so\nwe should early return.",
-      "technical_context": "Primary `68d7a32f97c0` (+24/\u22120). Files: llvm/lib/Transforms/Vectorize/SandboxVectorizer/DependencyGraph.cpp, llvm/unittests/Transforms/Vectorize/SandboxVectorizer/DependencyGraphTest.cpp. Diff-referenced symbols include: DependencyGraph::notifyMoveInstr, TEST_F.",
-      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engineers.",
+      "technical_context": "This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. The fix is trivial: if the DAG is empty there is nothing to be done, so we should early return. The change touches 2 test files (+24/\u22120). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. Engineering focus: Middle-end \u2014 CPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "CPU developers",
         "Middle-end engineers"
@@ -81590,8 +81587,8 @@
       ],
       "story_id": "llvm-clang-cir-implement",
       "what_changed": "This patch handles lookups from a relative-vtable. While the rest of the\nrelative V-table work is quite large, this ends up being pretty easy to\nsplit up. Effectively, we now just make sure we lower to the LLVM\ndialect properly for loads of a relative Vtable.",
-      "technical_context": "Primary `6516d75ae90d` (+268/\u221222). Files: clang/lib/CIR/Lowering/DirectToLLVM/LowerToLLVM.cpp, clang/test/CIR/CodeGenCXX/relative-vtable-lookups.cpp, clang/test/CIR/Lowering/vtable-relative-lookups.cir. Diff-referenced symbols include: CIRToLLVMVTableGetVPtrOpLowering::matchAndRewrite, usesRelativeVTables, CIRToLLVMVTableGetVirtualFnByOffsetOpLowering::matchAndRewrite, CIRToLLVMVTableGetOffsetOpLowering::matchAndRewrite.",
-      "why_it_matters": "Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: Languages developers, Frontend engineers.",
+      "technical_context": "This patch handles lookups from a relative-vtable. While the rest of the relative V-table work is quite large, this ends up being pretty easy to split up. The change touches 3 test files (+268/\u221222). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "This patch handles lookups from a relative-vtable. Engineering focus: Frontend \u2014 Languages teams should confirm behavior in the linked source.",
       "who_should_care": [
         "Languages developers",
         "Frontend engineers"
@@ -81832,8 +81829,8 @@
       ],
       "story_id": "llvm-clang-cir-openmp",
       "what_changed": "Add `-triple x86_64-unknown-linux-gnu` to tests added in \n61067a5096e (#229256) to avoid defaulting to the host target triple\nand failing on non-x86 builders like\nhttps://lab.llvm.org/buildbot/#/builders/231/builds/2223.",
-      "technical_context": "Primary `1d7320348805` (+6/\u22123). Files: clang/test/CIR/CodeGenOpenMP/for-loop-forms.c, clang/test/CIR/CodeGenOpenMP/parallel-for.c, clang/test/CIR/CodeGenOpenMP/target-parallel-for.c.",
-      "why_it_matters": "Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: Languages developers, Frontend engineers.",
+      "technical_context": "Add `-triple x86_64-unknown-linux-gnu` to tests added in 61067a5096e (#229256) to avoid defaulting to the host target triple and failing on non-x86 builders like https://lab. llvm. The change touches 3 test files (+6/\u22123). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "Add `-triple x86_64-unknown-linux-gnu` to tests added in 61067a5096e (#229256) to avoid defaulting to the host target triple and failing on non-x86 builders like https://lab.llvm.org/buildbot/#/builders/231/builds/2223. Engineering focus: Frontend \u2014 Languages teams should confirm behavior in the linked source.",
       "who_should_care": [
         "Languages developers",
         "Frontend engineers"
@@ -81989,8 +81986,8 @@
       ],
       "story_id": "llvm-llvm-loopvectorize-add",
       "what_changed": "Add a new per-loop metadata key llvm.loop.vectorize.fp_unsafe to\nexplicitly control whether the Loop Vectorizer may apply floating-point\ntransforms that change the computed result:",
-      "technical_context": "Primary `a2f1d1aeb6f5` (+282/\u22129). Files: llvm/docs/LangRef.md, llvm/include/llvm/Transforms/Vectorize/LoopVectorizationLegality.h, llvm/lib/Transforms/Vectorize/LoopVectorizationLegality.cpp, llvm/test/Transforms/LoopVectorize/ARM/fp-unsafe-metadata.ll, llvm/test/Transforms/LoopVectorize/fp-unsafe-metadata.ll. Diff-referenced symbols include: LoopVectorizeHints::LoopVectorizeHints, TheLoop, LoopVectorizeHints::emitRemarkWithHints, LoopVectorizeHints::getHintsFromMetadata, LoopVectorizeHints::setHint, no_hint, fp_unsafe_enable, fp_unsafe_disable.",
-      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engineers.",
+      "technical_context": "Add a new per-loop metadata key llvm. loop. The change touches 5 files under llvm/ (+282/\u22129). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "Add a new per-loop metadata key llvm.loop.vectorize.fp_unsafe to explicitly control whether the Loop Vectorizer may apply floating-point transforms that change the computed result:. Engineering focus: Middle-end \u2014 CPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "CPU developers",
         "Middle-end engineers"
@@ -82149,8 +82146,8 @@
       ],
       "story_id": "llvm-llvm-nvptx-add",
       "what_changed": "This change adds `sm_107a` to the list of supported architectures for\n`s2f6x2` conversion intrinsics in the NVPTX backend, and tests for the\nsame.",
-      "technical_context": "Primary `f8632aadcd6d` (+3/\u22122). Files: llvm/lib/Target/NVPTX/NVPTXInstrInfo.td, llvm/test/CodeGen/NVPTX/convert_s2f6x2_sm_100a.ll.",
-      "why_it_matters": "Affects NVPTX lowering / target code generation. Matters for GPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: GPU developers, NVPTX backend engineers, Backend engineers.",
+      "technical_context": "This change adds `sm_107a` to the list of supported architectures for `s2f6x2` conversion intrinsics in the NVPTX backend, and tests for the same. The change touches 2 files under llvm/ (+3/\u22122). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "This change adds `sm_107a` to the list of supported architectures for `s2f6x2` conversion intrinsics in the NVPTX backend, and tests for the same. Engineering focus: Backend (NVPTX) \u2014 GPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "GPU developers",
         "NVPTX backend engineers",
@@ -82309,8 +82306,8 @@
       ],
       "story_id": "llvm-llvm-vectorutils-allow",
       "what_changed": "Constant folding separately implemented in\nhttps://github.com/llvm/llvm-project/pull/241127.",
-      "technical_context": "Primary `df6c328b56a2` (+98/\u22120). Files: llvm/lib/Analysis/VectorUtils.cpp, llvm/test/Transforms/LoopVectorize/intrinsic.ll, llvm/test/Transforms/Scalarizer/intrinsics.ll. Diff-referenced symbols include: llvm::isTriviallyVectorizable, sshl_sat_i64, ushl_sat_i64, v2f32, scalarize_ldexp_v2f32.",
-      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engineers.",
+      "technical_context": "Constant folding separately implemented in https://github. com/llvm/llvm-project/pull/241127. The change touches 3 test files (+98/\u22120). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "Constant folding separately implemented in https://github.com/llvm/llvm-project/pull/241127. Engineering focus: Middle-end \u2014 CPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "CPU developers",
         "Middle-end engineers"
@@ -91598,8 +91595,8 @@
       ],
       "story_id": "gcc-gcc-i386",
       "what_changed": "BSF, like BSR, leaves its destination unmodified when the source is\nzero, so the hardware treats the destination as an input.  The new\nX86_TUNE_AVOID_FALSE_DEP_FOR_BSR tuning already clears the destination\nbefore BSR, but BSF was not handled:",
-      "technical_context": "Primary `01f482bf9819` (+75/\u221215). Files: gcc/config/i386/i386.md, gcc/config/i386/x86-tune.def, gcc/testsuite/gcc.target/i386/pr128662-1.c, gcc/testsuite/gcc.target/i386/pr128662-2.c. Diff-referenced symbols include: optimize_function_for_speed_p, compare:CCZ, ctz:SWI48, TARGET_CPU_P, optimize_function_for_size_p, DEF_TUNE.",
-      "why_it_matters": "Affects X86 lowering / target code generation. Matters for CPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, X86 backend engineers, Backend engineers.",
+      "technical_context": "BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. The new X86_TUNE_AVOID_FALSE_DEP_FOR_BSR tuning already clears the destination before BSR, but BSF was not handled:. The change touches 4 files under gcc/ (+75/\u221215). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. Engineering focus: Backend (X86) \u2014 CPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "CPU developers",
         "X86 backend engineers",
@@ -91864,8 +91861,8 @@
       ],
       "story_id": "llvm-llvm-amdgpu-add",
       "what_changed": "Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround\nwhen XNACK is enabled or unspecified.",
-      "technical_context": "Primary `63b8d2fd94ba` (+1266/\u221241). Files: llvm/docs/ReleaseNotes.md, llvm/lib/Target/AMDGPU/AMDGPU.h, llvm/lib/Target/AMDGPU/AMDGPUInsertDelayAlu.cpp, llvm/lib/Target/AMDGPU/AMDGPUMCInstLower.cpp, llvm/lib/Target/AMDGPU/AMDGPUPassRegistry.def, llvm/lib/Target/AMDGPU/AMDGPUTargetMachine.cpp, llvm/lib/Target/AMDGPU/CMakeLists.txt, llvm/lib/Target/AMDGPU/FLATInstructions.td. Diff-referenced symbols include: createSIAnnotateControlFlowLegacyPass, getOpcode, AMDGPUAsmPrinter::emitInstruction, MACHINE_FUNCTION_PASS, SIInsertAsyncBarrierArriveWorkaroundPass, LLVMInitializeAMDGPUTarget, GCNPassConfig::addPreSched2, mayNeedAsyncBarrierArriveWorkaround.",
-      "why_it_matters": "Affects AMDGPU lowering / target code generation. Matters for GPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: GPU developers, AMDGPU backend engineers, Backend engineers.",
+      "technical_context": "Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. The change touches 20 files under llvm/ (+1266/\u221241). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. Engineering focus: Backend (AMDGPU) \u2014 GPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "GPU developers",
         "AMDGPU backend engineers",
@@ -92103,8 +92100,8 @@
       ],
       "story_id": "llvm-llvm-sandboxvec-dag",
       "what_changed": "This patch fixes a crash inside an assertion in the DAG move instruction\nnotifier, when the DAG was empty.\nThe fix is trivial: if the DAG is empty there is nothing to be done, so\nwe should early return.",
-      "technical_context": "Primary `68d7a32f97c0` (+24/\u22120). Files: llvm/lib/Transforms/Vectorize/SandboxVectorizer/DependencyGraph.cpp, llvm/unittests/Transforms/Vectorize/SandboxVectorizer/DependencyGraphTest.cpp. Diff-referenced symbols include: DependencyGraph::notifyMoveInstr, TEST_F.",
-      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engineers.",
+      "technical_context": "This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. The fix is trivial: if the DAG is empty there is nothing to be done, so we should early return. The change touches 2 test files (+24/\u22120). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. Engineering focus: Middle-end \u2014 CPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "CPU developers",
         "Middle-end engineers"
@@ -92339,8 +92336,8 @@
       ],
       "story_id": "llvm-clang-cir-implement",
       "what_changed": "This patch handles lookups from a relative-vtable. While the rest of the\nrelative V-table work is quite large, this ends up being pretty easy to\nsplit up. Effectively, we now just make sure we lower to the LLVM\ndialect properly for loads of a relative Vtable.",
-      "technical_context": "Primary `6516d75ae90d` (+268/\u221222). Files: clang/lib/CIR/Lowering/DirectToLLVM/LowerToLLVM.cpp, clang/test/CIR/CodeGenCXX/relative-vtable-lookups.cpp, clang/test/CIR/Lowering/vtable-relative-lookups.cir. Diff-referenced symbols include: CIRToLLVMVTableGetVPtrOpLowering::matchAndRewrite, usesRelativeVTables, CIRToLLVMVTableGetVirtualFnByOffsetOpLowering::matchAndRewrite, CIRToLLVMVTableGetOffsetOpLowering::matchAndRewrite.",
-      "why_it_matters": "Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: Languages developers, Frontend engineers.",
+      "technical_context": "This patch handles lookups from a relative-vtable. While the rest of the relative V-table work is quite large, this ends up being pretty easy to split up. The change touches 3 test files (+268/\u221222). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "This patch handles lookups from a relative-vtable. Engineering focus: Frontend \u2014 Languages teams should confirm behavior in the linked source.",
       "who_should_care": [
         "Languages developers",
         "Frontend engineers"
@@ -92581,8 +92578,8 @@
       ],
       "story_id": "llvm-clang-cir-openmp",
       "what_changed": "Add `-triple x86_64-unknown-linux-gnu` to tests added in \n61067a5096e (#229256) to avoid defaulting to the host target triple\nand failing on non-x86 builders like\nhttps://lab.llvm.org/buildbot/#/builders/231/builds/2223.",
-      "technical_context": "Primary `1d7320348805` (+6/\u22123). Files: clang/test/CIR/CodeGenOpenMP/for-loop-forms.c, clang/test/CIR/CodeGenOpenMP/parallel-for.c, clang/test/CIR/CodeGenOpenMP/target-parallel-for.c.",
-      "why_it_matters": "Matters for Languages compiler engineering. Lives in the Frontend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: Languages developers, Frontend engineers.",
+      "technical_context": "Add `-triple x86_64-unknown-linux-gnu` to tests added in 61067a5096e (#229256) to avoid defaulting to the host target triple and failing on non-x86 builders like https://lab. llvm. The change touches 3 test files (+6/\u22123). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "Add `-triple x86_64-unknown-linux-gnu` to tests added in 61067a5096e (#229256) to avoid defaulting to the host target triple and failing on non-x86 builders like https://lab.llvm.org/buildbot/#/builders/231/builds/2223. Engineering focus: Frontend \u2014 Languages teams should confirm behavior in the linked source.",
       "who_should_care": [
         "Languages developers",
         "Frontend engineers"
@@ -92738,8 +92735,8 @@
       ],
       "story_id": "llvm-llvm-loopvectorize-add",
       "what_changed": "Add a new per-loop metadata key llvm.loop.vectorize.fp_unsafe to\nexplicitly control whether the Loop Vectorizer may apply floating-point\ntransforms that change the computed result:",
-      "technical_context": "Primary `a2f1d1aeb6f5` (+282/\u22129). Files: llvm/docs/LangRef.md, llvm/include/llvm/Transforms/Vectorize/LoopVectorizationLegality.h, llvm/lib/Transforms/Vectorize/LoopVectorizationLegality.cpp, llvm/test/Transforms/LoopVectorize/ARM/fp-unsafe-metadata.ll, llvm/test/Transforms/LoopVectorize/fp-unsafe-metadata.ll. Diff-referenced symbols include: LoopVectorizeHints::LoopVectorizeHints, TheLoop, LoopVectorizeHints::emitRemarkWithHints, LoopVectorizeHints::getHintsFromMetadata, LoopVectorizeHints::setHint, no_hint, fp_unsafe_enable, fp_unsafe_disable.",
-      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engineers.",
+      "technical_context": "Add a new per-loop metadata key llvm. loop. The change touches 5 files under llvm/ (+282/\u22129). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "Add a new per-loop metadata key llvm.loop.vectorize.fp_unsafe to explicitly control whether the Loop Vectorizer may apply floating-point transforms that change the computed result:. Engineering focus: Middle-end \u2014 CPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "CPU developers",
         "Middle-end engineers"
@@ -92898,8 +92895,8 @@
       ],
       "story_id": "llvm-llvm-nvptx-add",
       "what_changed": "This change adds `sm_107a` to the list of supported architectures for\n`s2f6x2` conversion intrinsics in the NVPTX backend, and tests for the\nsame.",
-      "technical_context": "Primary `f8632aadcd6d` (+3/\u22122). Files: llvm/lib/Target/NVPTX/NVPTXInstrInfo.td, llvm/test/CodeGen/NVPTX/convert_s2f6x2_sm_100a.ll.",
-      "why_it_matters": "Affects NVPTX lowering / target code generation. Matters for GPU compiler engineering. Lives in the Backend of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: GPU developers, NVPTX backend engineers, Backend engineers.",
+      "technical_context": "This change adds `sm_107a` to the list of supported architectures for `s2f6x2` conversion intrinsics in the NVPTX backend, and tests for the same. The change touches 2 files under llvm/ (+3/\u22122). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "This change adds `sm_107a` to the list of supported architectures for `s2f6x2` conversion intrinsics in the NVPTX backend, and tests for the same. Engineering focus: Backend (NVPTX) \u2014 GPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "GPU developers",
         "NVPTX backend engineers",
@@ -93058,8 +93055,8 @@
       ],
       "story_id": "llvm-llvm-vectorutils-allow",
       "what_changed": "Constant folding separately implemented in\nhttps://github.com/llvm/llvm-project/pull/241127.",
-      "technical_context": "Primary `df6c328b56a2` (+98/\u22120). Files: llvm/lib/Analysis/VectorUtils.cpp, llvm/test/Transforms/LoopVectorize/intrinsic.ll, llvm/test/Transforms/Scalarizer/intrinsics.ll. Diff-referenced symbols include: llvm::isTriviallyVectorizable, sshl_sat_i64, ushl_sat_i64, v2f32, scalarize_ldexp_v2f32.",
-      "why_it_matters": "Matters for CPU compiler engineering. Lives in the Middle-end of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: CPU developers, Middle-end engineers.",
+      "technical_context": "Constant folding separately implemented in https://github. com/llvm/llvm-project/pull/241127. The change touches 3 test files (+98/\u22120). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+      "why_it_matters": "Constant folding separately implemented in https://github.com/llvm/llvm-project/pull/241127. Engineering focus: Middle-end \u2014 CPU teams should confirm behavior in the linked source.",
       "who_should_care": [
         "CPU developers",
         "Middle-end engineers"
@@ -102542,13 +102539,11 @@
     ],
     "story_id": "llvm-lldb-lldb-test",
     "what_changed": "These are breaking the new Green Dragon matrix bot that now also tests\nWebAssembly. This patch just adds skipIfWasm to all broken tests I could\nsee in the log to unbreak the bot.",
-    "technical_context": "Primary `8e1359f419e7` (+24/\u22121). Files: lldb/test/API/commands/frame/recognizer/step-through/TestFrameRecognizerStepThrough.py, lldb/test/API/commands/process/detach-launched/TestDetachLaunched.py, lldb/test/API/functionalities/breakpoint/breakpoint_while_running/TestBreakpointWhileRunning.py, lldb/test/API/functionalities/breakpoint/consecutive_breakpoints/TestConsecutiveBreakpoints.py, lldb/test/API/functionalities/breakpoint/step_over_breakpoint/TestStepOverBreakpoint.py, lldb/test/API/functionalities/breakpoint/thread_plan_user_breakpoint/TestThreadPlanUserBreakpoint.py, lldb/test/API/functionalities/location-list-lookup/TestLocationListLookup.py, lldb/test/API/functionalities/scripted_extensions/TestScriptedExtensionsDiagnostics.py. Diff-referenced symbols include: DetachLaunchedTestCase, ConsecutiveBreakpointsTestCase, StepOverBreakpointsTestCase, ThreadPlanUserBreakpointsTestCase, LocationListLookupTestCase, TestScriptedExtensionsDiagnostics, StepAvoidsNoDebugTestCase, StepUntilTestCase. Diff inspected locally; see primary source for full hunks.",
-    "why_it_matters": "Affects WebAssembly, AArch64 lowering / target code generation. Matters for Languages compiler engineering. Lives in the Runtime & Toolchain of the pipeline. The same commit touches tests \u2014 use those as the reproduce entry point. Primary audience: Languages developers, CPU developers, WebAssembly backend engineers.",
+    "technical_context": "These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. This patch just adds skipIfWasm to all broken tests I could see in the log to unbreak the bot. The change touches 17 LLDB API test modules (+24/\u22121). Open the primary commit for the exact hunks \u2014 this section explains the mechanism, not the file list.",
+    "why_it_matters": "These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. Engineering focus: Runtime & Toolchain (WebAssembly) \u2014 Languages teams should confirm behavior in the linked source.",
     "who_should_care": [
       "Languages developers",
-      "CPU developers",
       "WebAssembly backend engineers",
-      "AArch64 backend engineers",
       "Runtime & Toolchain engineers"
     ],
     "uncertainty_note": "Explanation grounded in the commit subject; open the source for details.",
@@ -102568,8 +102563,7 @@
       "Tooling"
     ],
     "hardware_targets": [
-      "WebAssembly",
-      "AArch64"
+      "WebAssembly"
     ],
     "impact_uncertain": false,
     "deep_dive_notes": {

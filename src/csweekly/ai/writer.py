@@ -99,20 +99,30 @@ def write_deterministic(pack: EvidencePack, *, level: str = "engineering_analysi
                 "confirm exact prior behavior in the linked diff."
             )
 
+    # Prose-first implementation note. File lists stay in evidence metadata,
+    # not the reader-facing explanation (HTML links the primary commit).
+    n_files = len(primary.files)
+    surface = (
+        f"{n_files} LLDB API test modules"
+        if any("lldb/test" in f for f in primary.files[:6])
+        else f"{n_files} files"
+        if n_files
+        else "the inspected sources"
+    )
     impl_parts = [
-        f"Primary `{primary.sha[:12]}` (+{primary.additions}/−{primary.deletions}).",
-        f"Files: {files}.",
+        (first or subject).rstrip(".") + ".",
+        f"Touches {surface} (+{primary.additions}/−{primary.deletions}).",
     ]
-    if funcs:
-        impl_parts.append(f"Diff-referenced symbols include: {funcs}.")
+    if funcs and level == "deep_dive":
+        # Mention at most a few symbols — never dump the full symbol list inline.
+        top = ", ".join(primary.functions[:3])
+        impl_parts.append(f"Notable symbols include {top}.")
     if level == "deep_dive" and primary.diff_excerpt:
-        # Keep a short factual note — do not invent IR
-        impl_parts.append(
-            "Diff inspected locally; see primary source for full hunks."
-        )
+        impl_parts.append("Diff inspected locally; open the primary commit for full hunks.")
 
     validation = (
-        f"Tests touched: {tests}."
+        f"Validation is carried by {len(primary.tests)} touched test path(s); "
+        f"use the primary commit as the reproduce entry point."
         if tests
         else "No obvious test paths in the primary commit file list."
     )
@@ -182,33 +192,55 @@ def _why_it_matters_from_evidence(
     audience: list[str],
     has_tests: bool,
 ) -> str:
-    """Implication/audience prose — must not clone the commit body / what_changed."""
-    bits: list[str] = []
-    if pack.hardware_targets:
-        bits.append(
-            "Affects "
-            + ", ".join(pack.hardware_targets[:3])
-            + " lowering / target code generation."
-        )
-    if pack.domains:
-        bits.append(f"Matters for {pack.domains[0]} compiler engineering.")
-    if pack.stages:
-        bits.append(f"Lives in the {pack.stages[0]} of the pipeline.")
-    if has_tests:
-        bits.append("The same commit touches tests — use those as the reproduce entry point.")
+    """Implication prose grounded in evidence — never taxonomy filler."""
     who = ", ".join(audience[:3]) or "Compiler engineers"
+    stage = pack.stages[0] if pack.stages else ""
+    domain = pack.domains[0] if pack.domains else ""
+    targets = [t for t in pack.hardware_targets[:3] if t]
+    files = pack.primary.files if pack.primary else []
+    path_blob = " ".join(files[:12]).lower()
+
+    # Drop CPU/backend targets the file list does not support (e.g. LLDB tests ≠ AArch64).
+    if files and ("lldb/" in path_blob or path_blob.count("/test/") >= 2):
+        subj = f"{subject or ''}\n{first or ''}".lower()
+        keep: list[str] = []
+        for t in targets:
+            tl = t.lower()
+            if "wasm" in tl or "webassembly" in tl:
+                if "wasm" in subj or "webassembly" in subj or "wasm" in path_blob:
+                    keep.append(t)
+            elif tl in subj or tl in path_blob:
+                keep.append(t)
+        targets = keep
+
+    bits: list[str] = []
+    # Prefer a concrete engineering consequence from the commit body.
+    if first:
+        lead = first.strip().split("\n")[0][:180].rstrip(".")
+        bits.append(f"{lead}.")
+    target_bit = f" for {', '.join(targets)}" if targets else ""
+    if stage and domain:
+        bits.append(
+            f"This is {stage.lower()} work{target_bit} with relevance to {domain} engineers."
+        )
+    elif stage:
+        bits.append(f"This lands in the {stage.lower()}{target_bit}.")
+    elif targets:
+        bits.append(f"Target-relevant change{target_bit}.")
+    if has_tests:
+        bits.append("Changed tests are the reproduce entry point.")
     bits.append(f"Primary audience: {who}.")
     why = " ".join(bits)
-    # Hard guard: never publish why identical to the change description
+
     if first and _norm_cmp(why) == _norm_cmp(first[:500]):
         why = (
-            f"Engineers should inspect the linked diff for “{subject[:72]}”; "
-            f"broader product impact is not claimed beyond the evidence pack. "
-            f"Audience: {who}."
+            f"Engineers maintaining related {stage or 'pipeline'} code should inspect "
+            f"“{subject[:72]}” in the linked diff; broader impact is not claimed beyond "
+            f"the evidence pack. Audience: {who}."
         )
     if _norm_cmp(why) == _norm_cmp(subject):
         why = (
-            f"Track this if you maintain related pipeline code. "
+            f"Track this if you maintain related {stage or 'pipeline'} code. "
             f"Audience: {who}. Broader impact is not established beyond the source."
         )
     return why

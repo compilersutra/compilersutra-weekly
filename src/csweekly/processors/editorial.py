@@ -256,6 +256,11 @@ def _briefing_slot_label(g: ChangeGroup, index: int) -> str:
 
 def week_overview_bullets(groups: list[ChangeGroup]) -> list[str]:
     """Five-minute briefing: labeled editorial slots, not a raw title dump."""
+    from csweekly.reporters.publication import (
+        briefing_cards_from_payload,
+        briefing_overview_lines,
+    )
+
     ranked = sorted(
         [
             g
@@ -269,27 +274,16 @@ def week_overview_bullets(groups: list[ChangeGroup]) -> list[str]:
             -len(g.stories),
         ),
     )
-    bullets: list[str] = []
-    used_labels: set[str] = set()
-    for i, g in enumerate(ranked[:5]):
-        label = _briefing_slot_label(g, i)
-        if label in used_labels and i > 0:
-            label = "Also on the radar"
-        used_labels.add(label)
-        stage = (g.stages or ["—"])[0]
-        domain = (g.domains or ["—"])[0]
-        title = _clip_words(g.title or "Untitled", 72)
-        why = _clip_words(g.why_it_matters or "Impact not yet clear.", 110)
-        # Avoid cloning title into why when thin
-        if _clip_words(why, 72) == title:
-            why = f"{stage} · {domain} — see the full edition for evidence."
-        num = f"{i + 1:02d}"
-        bullets.append(
-            f"{num} — {label}: {title}. {why} ({stage} · {domain})"
-        )
-    if not bullets:
-        return ["Quiet week in the tracked sources — no high-signal themes stood out."]
-    return bullets
+    deep = next((g for g in ranked if g.signal == SignalLevel.DEEP_DIVE), None)
+    high = [g for g in ranked if g.signal == SignalLevel.HIGH_SIGNAL]
+    worth = [g for g in ranked if g.signal == SignalLevel.WORTH_KNOWING]
+    payload = {
+        "deep_dive": deep.model_dump(mode="json") if deep else None,
+        "high_signal": [g.model_dump(mode="json") for g in high],
+        "worth_knowing": [g.model_dump(mode="json") for g in worth],
+    }
+    cards = briefing_cards_from_payload(payload, limit=5)
+    return briefing_overview_lines(cards)
 
 
 def moving_story_lines(groups: list[ChangeGroup]) -> dict[str, list[str]]:

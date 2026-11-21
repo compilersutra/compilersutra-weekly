@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: weekly-publish
@@ -120,6 +121,9 @@ jobs:
           csweekly publish $AS_OF_ARG --reports-dir reports --site-dir site
 
       - name: Commit published edition
+        env:
+          CSWEEKLY_GITHUB_TOKEN: ${{ secrets.CSWEEKLY_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           git config user.name "compilersutra-bot"
@@ -136,7 +140,28 @@ jobs:
           Automated collect → process → validate → publish.
           EOF
           )"
+          # Prefer a PAT so the push can trigger the Pages workflow (GITHUB_TOKEN cannot).
+          PUSH_TOKEN="${CSWEEKLY_GITHUB_TOKEN:-}"
+          if [ -n "$PUSH_TOKEN" ]; then
+            git remote set-url origin "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          fi
           git push origin HEAD
+          echo "pushed=1" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Deploy Pages after publish
+        if: success()
+        env:
+          CSWEEKLY_GITHUB_TOKEN: ${{ secrets.CSWEEKLY_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Prefer PAT so Pages actually runs (default GITHUB_TOKEN pushes do not chain workflows).
+          export GH_TOKEN="${CSWEEKLY_GITHUB_TOKEN:-$GH_TOKEN}"
+          if gh workflow run pages.yml --ref "${GITHUB_REF_NAME:-master}"; then
+            echo "Pages workflow dispatched"
+          else
+            echo "WARN: could not dispatch Pages — set CSWEEKLY_GITHUB_TOKEN or run Pages manually"
+          fi
 
       - uses: actions/upload-artifact@v4
         if: always()

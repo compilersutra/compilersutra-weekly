@@ -114,23 +114,47 @@ def taxonomy_fields(g: dict[str, Any] | None) -> dict[str, list[str]]:
 
 
 def taxonomy_badges_html(
-    g: dict[str, Any] | None, *, include_type: bool = False, include_evidence: bool = True
+    g: dict[str, Any] | None,
+    *,
+    include_type: bool = False,
+    include_evidence: bool = True,
+    compact: bool = False,
+    show_dims: bool | None = None,
 ) -> str:
-    """Compact chips with dimension hints — never concatenates bare words."""
+    """Compact chips with dimension hints — never concatenates bare words.
+
+    compact=True: reading-surface chips (project/stage/target/evidence only).
+    Full filter metadata stays available via explore pages / details.
+    """
     g = g or {}
+    try:
+        from csweekly.reporters.publication import sanitize_group_for_display
+
+        g = sanitize_group_for_display(g)
+    except Exception:
+        pass
     fields = taxonomy_fields(g)
     raw_project = str(g.get("project") or g.get("category") or "")
     project_key = project_color_key(raw_project)
-    order = [
-        ("project", fields["project"]),
-        ("stage", fields["stage"]),
-        ("domain", fields["domain"]),
-        ("target", fields["target"]),
-    ]
-    if include_type and fields["type"]:
-        order.append(("type", fields["type"]))
-    if fields["level"]:
-        order.append(("level", fields["level"]))
+    if compact:
+        order = [
+            ("project", fields["project"]),
+            ("stage", fields["stage"][:1]),
+            ("target", fields["target"][:1]),
+        ]
+        show_label = False if show_dims is None else show_dims
+    else:
+        order = [
+            ("project", fields["project"]),
+            ("stage", fields["stage"]),
+            ("domain", fields["domain"]),
+            ("target", fields["target"]),
+        ]
+        if include_type and fields["type"]:
+            order.append(("type", fields["type"]))
+        if fields["level"]:
+            order.append(("level", fields["level"]))
+        show_label = True if show_dims is None else show_dims
     chips: list[str] = []
     for dim, values in order:
         for value in values:
@@ -139,22 +163,28 @@ def taxonomy_badges_html(
                 extra = f" project-{html.escape(project_key)}"
             elif dim == "stage":
                 extra = f" stage-{html.escape(css_slug(value))}"
+            dim_html = (
+                f'<span class="tax-dim">{html.escape(dim)}</span>' if show_label else ""
+            )
             chips.append(
                 f'<span class="badge tax-{html.escape(dim)}{extra}" '
                 f'data-dim="{html.escape(dim)}" title="{html.escape(dim)}">'
-                f'<span class="tax-dim">{html.escape(dim)}</span>'
-                f"{html.escape(value)}</span>"
+                f"{dim_html}{html.escape(value)}</span>"
             )
     if include_evidence:
         label, slug = evidence_confidence(g)
+        dim_html = (
+            '<span class="tax-dim">evidence</span>' if show_label else ""
+        )
         chips.append(
             f'<span class="badge tax-evidence evidence-{html.escape(slug)}" '
             f'data-dim="evidence" title="Evidence confidence">'
-            f'<span class="tax-dim">evidence</span>{html.escape(label)}</span>'
+            f"{dim_html}{html.escape(label)}</span>"
         )
     if not chips:
         return ""
-    return f'<div class="badge-row">{"".join(chips)}</div>'
+    row_cls = "badge-row compact" if compact else "badge-row"
+    return f'<div class="{row_cls}">{"".join(chips)}</div>'
 
 
 def taxonomy_line(g: dict[str, Any] | None) -> str:

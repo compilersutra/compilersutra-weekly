@@ -42,13 +42,17 @@ def score_impact(group: ChangeGroup) -> ChangeGroup:
         factors["novelty"] = 3.0
         factors["technical_significance"] = min(factors["technical_significance"], 4.0)
 
+    # Editorial ranking weights (publication methodology — not objective importance).
+    # technical significance 30% · engineering impact 25% · novelty 20% ·
+    # breadth 15% · evidence quality 10%.
     weights = {
-        "technical_significance": 0.25,
-        "architectural_impact": 0.20,
-        "developer_relevance": 0.20,
-        "scope_of_change": 0.15,
-        "novelty": 0.10,
+        "technical_significance": 0.30,
+        "architectural_impact": 0.25,  # engineering impact
+        "novelty": 0.20,
+        "scope_of_change": 0.15,  # breadth of relevance
         "evidence_validation": 0.10,
+        # developer_relevance folded into engineering impact via score nudges above
+        "developer_relevance": 0.0,
     }
     score = sum(factors[k] * weights[k] for k in weights)
     group.impact_factors = {k: round(v, 2) for k, v in factors.items()}
