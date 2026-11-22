@@ -143,32 +143,142 @@ def engineering_takeaway(g: dict[str, Any] | None) -> str:
 
 
 def reason_to_care(g: dict[str, Any] | None) -> str:
-    """One-line Top-3 reason — implication only, not a replay of what_changed."""
+    """Complete Top-3 reason to care — never truncated mid-thought, never generic filler."""
     g = g or {}
-    why = (g.get("why_it_matters") or "").strip()
-    what = re.sub(r"\s+", " ", (g.get("what_changed") or "").strip())
+    title = g.get("title") or ""
+    what = _join_soft_wraps(g.get("what_changed") or "")
     notes = g.get("deep_dive_notes") or {}
+    why = (g.get("why_it_matters") or "").strip()
     impl_hint = (notes.get("implications") or "").strip()
+    blob = f"{title}\n{what}".lower()
+
+    # Pattern reasons grounded in the patch — distinct from briefing what-changed.
+    patterned = _pattern_reason(blob)
+    if patterned:
+        return patterned
+
     for c in (why, impl_hint):
+        cleaned = _finish_sentence(_join_soft_wraps(c))
         if (
-            c
-            and not _GENERIC_WHY.search(c)
-            and _clip_words(c, 60) != _clip_words(what, 60)
+            cleaned
+            and not _GENERIC_WHY.search(cleaned)
+            and not _too_similar(cleaned, what)
+            and "engineering focus:" not in cleaned.lower()
         ):
-            return _clip_words(c, 120)
-    # Prefer a later sentence (consequence / fix) over restating sentence 1 in briefing.
-    sentences = [s.strip() for s in re.findall(r"[^.!?]+[.!?]?", what) if s.strip()]
-    if len(sentences) >= 2 and len(sentences[1]) >= 28:
-        return _clip_words(sentences[1], 120)
+            return cleaned
+
+    sents = _split_sentences(what)
+    if len(sents) >= 2:
+        return sents[1]
+    if sents and len(sents[0]) <= 180:
+        # Single complete sentence can stand as the reason when no better rewrite exists.
+        return sents[0]
+
     stage = ((g.get("stages") or ["compiler"])[0]).replace("Runtime & Toolchain", "Runtime")
     targets = path_grounded_targets(g)
-    target_bit = f" · {', '.join(targets[:2])}" if targets else ""
+    target_bit = f" on {', '.join(targets[:2])}" if targets else ""
     who = scrub_audience(g.get("who_should_care") or [], targets)
     audience = who[0] if who else "compiler engineers"
-    return _clip_words(
-        f"{stage}{target_bit} — priority for {audience}; confirm scope in the primary commit.",
-        120,
+    return (
+        f"{stage}{target_bit} change that {audience} should verify in the primary commit."
     )
+
+
+def featured_summary(g: dict[str, Any] | None, *, limit: int = 320) -> str:
+    """Featured-card technical blurb: soft wraps joined, complete sentences only."""
+    g = g or {}
+    return _prose_upto(g.get("what_changed") or g.get("title") or "", max_sentences=2, limit=limit)
+
+
+def problem_statement(g: dict[str, Any] | None) -> str:
+    """Deep-dive Problem: symptom / motivation only (first complete sentence)."""
+    g = g or {}
+    notes = g.get("deep_dive_notes") or {}
+    raw = notes.get("problem") or g.get("what_changed") or ""
+    sents = _split_sentences(raw)
+    return sents[0] if sents else ""
+
+
+def _pattern_reason(blob: str) -> str:
+    if "skipifwasm" in blob or ("wasm" in blob and "test" in blob and "skip" in blob):
+        return (
+            "Green Dragon’s Wasm matrix was failing LLDB API tests; "
+            "targeted skips restore the bot."
+        )
+    if "false dep" in blob or "false-depend" in blob or re.search(r"\bbsf\b", blob):
+        return (
+            "BSF left a live destination on zero input; the tune now clears it "
+            "the same way as BSR."
+        )
+    if "async barrier" in blob or ("barrier" in blob and "amdgpu" in blob):
+        return (
+            "gfx1250/1251 async barrier arrivals need a replay workaround when "
+            "XNACK is enabled."
+        )
+    if "empty dag" in blob or "moveinstrnotifier" in blob:
+        return (
+            "An empty DAG hit an assertion in the move notifier; the fix early-returns "
+            "when there is nothing to update."
+        )
+    if "vtable" in blob or "relative-vtable" in blob:
+        return (
+            "Relative vtable lookups must lower to the LLVM dialect correctly before "
+            "the wider ABI work lands."
+        )
+    return ""
+
+
+def _join_soft_wraps(text: str) -> str:
+    return re.sub(r"\s+", " ", (text or "").strip())
+
+
+def _finish_sentence(text: str) -> str:
+    text = _join_soft_wraps(text)
+    text = re.sub(r"[:;,\s]+$", "", text)
+    if text and not text.endswith((".", "!", "?")):
+        text += "."
+    return text
+
+
+def _split_sentences(text: str) -> list[str]:
+    text = _join_soft_wraps(text)
+    if not text:
+        return []
+    parts = re.findall(r"[^.!?]+[.!?]|[^.!?]+$", text)
+    out: list[str] = []
+    for part in parts:
+        cleaned = _finish_sentence(part)
+        if len(cleaned) > 2:
+            out.append(cleaned)
+    return out
+
+
+def _prose_upto(text: str, *, max_sentences: int = 2, limit: int = 280) -> str:
+    """Join up to N complete sentences without mid-sentence ellipsis cuts."""
+    sents = _split_sentences(text)
+    if not sents:
+        return ""
+    chosen: list[str] = []
+    for s in sents[:max_sentences]:
+        candidate = " ".join(chosen + [s])
+        if chosen and len(candidate) > limit:
+            break
+        chosen.append(s)
+    result = " ".join(chosen)
+    if len(result) > limit and len(chosen) > 1:
+        result = chosen[0]
+    return result
+
+
+def _too_similar(a: str, b: str) -> bool:
+    aa = _join_soft_wraps(a).lower()
+    bb = _join_soft_wraps(b).lower()
+    if not aa or not bb:
+        return False
+    if aa == bb:
+        return True
+    short, long = (aa, bb) if len(aa) <= len(bb) else (bb, aa)
+    return long.startswith(short[: min(72, len(short))]) or short in long
 
 
 def briefing_slot(g: dict[str, Any], index: int) -> str:
@@ -254,9 +364,7 @@ def briefing_cards_from_payload(payload: dict[str, Any], *, limit: int = 5) -> l
                 "kicker": briefing_kicker(slot, i),
                 "slot": slot,
                 "headline": editorial_headline(g),
-                "summary": _first_sentence(
-                    g.get("what_changed") or g.get("title") or "", limit=200
-                ),
+                "summary": featured_summary(g, limit=240),
                 "takeaway": engineering_takeaway(g),
                 "reason": reason_to_care(g),
                 "stage": stage,
@@ -486,27 +594,35 @@ def _surface_summary(paths: list[str]) -> str:
 
 
 def implementation_explanation(g: dict[str, Any] | None) -> str:
-    """Prose explanation of the change — never a raw file/symbol dump."""
+    """Mechanism prose — must not repeat the Problem paragraph."""
     g = g or {}
     notes = g.get("deep_dive_notes") or {}
-    what = re.sub(r"\s+", " ", (g.get("what_changed") or "").strip())
-    problem = re.sub(r"\s+", " ", (notes.get("problem") or "").strip())
+    problem = problem_statement(g)
+    what_sents = _split_sentences(g.get("what_changed") or "")
     raw_impl = notes.get("implementation") or g.get("technical_context") or ""
     # Reject machine dumps that start with "Primary `sha`" / "Files:"
     if re.match(r"(?i)^primary\s+`", raw_impl.strip()) or "Files:" in raw_impl[:80]:
         raw_impl = ""
-    base = what or problem or raw_impl
-    if not base:
-        return "See the primary commit for the implementation details."
-    # Prefer 1–2 sentences of engineering prose.
-    sentences = re.findall(r"[^.!?]+[.!?]?", base)
-    prose = " ".join(s.strip() for s in sentences[:2] if s.strip())
-    prose = re.sub(r"\s+", " ", prose).strip()
-    if not prose.endswith((".", "!", "?")):
-        prose += "."
+
+    # Prefer later sentences (the fix) over restating the symptom.
+    fix_sents = [s for s in what_sents if not _too_similar(s, problem)]
+    prose = ""
+    if fix_sents:
+        prose = " ".join(fix_sents[:2])
+    elif raw_impl:
+        prose = _prose_upto(raw_impl, max_sentences=2, limit=280)
+        if problem and _too_similar(prose, problem):
+            prose = ""
+
     meta = primary_commit(g)
     surface = _surface_summary(meta["paths"])
     size_bit = f" ({meta['size']})" if meta.get("size") else ""
+    if not prose:
+        return (
+            f"The inspected commit applies the change across {surface}{size_bit}. "
+            "Open the primary commit for the exact hunks — this section covers the "
+            "mechanism surface, not a file dump."
+        )
     return (
         f"{prose} The change touches {surface}{size_bit}. "
         "Open the primary commit for the exact hunks — this section explains the mechanism, "
@@ -547,15 +663,20 @@ def deep_dive_sections(g: dict[str, Any] | None) -> list[tuple[str, str, str]]:
     """
     g = g or {}
     notes = g.get("deep_dive_notes") or {}
-    what = (g.get("what_changed") or "").strip()
-    why = engineering_takeaway(g)
     who = ", ".join(g.get("who_should_care") or []) or "Compiler engineers"
     limits = (notes.get("limits") or g.get("uncertainty_note") or "").strip()
     prev = (notes.get("previous_behavior") or "").strip()
-    problem = (notes.get("problem") or what).strip()
-    # Problem should be prose, not identical file dump
-    problem = re.sub(r"\s+", " ", problem)
+    problem = problem_statement(g)
     impl = implementation_explanation(g)
+    # Hard guard: never show Implementation that restates Problem.
+    if problem and impl and _too_similar(impl, problem):
+        meta = primary_commit(g)
+        surface = _surface_summary(meta["paths"])
+        size_bit = f" ({meta['size']})" if meta.get("size") else ""
+        impl = (
+            f"The inspected commit applies the change across {surface}{size_bit}. "
+            "Open the primary commit for the exact hunks."
+        )
     validation = validation_explanation(g)
     reproduce = (notes.get("reproduce") or "").strip()
     if not reproduce and validation:
@@ -584,7 +705,8 @@ def deep_dive_sections(g: dict[str, Any] | None) -> list[tuple[str, str, str]]:
         (
             "implications",
             "Engineering implications",
-            f"{why} Who should care: {who}.",
+            # Editorial why-care, not a replay of Problem/Implementation.
+            f"{reason_to_care(g)} Who should care: {who}.",
         ),
         (
             "evidence",

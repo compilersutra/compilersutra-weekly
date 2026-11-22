@@ -201,6 +201,106 @@ def test_engineering_lessons_are_evidence_bound():
     assert "barrier" in lessons[0]["headline"].lower() or "async" in lessons[0]["headline"].lower()
 
 
+def test_reason_to_care_is_complete_not_generic():
+    from csweekly.reporters.publication import reason_to_care
+
+    bsf = reason_to_care(
+        {
+            "title": "Avoid false dependency for BSF",
+            "what_changed": (
+                "BSF, like BSR, leaves its destination unmodified when the source is\n"
+                "zero, so the hardware treats the destination as an input.  The new\n"
+                "X86_TUNE_AVOID_FALSE_DEP_FOR_BSR tuning already clears the destination\n"
+                "before BSR, but BSF was not handled:"
+            ),
+            "stages": ["Backend"],
+            "hardware_targets": ["X86"],
+            "who_should_care": ["CPU developers"],
+        }
+    )
+    assert "…" not in bsf
+    assert "priority for" not in bsf.lower()
+    assert "bsf" in bsf.lower()
+    assert bsf.endswith(".")
+
+    amd = reason_to_care(
+        {
+            "title": "[AMDGPU] Add an async barrier arrival workaround",
+            "what_changed": (
+                "Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround\n"
+                "when XNACK is enabled or unspecified."
+            ),
+            "stages": ["Backend"],
+            "hardware_targets": ["AMDGPU"],
+            "who_should_care": ["GPU developers"],
+            "stories": [{"paths": ["llvm/lib/Target/AMDGPU/SIInsert.cpp"]}],
+        }
+    )
+    assert "…" not in amd
+    assert "confirm scope" not in amd.lower()
+    assert "barrier" in amd.lower() or "gfx1250" in amd.lower()
+    assert amd.endswith(".")
+
+
+def test_featured_summary_joins_soft_wraps():
+    from csweekly.reporters.publication import featured_summary
+
+    text = featured_summary(
+        {
+            "what_changed": (
+                "BSF, like BSR, leaves its destination unmodified when the source is\n"
+                "zero, so the hardware treats the destination as an input.  The new\n"
+                "X86_TUNE_AVOID_FALSE_DEP_FOR_BSR tuning already clears the destination\n"
+                "before BSR, but BSF was not handled:"
+            )
+        }
+    )
+    assert "when the source is zero" in text
+    assert not text.rstrip(".").endswith("is")
+    assert "…" not in text
+
+
+def test_deep_dive_problem_and_implementation_differ():
+    from csweekly.reporters.publication import deep_dive_sections
+
+    sections = {
+        sid: body
+        for sid, _title, body in deep_dive_sections(
+            {
+                "title": "[lldb][test] Skip more tests that don't work with WebAssembly",
+                "what_changed": (
+                    "These are breaking the new Green Dragon matrix bot that now also tests "
+                    "WebAssembly. This patch just adds skipIfWasm to all broken tests I could "
+                    "see in the log to unbreak the bot."
+                ),
+                "stages": ["Runtime & Toolchain"],
+                "stories": [
+                    {
+                        "related_ref": "8e1359f4",
+                        "source_url": "https://example.com/c",
+                        "paths": [
+                            "lldb/test/API/commands/frame/recognizer/TestA.py",
+                            "lldb/test/API/commands/process/TestB.py",
+                        ],
+                    }
+                ],
+                "deep_dive_notes": {
+                    "problem": (
+                        "These are breaking the new Green Dragon matrix bot that now also tests "
+                        "WebAssembly. This patch just adds skipIfWasm to all broken tests I could "
+                        "see in the log to unbreak the bot."
+                    ),
+                    "implementation": "Primary `8e1359f4` (+24/−1). Files: lldb/test/API/foo.py",
+                },
+            }
+        )
+    }
+    assert "problem" in sections and "implementation" in sections
+    assert not sections["implementation"].lower().startswith(
+        sections["problem"].lower()[:48]
+    )
+
+
 def test_deterministic_why_avoids_matters_for_boilerplate():
     primary = CommitEvidence(
         sha="abcdef1234567890",

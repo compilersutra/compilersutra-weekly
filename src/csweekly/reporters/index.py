@@ -1072,7 +1072,7 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
     num = f"#{meta.issue_number:03d}" if meta.issue_number else meta.date
     if payload.get("high_signal") or payload.get("groups"):
         content = _render_issue_html(meta, payload)
-        toc_ids = [
+        toc_candidates = [
             ("top-three", "Top 3"),
             ("briefing", "Briefing"),
             ("featured", "Featured"),
@@ -1083,8 +1083,10 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
             ("worth-reading", "Research"),
             ("topic-index", "Index"),
         ]
+        # Only link sections that actually rendered (e.g. skip Research when empty).
+        toc_ids = [(i, l) for i, l in toc_candidates if f'id="{i}"' in content]
         toc_links = "".join(f'<a href="#{i}">{html.escape(l)}</a>' for i, l in toc_ids)
-        toc = f'<nav class="toc" aria-label="On this page">{toc_links}</nav>'
+        toc = f'<nav class="toc" aria-label="On this page">{toc_links}</nav>' if toc_ids else ""
     else:
         content = markdown_to_html(md)
         toc_links = [
@@ -1256,6 +1258,7 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         '<li><a href="../../changelog.html">Complete collected dataset</a></li>'
         '<li><a href="../../explore/index.html">Explore by stage / domain / area</a></li>'
         '<li><a href="../../topics/index.html">Topic pages</a></li>'
+        '<li><a href="../../topics/research.html">Research papers</a></li>'
         '<li><a href="../../archive.html">Archive</a></li>'
         "</ul>"
         f'<p class="muted" style="margin-top:1.5rem"><strong>Editorial invariant.</strong> '
@@ -1267,13 +1270,11 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
 
 
 def _top_three_html(cards: list[dict]) -> str:
-    from csweekly.processors.editorial import _clip_words
-
     items = []
     for c in cards[:3]:
         num = f"{c['index'] + 1:02d}"
-        # One-line reason only — briefing below carries what-changed context.
-        reason = _clip_words(c.get("reason") or c.get("takeaway") or "", 110)
+        # Complete reason — never mid-sentence clip; briefing carries what-changed.
+        reason = (c.get("reason") or c.get("takeaway") or "").strip()
         meta_bits = []
         proj = str(c.get("project") or "")
         if proj:
@@ -1287,6 +1288,7 @@ def _top_three_html(cards: list[dict]) -> str:
             f"""<article class="top3-card">
   <span class="brief-num">{html.escape(num)}</span>
   <div>
+    <p class="info-kind">Why it matters</p>
     <h3><a href="#{html.escape(c["anchor"])}">{html.escape(c["headline"])}</a></h3>
     <p class="top3-reason">{html.escape(reason)}</p>
     <p class="brief-meta-line"><span>{html.escape(cat)}</span>
@@ -1297,8 +1299,8 @@ def _top_three_html(cards: list[dict]) -> str:
     return (
         '<section id="top-three" class="issue-section section-top3">'
         "<h2>The 3 changes worth knowing</h2>"
-        '<p class="section-lede muted">60-second start — headline, why care, category. '
-        "Fuller context is in the briefing below.</p>"
+        '<p class="section-lede muted">Editorial selection — why these three deserve attention. '
+        "Technical detail follows in the briefing.</p>"
         f'<div class="top3-grid">{"".join(items)}</div></section>'
     )
 
@@ -1410,6 +1412,7 @@ def _briefing_cards_html(cards: list[dict]) -> str:
             f"""<article class="brief-card" data-evidence="{ev_slug}">
   <span class="brief-num" aria-hidden="true">{html.escape(num)}</span>
   <div class="brief-body">
+    <p class="info-kind info-kind-tech">What changed</p>
     <h3><a href="#{html.escape(c["anchor"])}">{html.escape(c["headline"])}</a></h3>
     <p class="brief-line">{html.escape(summary)}</p>
     {extra}
@@ -1429,8 +1432,8 @@ def _briefing_cards_html(cards: list[dict]) -> str:
         f"<h2>Five-minute briefing</h2>"
         f'<p class="section-count muted">{n} stor{"y" if n == 1 else "ies"}</p>'
         f"</div>"
-        f'<p class="section-lede muted">Five stories across LLVM, GCC, MLIR and GPU — '
-        f"what changed, with primary sources.</p>"
+        f'<p class="section-lede muted">Technical explanation — what the patches change, '
+        f"with primary sources.</p>"
         f'<div class="brief-cards">{"".join(items)}</div></section>'
     )
 
@@ -1444,6 +1447,7 @@ def _issue_story_card(g: dict, *, prominent: bool, watchlist: bool = False) -> s
     from csweekly.reporters.publication import (
         editorial_headline,
         engineering_takeaway,
+        featured_summary,
         sanitize_group_for_display,
         score_caption,
     )
@@ -1452,7 +1456,7 @@ def _issue_story_card(g: dict, *, prominent: bool, watchlist: bool = False) -> s
     g = sanitize_group_for_display(g)
     anchor = _story_anchor(g)
     title = html.escape(editorial_headline(g))
-    what = html.escape((g.get("what_changed") or "").split("\n")[0][:400])
+    what = html.escape(featured_summary(g, limit=320))
     why = html.escape(engineering_takeaway(g))
     uncertain = html.escape(g.get("uncertainty_note") or "")
     score = g.get("impact_score")
@@ -1535,6 +1539,7 @@ def _issue_story_card(g: dict, *, prominent: bool, watchlist: bool = False) -> s
     <span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span>
     <p class="card-labels">{label_line}</p>
   </header>
+  <p class="info-kind info-kind-tech">Technical explanation</p>
   <h3>{title}</h3>
   <p class="what-changed">{what}</p>
   <p class="meta card-source">
@@ -1632,9 +1637,10 @@ def _deep_dive_html(g: dict) -> str:
     )
     return f"""<section id="deep-dive" class="issue-section deep-dive section-dive">
   <h2>Under the hood</h2>
-  <p class="section-lede muted">One implementation explained with technical evidence —
-    problem → implementation → validation → implications. Unanswered questions stay marked as unknown.</p>
+  <p class="section-lede muted">Technical explanation with evidence —
+    problem → implementation → validation. Unanswered questions stay marked unknown.</p>
   <article class="dive-panel" id="{html.escape(anchor)}" data-project="{html.escape(proj)}">
+    <p class="info-kind info-kind-evidence">Evidence-bound deep dive</p>
     <p class="card-kicker-row">
       <span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span>
       <span class="card-labels">{html.escape(dive_labels)}</span>

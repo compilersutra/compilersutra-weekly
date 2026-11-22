@@ -45,7 +45,9 @@ Public URL: https://www.compilersutra.com/weekly/
 7. **What engineers should watch** — collapsed rows (title / project·component / status); expand for context + limits  
 8. Themes / Research / Index  
 
-**Do not add more sections.** Depth beats length. Target: three developments in 60 seconds, then optional 5–20 min.
+**Do not add more sections.** Layout is frozen after #003 polish — improve the editorial generation pipeline next. Target: three developments in 60 seconds, then optional 5–20 min.
+
+**Info types (keep distinct):** editorial selection · technical explanation · evidence.
 
 ## Watchlist tiers
 

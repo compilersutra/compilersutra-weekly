@@ -980,19 +980,35 @@ a.issue-row:hover { background: color-mix(in srgb, var(--accent) 8%, transparent
 .top3-reason {
   margin: 0 0 0.45rem;
   color: var(--text-secondary);
-  font-size: 0.92rem;
-  line-height: 1.4;
+  font-size: 0.95rem;
+  line-height: 1.45;
 }
 .top3-card {
   padding: 1.05rem 1.1rem 1.15rem;
   min-height: 8.5rem;
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
 }
 .brief-cards {
   display: grid;
   gap: 0.85rem;
   margin-top: 0.65rem;
 }
+.brief-card {
+  border-left: 3px solid var(--border);
+}
 .brief-why { opacity: 0.92; }
+.info-kind {
+  margin: 0 0 0.28rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 560;
+}
+.info-kind-tech { color: var(--text-muted); }
+.info-kind-evidence { color: var(--success, #3d9a6a); }
 .lesson-list {
   display: grid;
   gap: 0.65rem;

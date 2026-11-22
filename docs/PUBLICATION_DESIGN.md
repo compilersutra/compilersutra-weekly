@@ -12,7 +12,11 @@ Compiler engineers, GPU developers, LLVM/GCC/MLIR/IREE maintainers, compiler res
 
 ## Issue page structure
 
-Do not add sections. Target: three developments in 60 seconds, then optional 5–20 minutes.
+Do not add sections. **Layout is frozen** after Edition #003 polish — next gains come from the editorial generation pipeline (complete, non-repetitive, technically useful copy).
+
+Target: three developments in 60 seconds, then optional 5–20 minutes.
+
+Information types (keep visually distinct): **editorial selection** (why care) · **technical explanation** (what changed) · **evidence** (what the source confirms / unknown).
 
 1. **Hero** — edition title, date window, project chips, positioning lede  
 2. **The 3 changes worth knowing** — headline, one-line reason, category (no full briefing copy)  
