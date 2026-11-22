@@ -12,14 +12,16 @@ Compiler engineers, GPU developers, LLVM/GCC/MLIR/IREE maintainers, compiler res
 
 ## Issue page structure
 
+Do not add sections. Target: three developments in 60 seconds, then optional 5–20 minutes.
+
 1. **Hero** — edition title, date window, project chips, positioning lede  
-2. **The 3 changes worth knowing** — highest-priority editorial picks  
-3. **Five-minute briefing** — five editorial story cards  
-4. **Featured engineering changes** — 2-column cards, expandable details  
-5. **Under the hood** — one evidence-bound deep dive  
-6. **Engineering lessons** — practical takeaways from featured/dive  
-7. **What engineers should watch** — quick signals + tiered watchlist  
-8. **Themes / Research / Index** — navigation  
+2. **The 3 changes worth knowing** — headline, one-line reason, category (no full briefing copy)  
+3. **Five-minute briefing** — five stories with what-changed context + source  
+4. **Featured engineering changes** — 2-column cards; evidence in header; scores inside details  
+5. **Under the hood** — one deep dive; sequential section numbering after skips  
+6. **Engineering lessons** — concrete patch takeaways (not disclaimers)  
+7. **What engineers should watch** — collapsed title/component/status; expand for context + limits  
+8. **Themes / Research / Index** — navigation
 
 ### Watchlist tiers
 

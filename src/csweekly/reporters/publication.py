@@ -142,6 +142,35 @@ def engineering_takeaway(g: dict[str, Any] | None) -> str:
     )
 
 
+def reason_to_care(g: dict[str, Any] | None) -> str:
+    """One-line Top-3 reason — implication only, not a replay of what_changed."""
+    g = g or {}
+    why = (g.get("why_it_matters") or "").strip()
+    what = re.sub(r"\s+", " ", (g.get("what_changed") or "").strip())
+    notes = g.get("deep_dive_notes") or {}
+    impl_hint = (notes.get("implications") or "").strip()
+    for c in (why, impl_hint):
+        if (
+            c
+            and not _GENERIC_WHY.search(c)
+            and _clip_words(c, 60) != _clip_words(what, 60)
+        ):
+            return _clip_words(c, 120)
+    # Prefer a later sentence (consequence / fix) over restating sentence 1 in briefing.
+    sentences = [s.strip() for s in re.findall(r"[^.!?]+[.!?]?", what) if s.strip()]
+    if len(sentences) >= 2 and len(sentences[1]) >= 28:
+        return _clip_words(sentences[1], 120)
+    stage = ((g.get("stages") or ["compiler"])[0]).replace("Runtime & Toolchain", "Runtime")
+    targets = path_grounded_targets(g)
+    target_bit = f" · {', '.join(targets[:2])}" if targets else ""
+    who = scrub_audience(g.get("who_should_care") or [], targets)
+    audience = who[0] if who else "compiler engineers"
+    return _clip_words(
+        f"{stage}{target_bit} — priority for {audience}; confirm scope in the primary commit.",
+        120,
+    )
+
+
 def briefing_slot(g: dict[str, Any], index: int) -> str:
     """Map group dict onto editorial slot labels."""
     from csweekly.models import ChangeGroup, SignalLevel
@@ -229,6 +258,7 @@ def briefing_cards_from_payload(payload: dict[str, Any], *, limit: int = 5) -> l
                     g.get("what_changed") or g.get("title") or "", limit=200
                 ),
                 "takeaway": engineering_takeaway(g),
+                "reason": reason_to_care(g),
                 "stage": stage,
                 "project": g.get("project") or g.get("category") or "",
                 "targets": path_grounded_targets(g),
@@ -321,24 +351,18 @@ WATCHLIST_LABELS = {
 
 
 def engineering_lessons(groups: list[dict[str, Any]], *, limit: int = 4) -> list[dict[str, str]]:
-    """Short lessons grounded in what_changed — no invented benchmarks."""
+    """Concrete takeaways from the patch text — not editorial disclaimers."""
     lessons: list[dict[str, str]] = []
     for g in groups:
         g = sanitize_group_for_display(g)
         what = re.sub(r"\s+", " ", (g.get("what_changed") or "").strip())
+        title = g.get("title") or ""
         if not what or len(what) < 40:
             continue
         headline = editorial_headline(g)
-        stage = ((g.get("stages") or ["compiler"])[0]).replace(
-            "Runtime & Toolchain", "Runtime"
-        )
-        # Lesson = mechanism sentence + audience caution (evidence-bound).
-        mechanism = _first_sentence(what, limit=180)
-        lesson = (
-            f"{mechanism} "
-            f"For {stage.lower()} work, treat the linked commit as the authority — "
-            "do not generalize beyond what the diff establishes."
-        )
+        lesson = _concrete_lesson(title=title, what=what, g=g)
+        if not lesson:
+            continue
         lessons.append(
             {
                 "headline": headline,
@@ -349,6 +373,54 @@ def engineering_lessons(groups: list[dict[str, Any]], *, limit: int = 4) -> list
         if len(lessons) >= limit:
             break
     return lessons
+
+
+def _concrete_lesson(*, title: str, what: str, g: dict[str, Any]) -> str:
+    """Map patch evidence to a practical engineering takeaway."""
+    blob = f"{title}\n{what}".lower()
+    mechanism = _first_sentence(what, limit=160)
+
+    if "skipifwasm" in blob or ("wasm" in blob and "test" in blob):
+        return (
+            f"{mechanism} "
+            "When a new target lands in CI, debugger and runtime API tests often need "
+            "explicit target gates — coverage for the new matrix is not free."
+        )
+    if "false dep" in blob or "false-depend" in blob or re.search(r"\bbsf\b|\bbsr\b", blob):
+        return (
+            f"{mechanism} "
+            "On x86, instructions that leave a destination unmodified on some inputs "
+            "can create false register dependencies; backend tuning may need to clear "
+            "the dest before use."
+        )
+    if "async barrier" in blob or ("barrier" in blob and "amdgpu" in blob):
+        return (
+            f"{mechanism} "
+            "GPU backends sometimes encode hardware errata as late machine passes — "
+            "the workaround is part of correctness, not optional polish."
+        )
+    if "empty dag" in blob or "moveinstrnotifier" in blob:
+        return (
+            f"{mechanism} "
+            "Notifiers and analysis callbacks should early-return on empty graphs; "
+            "assertion paths are easy to miss until a rare schedule hits them."
+        )
+    if "fp_unsafe" in blob or "vectorize.fp" in blob:
+        return (
+            f"{mechanism} "
+            "Vectorization and floating-point semantics are coupled — explicit metadata "
+            "lets authors opt into or out of unsafe FP assumptions without guessing pass defaults."
+        )
+    if "vtable" in blob or "relative-vtable" in blob:
+        return (
+            f"{mechanism} "
+            "Frontend IR lowering for ABIs (relative vtables) must match the runtime "
+            "layout the linker and loader expect."
+        )
+
+    # Generic but still concrete: restating the patch mechanism as the lesson.
+    stage = ((g.get("stages") or ["compiler"])[0]).replace("Runtime & Toolchain", "runtime")
+    return f"{mechanism} That is the concrete {stage.lower()} behavior change in this patch."
 
 
 def note_is_unknown(text: str | None) -> bool:
@@ -493,13 +565,13 @@ def deep_dive_sections(g: dict[str, Any] | None) -> list[tuple[str, str, str]]:
             f"{_surface_summary(meta['paths'])} with the project’s standard test runner."
         )
 
-    sections: list[tuple[str, str, str]] = [
-        ("problem", "01. Problem", problem),
-        ("previous", "02. Previous behavior", prev if not note_is_unknown(prev) else ""),
-        ("implementation", "03. Implementation", impl),
+    raw_sections: list[tuple[str, str, str]] = [
+        ("problem", "Problem", problem),
+        ("previous", "Previous behavior", prev if not note_is_unknown(prev) else ""),
+        ("implementation", "Implementation", impl),
         (
             "before-after",
-            "04. Before vs after",
+            "Before vs after",
             notes.get("before_after")
             or (
                 ""
@@ -507,21 +579,29 @@ def deep_dive_sections(g: dict[str, Any] | None) -> list[tuple[str, str, str]]:
                 else (notes.get("example") or "")
             ),
         ),
-        ("reproduce", "05. How to reproduce", reproduce),
-        ("validation", "06. Validation", validation),
+        ("reproduce", "How to reproduce", reproduce),
+        ("validation", "Validation", validation),
         (
             "implications",
-            "07. Engineering implications",
+            "Engineering implications",
             f"{why} Who should care: {who}.",
         ),
         (
             "evidence",
-            "08. Evidence and limitations",
+            "Evidence and limitations",
             limits
             or "Claims are limited to inspected commit evidence; unresolved questions stay unmarked.",
         ),
     ]
-    return [(i, t, b.strip()) for i, t, b in sections if b and b.strip()]
+    # Renumber only sections that survive filtering (skip empty / unknown).
+    out: list[tuple[str, str, str]] = []
+    for sid, title, body in raw_sections:
+        text = (body or "").strip()
+        if not text:
+            continue
+        n = len(out) + 1
+        out.append((sid, f"{n:02d}. {title}", text))
+    return out
 
 
 def score_caption(score: float | None) -> str:

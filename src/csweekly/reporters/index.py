@@ -1158,9 +1158,8 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         parts.append(
             f'<section id="featured" class="issue-section section-featured">'
             f"<h2>Featured engineering changes</h2>"
-            f'<p class="section-lede muted">LLVM · GCC · MLIR · GPU — what changed and why engineers should care.</p>'
+            f'<p class="section-lede muted">Technical details and primary commits.</p>'
             f'<div class="story-grid">{cards_html}</div>'
-            f'<p class="muted score-legend">{html.escape(editorial_score_legend())}</p>'
             f"</section>"
         )
 
@@ -1273,24 +1272,33 @@ def _top_three_html(cards: list[dict]) -> str:
     items = []
     for c in cards[:3]:
         num = f"{c['index'] + 1:02d}"
-        takeaway = _clip_words(c.get("takeaway") or c.get("summary") or "", 160)
+        # One-line reason only — briefing below carries what-changed context.
+        reason = _clip_words(c.get("reason") or c.get("takeaway") or "", 110)
+        meta_bits = []
+        proj = str(c.get("project") or "")
+        if proj:
+            meta_bits.append(proj.upper() if len(proj) <= 4 else str(proj).title())
+        if c.get("stage"):
+            meta_bits.append(str(c["stage"]).replace("Runtime & Toolchain", "Runtime"))
+        for t in (c.get("targets") or [])[:1]:
+            meta_bits.append(str(t))
+        cat = " · ".join(meta_bits) or "Compiler"
         items.append(
             f"""<article class="top3-card">
   <span class="brief-num">{html.escape(num)}</span>
   <div>
     <h3><a href="#{html.escape(c["anchor"])}">{html.escape(c["headline"])}</a></h3>
-    <p class="brief-line">{html.escape(takeaway)}</p>
-    <p class="brief-meta-line">
-      <a class="brief-jump" href="#{html.escape(c["anchor"])}">Read more →</a>
-    </p>
+    <p class="top3-reason">{html.escape(reason)}</p>
+    <p class="brief-meta-line"><span>{html.escape(cat)}</span>
+      <a class="brief-jump" href="#briefing">In briefing ↓</a></p>
   </div>
 </article>"""
         )
     return (
         '<section id="top-three" class="issue-section section-top3">'
         "<h2>The 3 changes worth knowing</h2>"
-        '<p class="section-lede muted">Start here — three developments with the highest '
-        "editorial priority this week.</p>"
+        '<p class="section-lede muted">60-second start — headline, why care, category. '
+        "Fuller context is in the briefing below.</p>"
         f'<div class="top3-grid">{"".join(items)}</div></section>'
     )
 
@@ -1328,7 +1336,10 @@ def _watch_row(g: dict) -> str:
     g = sanitize_group_for_display(g)
     anchor = _story_anchor(g)
     title = html.escape(editorial_headline(g))
-    why = html.escape(_clip_words(engineering_takeaway(g), 160))
+    why = html.escape(_clip_words(engineering_takeaway(g), 180))
+    limits = html.escape(
+        (g.get("uncertainty_note") or "Broader impact is not established from the commit message alone.")
+    )
     ev_label, ev_slug = evidence_confidence(g)
     stories = g.get("stories") or []
     primary = stories[0] if stories else {}
@@ -1336,30 +1347,36 @@ def _watch_row(g: dict) -> str:
     url = html.escape(primary.get("source_url") or "#")
     proj = str(g.get("project") or g.get("category") or "")
     stage = ((g.get("stages") or [""])[0] or "").replace("Runtime & Toolchain", "Runtime")
-    labels = html.escape(
-        " · ".join(
-            b
-            for b in (
-                proj.upper() if len(proj) <= 4 else proj.title(),
-                stage,
-                *((g.get("hardware_targets") or [])[:1]),
-            )
-            if b
+    component = " · ".join(
+        b
+        for b in (
+            proj.upper() if len(proj) <= 4 else proj.title(),
+            stage,
+            *((g.get("hardware_targets") or [])[:1]),
         )
+        if b
     )
     return f"""<details class="watch-row" id="{html.escape(anchor)}" data-evidence="{html.escape(ev_slug)}">
   <summary>
-    <span class="watch-title">{title}</span>
-    <span class="watch-meta">{labels} · <span class="evidence-dot evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span></span>
+    <span class="watch-summary-main">
+      <span class="watch-title">{title}</span>
+      <span class="watch-meta">{html.escape(component)}</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
   </summary>
-  <p class="brief-line">{why}</p>
-  <p class="meta">Source: <a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a></p>
+  <div class="watch-expand">
+    <p class="brief-line">{why}</p>
+    <p class="muted"><strong>Limitations.</strong> {limits}</p>
+    <p class="meta">Source: <a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a></p>
+  </div>
 </details>"""
 
 
 def _briefing_cards_html(cards: list[dict]) -> str:
     from csweekly.processors.editorial import _clip_words
 
+    top_ids = {c.get("anchor") for c in cards[:3]}
     items = []
     for c in cards:
         meta_bits = []
@@ -1376,8 +1393,18 @@ def _briefing_cards_html(cards: list[dict]) -> str:
         sha = html.escape(c.get("sha") or "link")
         src = html.escape(c.get("source_url") or "#")
         num = f"{c['index'] + 1:02d}"
-        takeaway = _clip_words(c.get("takeaway") or "", 180)
-        summary = _clip_words(c.get("summary") or takeaway, 160)
+        # Prefer what-changed summary; never replay the Top 3 reason line.
+        summary = _clip_words(c.get("summary") or "", 200)
+        extra = ""
+        if c.get("anchor") not in top_ids:
+            takeaway = _clip_words(c.get("takeaway") or "", 140)
+            # Skip if takeaway is just summary + boilerplate.
+            if (
+                takeaway
+                and takeaway != summary
+                and not takeaway.startswith(summary[: min(48, len(summary))])
+            ):
+                extra = f'<p class="brief-line brief-why">{html.escape(takeaway)}</p>'
         meta_line = " · ".join(meta_bits)
         items.append(
             f"""<article class="brief-card" data-evidence="{ev_slug}">
@@ -1385,7 +1412,7 @@ def _briefing_cards_html(cards: list[dict]) -> str:
   <div class="brief-body">
     <h3><a href="#{html.escape(c["anchor"])}">{html.escape(c["headline"])}</a></h3>
     <p class="brief-line">{html.escape(summary)}</p>
-    <p class="brief-line brief-why">{html.escape(takeaway)}</p>
+    {extra}
     <p class="brief-meta-line">
       <span>{html.escape(meta_line)}</span>
       <span class="evidence-dot evidence-{ev_slug}">{ev}</span>
@@ -1403,7 +1430,7 @@ def _briefing_cards_html(cards: list[dict]) -> str:
         f'<p class="section-count muted">{n} stor{"y" if n == 1 else "ies"}</p>'
         f"</div>"
         f'<p class="section-lede muted">Five stories across LLVM, GCC, MLIR and GPU — '
-        f"explained simply, with primary sources.</p>"
+        f"what changed, with primary sources.</p>"
         f'<div class="brief-cards">{"".join(items)}</div></section>'
     )
 
@@ -1495,13 +1522,21 @@ def _issue_story_card(g: dict, *, prominent: bool, watchlist: bool = False) -> s
     label_line = html.escape(" · ".join(label_bits))
     if prominent:
         size_show = f" · {size}" if size else ""
-        body = f"""  <p class="card-kicker-row">
+        # Keep editorial score out of the card face — details only, if present.
+        if pick:
+            details_bits.insert(
+                0, f'<p class="muted featured-rank">{html.escape(pick)}</p>'
+            )
+            details = (
+                '<details class="story-details"><summary>Technical details</summary>'
+                f"{''.join(details_bits)}</details>"
+            )
+        body = f"""  <header class="featured-head">
     <span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span>
-    {f'<span class="editor-pick">{html.escape(pick)}</span>' if pick else ""}
-  </p>
+    <p class="card-labels">{label_line}</p>
+  </header>
   <h3>{title}</h3>
-  <p class="card-labels">{label_line}</p>
-  <p class="what-changed"><strong>What changed.</strong> {what}</p>
+  <p class="what-changed">{what}</p>
   <p class="meta card-source">
     <a href="{primary_url}" rel="noopener noreferrer"><code>{primary_sha or 'link'}</code></a>{size_show}
   </p>

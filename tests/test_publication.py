@@ -195,7 +195,9 @@ def test_engineering_lessons_are_evidence_bound():
         limit=2,
     )
     assert lessons
-    assert "do not generalize" in lessons[0]["lesson"]
+    lesson = lessons[0]["lesson"].lower()
+    assert "do not generalize" not in lesson
+    assert "barrier" in lesson or "gpu" in lesson or "workaround" in lesson
     assert "barrier" in lessons[0]["headline"].lower() or "async" in lessons[0]["headline"].lower()
 
 

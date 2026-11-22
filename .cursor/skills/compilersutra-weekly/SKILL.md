@@ -37,13 +37,15 @@ Public URL: https://www.compilersutra.com/weekly/
 ## Page architecture (required order)
 
 1. Hero — title, date window, project chips, positioning lede  
-2. **The 3 changes worth knowing** — prioritization for busy readers  
-3. **Five-minute briefing** — editorial story cards (headline + explanation + source)  
-4. **Featured** — 2-column cards; expandable details  
-5. **Under the hood** — one deep dive (article panel)  
-6. **Engineering lessons** — evidence-bound takeaways  
-7. **What engineers should watch** — quick signals + tiered expandable watchlist  
+2. **The 3 changes worth knowing** — headline + one-line reason + category (60s scan; no full briefing copy)  
+3. **Five-minute briefing** — five stories with what-changed context + source (do not replay Top 3 one-liners)  
+4. **Featured** — 2-column cards; evidence + labels in header; scores only inside details  
+5. **Under the hood** — one deep dive; sections renumbered sequentially after skips  
+6. **Engineering lessons** — concrete patch takeaways (never editorial disclaimers)  
+7. **What engineers should watch** — collapsed rows (title / project·component / status); expand for context + limits  
 8. Themes / Research / Index  
+
+**Do not add more sections.** Depth beats length. Target: three developments in 60 seconds, then optional 5–20 min.
 
 ## Watchlist tiers
 
