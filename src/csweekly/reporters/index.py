@@ -1073,10 +1073,12 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
     if payload.get("high_signal") or payload.get("groups"):
         content = _render_issue_html(meta, payload)
         toc_ids = [
+            ("top-three", "Top 3"),
             ("briefing", "Briefing"),
             ("featured", "Featured"),
-            ("deep-dive", "Deep dive"),
-            ("worth-knowing", "Signals"),
+            ("deep-dive", "Under the hood"),
+            ("lessons", "Lessons"),
+            ("worth-knowing", "Watchlist"),
             ("themes", "Themes"),
             ("worth-reading", "Research"),
             ("topic-index", "Index"),
@@ -1099,18 +1101,23 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
         nav_bits.append(
             f'<a class="back" href="../{html.escape(next_m.path.parent.name)}/{html.escape(next_m.date)}.html">Next →</a>'
         )
-    projects = payload.get("stats", {}).get("projects") or []
-    proj_line = " · ".join(str(p).upper() if len(str(p)) <= 4 else str(p).title() for p in projects[:6])
-    if not proj_line:
-        proj_line = "LLVM · GCC · MLIR · GPU"
+    projects = payload.get("stats", {}).get("projects") or ["LLVM", "GCC", "MLIR", "GPU"]
+    chips = "".join(
+        f'<span class="hero-chip">{html.escape(str(p).upper() if len(str(p)) <= 4 else str(p).title())}</span>'
+        for p in projects[:6]
+    )
     body = f"""
   {_topic_bar(depth=2)}
   <article class="article issue-article" id="main">
     <div class="issue-nav">{" · ".join(nav_bits)}</div>
-    <p class="hero-kicker">CompilerSutra Weekly · Edition {html.escape(num)}</p>
-    <h1 class="page-title">The week in compiler engineering</h1>
-    <p class="muted issue-meta-line">{html.escape(format_issue_date(meta.date))} · {html.escape(meta.window)} · {html.escape(proj_line)}</p>
-    <p class="lede">Understand what changed, why it matters, and how it works under the hood.</p>
+    <header class="issue-hero">
+      <p class="hero-kicker">CompilerSutra Weekly · Edition {html.escape(num)}</p>
+      <h1 class="page-title">The week in compiler engineering</h1>
+      <p class="hero-date muted">{html.escape(format_issue_date(meta.date))} · {html.escape(meta.window)}</p>
+      <div class="hero-chips" aria-label="Projects covered">{chips}</div>
+      <p class="lede">Understand what changed in LLVM, GCC, MLIR and GPU compilers,
+        why it matters, and how it works under the hood.</p>
+    </header>
     {toc}
     <div class="issue-body">
     {content}
@@ -1121,22 +1128,26 @@ def _page_issue(meta: IssueMeta, md: str, prev_m: IssueMeta | None, next_m: Issu
 
 
 def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
+    from csweekly.brand import EDITORIAL_INVARIANT
     from csweekly.reporters.publication import (
         briefing_cards_from_payload,
         coverage_tier,
         editorial_score_legend,
+        engineering_lessons,
+        watchlist_bucket,
+        WATCHLIST_LABELS,
     )
 
     parts: list[str] = []
     cards = briefing_cards_from_payload(payload, limit=5)
     if cards:
+        parts.append(_top_three_html(cards[:3]))
         parts.append(_briefing_cards_html(cards))
 
     high = payload.get("high_signal") or []
     deep = payload.get("deep_dive")
     featured = list(high[:4])
     deep_id = (deep or {}).get("story_id") or (deep or {}).get("id")
-    # Featured grid excludes the deep-dive story (that lives in the deep-dive section).
     featured = [
         g
         for g in featured
@@ -1146,8 +1157,8 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         cards_html = "".join(_issue_story_card(g, prominent=True) for g in featured)
         parts.append(
             f'<section id="featured" class="issue-section section-featured">'
-            f"<h2>Featured developments</h2>"
-            f'<p class="section-lede muted">What changed, why it matters, and where to read the source.</p>'
+            f"<h2>Featured engineering changes</h2>"
+            f'<p class="section-lede muted">LLVM · GCC · MLIR · GPU — what changed and why engineers should care.</p>'
             f'<div class="story-grid">{cards_html}</div>'
             f'<p class="muted score-legend">{html.escape(editorial_score_legend())}</p>'
             f"</section>"
@@ -1155,6 +1166,11 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
 
     if deep:
         parts.append(_deep_dive_html(deep))
+
+    lesson_src = ([deep] if deep else []) + featured
+    lessons = engineering_lessons([g for g in lesson_src if g], limit=4)
+    if lessons:
+        parts.append(_lessons_html(lessons))
 
     worth = payload.get("worth_knowing") or []
     feat_ids = {(g.get("story_id") or g.get("id")) for g in featured}
@@ -1168,19 +1184,31 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
     if quick:
         signal_blocks.append(
             "<h3 class='signal-tier'>Quick signals</h3>"
-            '<p class="muted">Relevant, partially investigated — 2–3 sentences each.</p>'
-            f'<div class="story-stack compact">{"".join(_issue_story_card(g, prominent=False) for g in quick)}</div>'
+            '<p class="muted">Relevant, partially investigated — open the commit for details.</p>'
+            f'<div class="watch-rows">{"".join(_watch_row(g) for g in quick)}</div>'
         )
     if watch:
-        signal_blocks.append(
-            "<h3 class='signal-tier'>Watchlist</h3>"
-            '<p class="muted">Interesting, but source evidence is incomplete — treat claims cautiously.</p>'
-            f'<div class="story-stack watchlist">{"".join(_issue_story_card(g, prominent=False, watchlist=True) for g in watch)}</div>'
-        )
+        buckets: dict[str, list] = {
+            "needs_inspection": [],
+            "potentially_important": [],
+            "low_priority": [],
+        }
+        for g in watch:
+            buckets[watchlist_bucket(g)].append(g)
+        for key in ("needs_inspection", "potentially_important", "low_priority"):
+            items = buckets[key]
+            if not items:
+                continue
+            signal_blocks.append(
+                f"<h3 class='signal-tier'>{html.escape(WATCHLIST_LABELS[key])}</h3>"
+                f'<div class="watch-rows">{"".join(_watch_row(g) for g in items)}</div>'
+            )
     if signal_blocks:
         parts.append(
             f'<section id="worth-knowing" class="issue-section section-signals">'
-            f"<h2>Worth knowing</h2>"
+            f"<h2>What engineers should watch</h2>"
+            f'<p class="section-lede muted">Unresolved or lightly inspected signals — '
+            f"expand a row for source and context.</p>"
             f"{''.join(signal_blocks)}</section>"
         )
 
@@ -1231,12 +1259,102 @@ def _render_issue_html(meta: IssueMeta, payload: dict) -> str:
         '<li><a href="../../topics/index.html">Topic pages</a></li>'
         '<li><a href="../../archive.html">Archive</a></li>'
         "</ul>"
-        '<p class="muted" style="margin-top:1.5rem"><strong>Editorial invariant.</strong> '
-        "Never let generated explanations claim more than the underlying source evidence establishes. "
+        f'<p class="muted" style="margin-top:1.5rem"><strong>Editorial invariant.</strong> '
+        f"{html.escape(EDITORIAL_INVARIANT)} "
         "We do not invent benchmarks or completion status.</p>"
         "</section>"
     )
     return "\n".join(parts)
+
+
+def _top_three_html(cards: list[dict]) -> str:
+    from csweekly.processors.editorial import _clip_words
+
+    items = []
+    for c in cards[:3]:
+        num = f"{c['index'] + 1:02d}"
+        takeaway = _clip_words(c.get("takeaway") or c.get("summary") or "", 160)
+        items.append(
+            f"""<article class="top3-card">
+  <span class="brief-num">{html.escape(num)}</span>
+  <div>
+    <h3><a href="#{html.escape(c["anchor"])}">{html.escape(c["headline"])}</a></h3>
+    <p class="brief-line">{html.escape(takeaway)}</p>
+    <p class="brief-meta-line">
+      <a class="brief-jump" href="#{html.escape(c["anchor"])}">Read more →</a>
+    </p>
+  </div>
+</article>"""
+        )
+    return (
+        '<section id="top-three" class="issue-section section-top3">'
+        "<h2>The 3 changes worth knowing</h2>"
+        '<p class="section-lede muted">Start here — three developments with the highest '
+        "editorial priority this week.</p>"
+        f'<div class="top3-grid">{"".join(items)}</div></section>'
+    )
+
+
+def _lessons_html(lessons: list[dict]) -> str:
+    items = []
+    for i, lesson in enumerate(lessons, 1):
+        items.append(
+            f"""<article class="lesson-card">
+  <span class="brief-num">{i:02d}</span>
+  <div>
+    <h3><a href="#{html.escape(lesson["anchor"])}">{html.escape(lesson["headline"])}</a></h3>
+    <p class="brief-line">{html.escape(lesson["lesson"])}</p>
+  </div>
+</article>"""
+        )
+    return (
+        '<section id="lessons" class="issue-section section-lessons">'
+        "<h2>Engineering lessons</h2>"
+        '<p class="section-lede muted">What developers can take from this week’s '
+        "changes — grounded in the primary commits.</p>"
+        f'<div class="lesson-list">{"".join(items)}</div></section>'
+    )
+
+
+def _watch_row(g: dict) -> str:
+    from csweekly.processors.editorial import _clip_words
+    from csweekly.reporters.publication import (
+        editorial_headline,
+        engineering_takeaway,
+        sanitize_group_for_display,
+    )
+    from csweekly.reporters.taxonomy_ui import evidence_confidence
+
+    g = sanitize_group_for_display(g)
+    anchor = _story_anchor(g)
+    title = html.escape(editorial_headline(g))
+    why = html.escape(_clip_words(engineering_takeaway(g), 160))
+    ev_label, ev_slug = evidence_confidence(g)
+    stories = g.get("stories") or []
+    primary = stories[0] if stories else {}
+    sha = html.escape((primary.get("related_ref") or "")[:8] or "link")
+    url = html.escape(primary.get("source_url") or "#")
+    proj = str(g.get("project") or g.get("category") or "")
+    stage = ((g.get("stages") or [""])[0] or "").replace("Runtime & Toolchain", "Runtime")
+    labels = html.escape(
+        " · ".join(
+            b
+            for b in (
+                proj.upper() if len(proj) <= 4 else proj.title(),
+                stage,
+                *((g.get("hardware_targets") or [])[:1]),
+            )
+            if b
+        )
+    )
+    return f"""<details class="watch-row" id="{html.escape(anchor)}" data-evidence="{html.escape(ev_slug)}">
+  <summary>
+    <span class="watch-title">{title}</span>
+    <span class="watch-meta">{labels} · <span class="evidence-dot evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span></span>
+  </summary>
+  <p class="brief-line">{why}</p>
+  <p class="meta">Source: <a href="{url}" rel="noopener noreferrer"><code>{sha}</code></a></p>
+</details>"""
 
 
 def _briefing_cards_html(cards: list[dict]) -> str:
@@ -1249,9 +1367,7 @@ def _briefing_cards_html(cards: list[dict]) -> str:
         if proj:
             meta_bits.append(proj.upper() if len(proj) <= 4 else str(proj).title())
         if c.get("stage"):
-            stage = str(c["stage"])
-            # Short stage labels for the compact row
-            stage = stage.replace("Runtime & Toolchain", "Runtime").replace("Middle-end", "Middle-end")
+            stage = str(c["stage"]).replace("Runtime & Toolchain", "Runtime")
             meta_bits.append(stage)
         for t in (c.get("targets") or [])[:1]:
             meta_bits.append(str(t))
@@ -1260,14 +1376,16 @@ def _briefing_cards_html(cards: list[dict]) -> str:
         sha = html.escape(c.get("sha") or "link")
         src = html.escape(c.get("source_url") or "#")
         num = f"{c['index'] + 1:02d}"
-        takeaway = _clip_words(c.get("takeaway") or "", 140)
+        takeaway = _clip_words(c.get("takeaway") or "", 180)
+        summary = _clip_words(c.get("summary") or takeaway, 160)
         meta_line = " · ".join(meta_bits)
         items.append(
-            f"""<article class="brief-row" data-evidence="{ev_slug}">
+            f"""<article class="brief-card" data-evidence="{ev_slug}">
   <span class="brief-num" aria-hidden="true">{html.escape(num)}</span>
   <div class="brief-body">
     <h3><a href="#{html.escape(c["anchor"])}">{html.escape(c["headline"])}</a></h3>
-    <p class="brief-line">{html.escape(takeaway)}</p>
+    <p class="brief-line">{html.escape(summary)}</p>
+    <p class="brief-line brief-why">{html.escape(takeaway)}</p>
     <p class="brief-meta-line">
       <span>{html.escape(meta_line)}</span>
       <span class="evidence-dot evidence-{ev_slug}">{ev}</span>
@@ -1281,10 +1399,12 @@ def _briefing_cards_html(cards: list[dict]) -> str:
     return (
         f'<section id="briefing" class="issue-section section-briefing">'
         f'<div class="section-head">'
-        f"<h2>This week’s five-minute briefing</h2>"
+        f"<h2>Five-minute briefing</h2>"
         f'<p class="section-count muted">{n} stor{"y" if n == 1 else "ies"}</p>'
         f"</div>"
-        f'<div class="brief-list">{"".join(items)}</div></section>'
+        f'<p class="section-lede muted">Five stories across LLVM, GCC, MLIR and GPU — '
+        f"explained simply, with primary sources.</p>"
+        f'<div class="brief-cards">{"".join(items)}</div></section>'
     )
 
 
@@ -1476,9 +1596,9 @@ def _deep_dive_html(g: dict) -> str:
         if b
     )
     return f"""<section id="deep-dive" class="issue-section deep-dive section-dive">
-  <h2>Engineering deep dive</h2>
-  <p class="section-lede muted">One implementation, explained properly — problem → implementation →
-    validation → implications. Unanswered questions stay marked as unknown.</p>
+  <h2>Under the hood</h2>
+  <p class="section-lede muted">One implementation explained with technical evidence —
+    problem → implementation → validation → implications. Unanswered questions stay marked as unknown.</p>
   <article class="dive-panel" id="{html.escape(anchor)}" data-project="{html.escape(proj)}">
     <p class="card-kicker-row">
       <span class="badge tax-evidence evidence-{html.escape(ev_slug)}">{html.escape(ev_label)}</span>

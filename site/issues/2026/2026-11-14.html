@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>#002 — CompilerSutra Weekly</title>
-  <meta name="description" content="A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, with context on what changed and why it matters."/>
+  <meta name="description" content="Understand what changed in LLVM, GCC, MLIR and GPU compilers, why it matters, and how it works under the hood."/>
   <meta name="color-scheme" content="dark light"/>
   <script>
   (function(){try{var t=localStorage.getItem('csw-theme');
@@ -23,7 +23,7 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href="../../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">LLVM · GCC · MLIR · GPU — curated weekly</span></a>
+      <a class="brand" href="../../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">LLVM · GCC · MLIR · GPU — weekly engineering intelligence</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="../../index.html" aria-current="page">Latest</a>
         <a href="../../explore/index.html">Explore</a>
@@ -74,17 +74,50 @@
 
   <article class="article issue-article" id="main">
     <div class="issue-nav"><a class="back" href="../../archive.html">← Archive</a> · <a class="back" href="../2026/2026-11-07.html">← Prev</a> · <a class="back" href="../2026/2026-11-21.html">Next →</a></div>
-    <p class="hero-kicker">CompilerSutra Weekly · Edition #002</p>
-    <h1 class="page-title">The week in compiler engineering</h1>
-    <p class="muted issue-meta-line">14 Nov 2026 · 2026-11-07 → 2026-11-14 (Asia/Kolkata, Saturday→Friday, end exclusive) · GCC · IREE · LLVM · MLIR · Circt</p>
-    <p class="lede">Understand what changed, why it matters, and how it works under the hood.</p>
-    <nav class="toc" aria-label="On this page"><a href="#briefing">Briefing</a><a href="#featured">Featured</a><a href="#deep-dive">Deep dive</a><a href="#worth-knowing">Signals</a><a href="#themes">Themes</a><a href="#worth-reading">Research</a><a href="#topic-index">Index</a></nav>
+    <header class="issue-hero">
+      <p class="hero-kicker">CompilerSutra Weekly · Edition #002</p>
+      <h1 class="page-title">The week in compiler engineering</h1>
+      <p class="hero-date muted">14 Nov 2026 · 2026-11-07 → 2026-11-14 (Asia/Kolkata, Saturday→Friday, end exclusive)</p>
+      <div class="hero-chips" aria-label="Projects covered"><span class="hero-chip">GCC</span><span class="hero-chip">IREE</span><span class="hero-chip">LLVM</span><span class="hero-chip">MLIR</span><span class="hero-chip">Circt</span></div>
+      <p class="lede">Understand what changed in LLVM, GCC, MLIR and GPU compilers,
+        why it matters, and how it works under the hood.</p>
+    </header>
+    <nav class="toc" aria-label="On this page"><a href="#top-three">Top 3</a><a href="#briefing">Briefing</a><a href="#featured">Featured</a><a href="#deep-dive">Under the hood</a><a href="#lessons">Lessons</a><a href="#worth-knowing">Watchlist</a><a href="#themes">Themes</a><a href="#worth-reading">Research</a><a href="#topic-index">Index</a></nav>
     <div class="issue-body">
-    <section id="briefing" class="issue-section section-briefing"><div class="section-head"><h2>This week’s five-minute briefing</h2><p class="section-count muted">5 stories</p></div><div class="brief-list"><article class="brief-row" data-evidence="source-backed">
+    <section id="top-three" class="issue-section section-top3"><h2>The 3 changes worth knowing</h2><p class="section-lede muted">Start here — three developments with the highest editorial priority this week.</p><div class="top3-grid"><article class="top3-card">
+  <span class="brief-num">01</span>
+  <div>
+    <h3><a href="#llvm-llvm-aarch64">Remove clearKillFlags calls</a></h3>
+    <p class="brief-line">Kill flags are no longer permitted on virtual registers, but these contexts may also see physical registers. Engineering focus: Backend (AArch64) — CPU teams…</p>
+    <p class="brief-meta-line">
+      <a class="brief-jump" href="#llvm-llvm-aarch64">Read more →</a>
+    </p>
+  </div>
+</article><article class="top3-card">
+  <span class="brief-num">02</span>
+  <div>
+    <h3><a href="#gcc-gcc-aarch64">Port NEON widening shifts by an immediate to the pragma-based framework</a></h3>
+    <p class="brief-line">Port the following families of NEON intrinsics to the pragma-based framework: * vshll_n * vshll_high_n. Engineering focus: Backend (AArch64) — CPU teams should…</p>
+    <p class="brief-meta-line">
+      <a class="brief-jump" href="#gcc-gcc-aarch64">Read more →</a>
+    </p>
+  </div>
+</article><article class="top3-card">
+  <span class="brief-num">03</span>
+  <div>
+    <h3><a href="#llvm-llvm-mips-port">Port PostLegalizerCombiner to NewPM</a></h3>
+    <p class="brief-line">Standard NewPM pass porting. Engineering focus: Backend — CPU teams should confirm behavior in the linked source.</p>
+    <p class="brief-meta-line">
+      <a class="brief-jump" href="#llvm-llvm-mips-port">Read more →</a>
+    </p>
+  </div>
+</article></div></section>
+<section id="briefing" class="issue-section section-briefing"><div class="section-head"><h2>Five-minute briefing</h2><p class="section-count muted">5 stories</p></div><p class="section-lede muted">Five stories across LLVM, GCC, MLIR and GPU — explained simply, with primary sources.</p><div class="brief-cards"><article class="brief-card" data-evidence="source-backed">
   <span class="brief-num" aria-hidden="true">01</span>
   <div class="brief-body">
     <h3><a href="#llvm-llvm-aarch64">Remove clearKillFlags calls</a></h3>
-    <p class="brief-line">Kill flags are no longer permitted on virtual registers, but these contexts may also see physical registers. Engineering focus: Backend…</p>
+    <p class="brief-line">Kill flags are no longer permitted on virtual registers, but these contexts may also see physical registers.</p>
+    <p class="brief-line brief-why">Kill flags are no longer permitted on virtual registers, but these contexts may also see physical registers. Engineering focus: Backend (AArch64) — CPU teams should confirm…</p>
     <p class="brief-meta-line">
       <span>LLVM · Backend · AArch64</span>
       <span class="evidence-dot evidence-source-backed">Source-backed</span>
@@ -92,11 +125,12 @@
       <a class="brief-jump" href="#llvm-llvm-aarch64">Story →</a>
     </p>
   </div>
-</article><article class="brief-row" data-evidence="verified">
+</article><article class="brief-card" data-evidence="verified">
   <span class="brief-num" aria-hidden="true">02</span>
   <div class="brief-body">
     <h3><a href="#gcc-gcc-aarch64">Port NEON widening shifts by an immediate to the pragma-based framework</a></h3>
-    <p class="brief-line">Port the following families of NEON intrinsics to the pragma-based framework: * vshll_n * vshll_high_n. Engineering focus: Backend (AArch64)…</p>
+    <p class="brief-line">Port the following families of NEON intrinsics to the pragma-based framework: * vshll_n * vshll_high_n.</p>
+    <p class="brief-line brief-why">Port the following families of NEON intrinsics to the pragma-based framework: * vshll_n * vshll_high_n. Engineering focus: Backend (AArch64) — CPU teams should confirm behavior in…</p>
     <p class="brief-meta-line">
       <span>GCC · Backend · AArch64</span>
       <span class="evidence-dot evidence-verified">Verified</span>
@@ -104,11 +138,12 @@
       <a class="brief-jump" href="#gcc-gcc-aarch64">Story →</a>
     </p>
   </div>
-</article><article class="brief-row" data-evidence="source-backed">
+</article><article class="brief-card" data-evidence="source-backed">
   <span class="brief-num" aria-hidden="true">03</span>
   <div class="brief-body">
     <h3><a href="#llvm-llvm-mips-port">Port PostLegalizerCombiner to NewPM</a></h3>
-    <p class="brief-line">Standard NewPM pass porting. Engineering focus: Backend — CPU teams should confirm behavior in the linked source.</p>
+    <p class="brief-line">Standard NewPM pass porting.</p>
+    <p class="brief-line brief-why">Standard NewPM pass porting. Engineering focus: Backend — CPU teams should confirm behavior in the linked source.</p>
     <p class="brief-meta-line">
       <span>LLVM · Backend</span>
       <span class="evidence-dot evidence-source-backed">Source-backed</span>
@@ -116,11 +151,12 @@
       <a class="brief-jump" href="#llvm-llvm-mips-port">Story →</a>
     </p>
   </div>
-</article><article class="brief-row" data-evidence="verified">
+</article><article class="brief-card" data-evidence="verified">
   <span class="brief-num" aria-hidden="true">04</span>
   <div class="brief-body">
     <h3><a href="#mlir-mlir-cir-add">Add support for direct with align in calling convention lowering</a></h3>
-    <p class="brief-line">This change adds the infrastructure for handling arguments that are classified as `Direct` with a required alignment. Engineering focus…</p>
+    <p class="brief-line">This change adds the infrastructure for handling arguments that are classified as `Direct` with a required alignment.</p>
+    <p class="brief-line brief-why">This change adds the infrastructure for handling arguments that are classified as `Direct` with a required alignment. Engineering focus: Frontend — Languages teams should confirm…</p>
     <p class="brief-meta-line">
       <span>MLIR · Frontend</span>
       <span class="evidence-dot evidence-verified">Verified</span>
@@ -128,11 +164,12 @@
       <a class="brief-jump" href="#mlir-mlir-cir-add">Story →</a>
     </p>
   </div>
-</article><article class="brief-row" data-evidence="source-backed">
+</article><article class="brief-card" data-evidence="source-backed">
   <span class="brief-num" aria-hidden="true">05</span>
   <div class="brief-body">
     <h3><a href="#gcc-gcc-vectorizer">fix dump_printf_loc without dump_enabled_p</a></h3>
-    <p class="brief-line">dump_printf_loc has to be guarded by dump_enabled_p. Engineering focus: Middle-end — CPU teams should confirm behavior in the linked source.</p>
+    <p class="brief-line">dump_printf_loc has to be guarded by dump_enabled_p.</p>
+    <p class="brief-line brief-why">dump_printf_loc has to be guarded by dump_enabled_p. Engineering focus: Middle-end — CPU teams should confirm behavior in the linked source.</p>
     <p class="brief-meta-line">
       <span>GCC · Middle-end</span>
       <span class="evidence-dot evidence-source-backed">Source-backed</span>
@@ -141,7 +178,7 @@
     </p>
   </div>
 </article></div></section>
-<section id="featured" class="issue-section section-featured"><h2>Featured developments</h2><p class="section-lede muted">What changed, why it matters, and where to read the source.</p><div class="story-grid"><article class="story-card issue-story" id="gcc-gcc-aarch64" data-project="gcc" data-evidence="verified">
+<section id="featured" class="issue-section section-featured"><h2>Featured engineering changes</h2><p class="section-lede muted">LLVM · GCC · MLIR · GPU — what changed and why engineers should care.</p><div class="story-grid"><article class="story-card issue-story" id="gcc-gcc-aarch64" data-project="gcc" data-evidence="verified">
     <p class="card-kicker-row">
     <span class="badge tax-evidence evidence-verified">Verified</span>
     <span class="editor-pick">Editor&#x27;s pick · 6.8/10</span>
@@ -195,9 +232,9 @@
   
 </article></div><p class="muted score-legend">Editorial ranking (not an objective importance score): technical significance 30% · engineering impact 25% · novelty 20% · breadth 15% · evidence quality 10%. Separate from evidence confidence.</p></section>
 <section id="deep-dive" class="issue-section deep-dive section-dive">
-  <h2>Engineering deep dive</h2>
-  <p class="section-lede muted">One implementation, explained properly — problem → implementation →
-    validation → implications. Unanswered questions stay marked as unknown.</p>
+  <h2>Under the hood</h2>
+  <p class="section-lede muted">One implementation explained with technical evidence —
+    problem → implementation → validation → implications. Unanswered questions stay marked as unknown.</p>
   <article class="dive-panel" id="llvm-llvm-aarch64" data-project="llvm">
     <p class="card-kicker-row">
       <span class="badge tax-evidence evidence-source-backed">Source-backed</span>
@@ -216,91 +253,116 @@
     </details>
   </article>
 </section>
-<section id="worth-knowing" class="issue-section section-signals"><h2>Worth knowing</h2><h3 class='signal-tier'>Watchlist</h3><p class="muted">Interesting, but source evidence is incomplete — treat claims cautiously.</p><div class="story-stack watchlist"><article class="story-row watchlist-item" id="gcc-gcc-i386" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Backend · X86</p>
-  <p class="secondary">Source subject: “Extend AOCL vector library support to AOCL 5.3.1 and 6.0.0”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/d69d9672e1e8decde3d51dfa99b4bf1e6230e5a4" rel="noopener noreferrer"><code>d69d9672</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="gcc-gcc-risc-v" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Backend · RISC-V</p>
-  <p class="secondary">Source subject: “Fold masked counts in inverted bit extraction”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/72288e39290eb70bffbe5e47beb9da6426d53a41" rel="noopener noreferrer"><code>72288e39</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="gcc-gcc-loongarch" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Backend · LoongArch</p>
-  <p class="secondary">Source subject: “fix missed bstrins_di_for_ior_mask optimization”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/7fe2ca4c9333e0d023be08271a51c6769569da3f" rel="noopener noreferrer"><code>7fe2ca4c</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="gcc-gcc-c" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Middle-end</p>
-  <p class="secondary">Source subject: “c++: fix testcase more”. Apparent component: GCC. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/946f1fefc6d44afad2d3ff1e6a5fe74387bb3aea" rel="noopener noreferrer"><code>946f1fef</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-llvm-x86" data-project="llvm" data-evidence="unverified">
-    <p class="card-labels">LLVM · Backend · X86</p>
-  <p class="secondary">Source subject: “Remove clearKillFlags call in X86FlagsCopyLowering”. Apparent component: X86 backend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/105645b338a639d7c6c00f3048c67cb884d205b8" rel="noopener noreferrer"><code>105645b3</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-llvm-codegen" data-project="llvm" data-evidence="unverified">
-    <p class="card-labels">LLVM · Backend</p>
-  <p class="secondary">RuntimeLibcalls interface change — how the compiler declares or emits library calls.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/01b6afb6614383495f001a0668e115d08509942b" rel="noopener noreferrer"><code>01b6afb6</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="gcc-gcc-amdgcn" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Backend · AMDGPU</p>
-  <p class="secondary">AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/bb26438a98a26c64b1a06ee4844e6a6a7911b742" rel="noopener noreferrer"><code>bb26438a</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-llvm-amdgpu" data-project="llvm" data-evidence="unverified">
-    <p class="card-labels">LLVM · Backend · AMDGPU</p>
-  <p class="secondary">AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/eb5268bb587e72013a602ff3c0afd56d7923f2f0" rel="noopener noreferrer"><code>eb5268bb</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="gcc-gcc-a68" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Middle-end</p>
-  <p class="secondary">Source subject: “add GNU extensions in Algol 68 to libga68”. Apparent component: GCC. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/4b22e5581bb3276598d9e4ec46bbb6a541e8dbe6" rel="noopener noreferrer"><code>4b22e558</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="iree-codegen-cpu-add" data-project="ai" data-evidence="unverified">
-    <p class="card-labels">IREE · Backend · RISC-V</p>
-  <p class="secondary">Source subject: “Add RISC-V V bf16 vfwmaccbf16 inner_tiled MMA”. Apparent component: MLIR. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/iree-org/iree/commit/5332c68297a68fafd596277d7686f91009ebf1cb" rel="noopener noreferrer"><code>5332c682</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="gcc-gcc-i386" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Backend · X86</p>
-  <p class="secondary">Source subject: “Avoid false dependency for BSR”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/9844856b32f318381ba0ded6da2ed2d548b778a7" rel="noopener noreferrer"><code>9844856b</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-clang-clang-openmp" data-project="llvm" data-evidence="unverified">
-    <p class="card-labels">LLVM · Frontend</p>
-  <p class="secondary">Source subject: “Fix crash on task reduction of an array with a declare reduction that has no initializer”. Apparent component: Clang frontend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/7f84220a774a96f6d98bdad01cc47f54d2177278" rel="noopener noreferrer"><code>7f84220a</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
+<section id="lessons" class="issue-section section-lessons"><h2>Engineering lessons</h2><p class="section-lede muted">What developers can take from this week’s changes — grounded in the primary commits.</p><div class="lesson-list"><article class="lesson-card">
+  <span class="brief-num">01</span>
+  <div>
+    <h3><a href="#llvm-llvm-aarch64">Remove clearKillFlags calls</a></h3>
+    <p class="brief-line">Kill flags are no longer permitted on virtual registers, but these contexts may also see physical registers. For backend work, treat the linked commit as the authority — do not generalize beyond what the diff establishes.</p>
+  </div>
+</article><article class="lesson-card">
+  <span class="brief-num">02</span>
+  <div>
+    <h3><a href="#gcc-gcc-aarch64">Port NEON widening shifts by an immediate to the pragma-based framework</a></h3>
+    <p class="brief-line">Port the following families of NEON intrinsics to the pragma-based framework: * vshll_n * vshll_high_n. For backend work, treat the linked commit as the authority — do not generalize beyond what the diff establishes.</p>
+  </div>
+</article><article class="lesson-card">
+  <span class="brief-num">03</span>
+  <div>
+    <h3><a href="#gcc-gcc-aarch64">Add SVE2p3/SME2p3 pairwise intrinsics</a></h3>
+    <p class="brief-line">Add support for these new pairwise intrinsic operations: svaddqp, svaddsubp and svsubp. For backend work, treat the linked commit as the authority — do not generalize beyond what the diff establishes.</p>
+  </div>
+</article><article class="lesson-card">
+  <span class="brief-num">04</span>
+  <div>
+    <h3><a href="#mlir-mlir-cir-add">Add support for direct with align in calling convention lowering</a></h3>
+    <p class="brief-line">This change adds the infrastructure for handling arguments that are classified as `Direct` with a required alignment. For frontend work, treat the linked commit as the authority — do not generalize beyond what the diff establishes.</p>
+  </div>
 </article></div></section>
+<section id="worth-knowing" class="issue-section section-signals"><h2>What engineers should watch</h2><p class="section-lede muted">Unresolved or lightly inspected signals — expand a row for source and context.</p><h3 class='signal-tier'>Needs technical inspection</h3><div class="watch-rows"><details class="watch-row" id="llvm-llvm-codegen" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">CodeGen: Stop using TargetLowering&#x27;s libcall info in PreISelIntrinsicLowering</span>
+    <span class="watch-meta">LLVM · Backend · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">RuntimeLibcalls interface change — how the compiler declares or emits library calls.</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/01b6afb6614383495f001a0668e115d08509942b" rel="noopener noreferrer"><code>01b6afb6</code></a></p>
+</details><details class="watch-row" id="llvm-clang-clang-openmp" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Fix crash on task reduction of an array with a declare reduction that has no initializer</span>
+    <span class="watch-meta">LLVM · Frontend · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Fix crash on task reduction of an array with a declare reduction that has no initializer”. Apparent component: Clang frontend. Broader impact…</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/7f84220a774a96f6d98bdad01cc47f54d2177278" rel="noopener noreferrer"><code>7f84220a</code></a></p>
+</details></div><h3 class='signal-tier'>Potentially important</h3><div class="watch-rows"><details class="watch-row" id="gcc-gcc-i386" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Extend AOCL vector library support to AOCL 5.3.1 and 6.0.0</span>
+    <span class="watch-meta">GCC · Backend · X86 · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Extend AOCL vector library support to AOCL 5.3.1 and 6.0.0”. Apparent component: GCC target backend. Broader impact is not established from the…</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/d69d9672e1e8decde3d51dfa99b4bf1e6230e5a4" rel="noopener noreferrer"><code>d69d9672</code></a></p>
+</details><details class="watch-row" id="gcc-gcc-risc-v" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Fold masked counts in inverted bit extraction</span>
+    <span class="watch-meta">GCC · Backend · RISC-V · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Fold masked counts in inverted bit extraction”. Apparent component: GCC target backend. Broader impact is not established from the commit…</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/72288e39290eb70bffbe5e47beb9da6426d53a41" rel="noopener noreferrer"><code>72288e39</code></a></p>
+</details><details class="watch-row" id="gcc-gcc-loongarch" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">fix missed bstrins_di_for_ior_mask optimization</span>
+    <span class="watch-meta">GCC · Backend · LoongArch · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “fix missed bstrins_di_for_ior_mask optimization”. Apparent component: GCC target backend. Broader impact is not established from the commit…</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/7fe2ca4c9333e0d023be08271a51c6769569da3f" rel="noopener noreferrer"><code>7fe2ca4c</code></a></p>
+</details><details class="watch-row" id="gcc-gcc-c" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">fix testcase more</span>
+    <span class="watch-meta">GCC · Middle-end · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “c++: fix testcase more”. Apparent component: GCC. Broader impact is not established from the commit message alone.</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/946f1fefc6d44afad2d3ff1e6a5fe74387bb3aea" rel="noopener noreferrer"><code>946f1fef</code></a></p>
+</details><details class="watch-row" id="llvm-llvm-x86" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Remove clearKillFlags call in X86FlagsCopyLowering</span>
+    <span class="watch-meta">LLVM · Backend · X86 · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Remove clearKillFlags call in X86FlagsCopyLowering”. Apparent component: X86 backend. Broader impact is not established from the commit message…</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/105645b338a639d7c6c00f3048c67cb884d205b8" rel="noopener noreferrer"><code>105645b3</code></a></p>
+</details><details class="watch-row" id="gcc-gcc-amdgcn" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">fix 64-bit multiply edge cases</span>
+    <span class="watch-meta">GCC · Backend · AMDGPU · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/bb26438a98a26c64b1a06ee4844e6a6a7911b742" rel="noopener noreferrer"><code>bb26438a</code></a></p>
+</details><details class="watch-row" id="llvm-llvm-amdgpu" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Remove clearKillFlags calls</span>
+    <span class="watch-meta">LLVM · Backend · AMDGPU · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/eb5268bb587e72013a602ff3c0afd56d7923f2f0" rel="noopener noreferrer"><code>eb5268bb</code></a></p>
+</details><details class="watch-row" id="gcc-gcc-a68" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">add GNU extensions in Algol 68 to libga68</span>
+    <span class="watch-meta">GCC · Middle-end · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “add GNU extensions in Algol 68 to libga68”. Apparent component: GCC. Broader impact is not established from the commit message alone.</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/4b22e5581bb3276598d9e4ec46bbb6a541e8dbe6" rel="noopener noreferrer"><code>4b22e558</code></a></p>
+</details><details class="watch-row" id="iree-codegen-cpu-add" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Add RISC-V V bf16 vfwmaccbf16 inner_tiled MMA</span>
+    <span class="watch-meta">IREE · Backend · RISC-V · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Add RISC-V V bf16 vfwmaccbf16 inner_tiled MMA”. Apparent component: MLIR. Broader impact is not established from the commit message alone.</p>
+  <p class="meta">Source: <a href="https://github.com/iree-org/iree/commit/5332c68297a68fafd596277d7686f91009ebf1cb" rel="noopener noreferrer"><code>5332c682</code></a></p>
+</details><details class="watch-row" id="gcc-gcc-i386" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Avoid false dependency for BSR</span>
+    <span class="watch-meta">GCC · Backend · X86 · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Avoid false dependency for BSR”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/9844856b32f318381ba0ded6da2ed2d548b778a7" rel="noopener noreferrer"><code>9844856b</code></a></p>
+</details></div></section>
 <section id="themes" class="issue-section"><h2>Themes this week</h2><p class="muted">Project index only — details are in the sections above.</p><h3>AI Compilers</h3><ul class='theme-index'><li><a href="#iree-codegen-cpu-add">Add RISC-V V bf16 vfwmaccbf16 inner_tiled MMA · RISC-V, WebAssembly</a></li></ul><h3>Clang</h3><ul class='theme-index'><li><a href="#llvm-clang-clang-openmp">Fix crash on task reduction of an array with a declare reduction that has no initializer</a></li></ul><h3>GCC</h3><ul class='theme-index'><li><a href="#gcc-gcc-aarch64">Port NEON widening shifts by an immediate to the pragma-based framework · AArch64</a></li><li><a href="#gcc-gcc-aarch64">Add SVE2p3/SME2p3 pairwise intrinsics · AArch64</a></li><li><a href="#gcc-gcc-vectorizer">fix dump_printf_loc without dump_enabled_p</a></li><li><a href="#gcc-gcc-s390">Fix return value ABI handling for nullptr_t</a></li><li><a href="#gcc-gcc-tree-optimization-128514">tree-optimization/128514 - wrong bitfield vectorization with SSO</a></li><li><a href="#gcc-gcc-openmp-c">Add support for &#x27;omp allocate&#x27; directive</a></li></ul><h3>LLVM</h3><ul class='theme-index'><li><a href="#llvm-llvm-aarch64">Remove clearKillFlags calls · AArch64</a></li><li><a href="#llvm-llvm-mips-port">Port PostLegalizerCombiner to NewPM</a></li><li><a href="#llvm-llvm-x86">Remove clearKillFlags call in X86FlagsCopyLowering · X86</a></li><li><a href="#llvm-llvm-codegen">CodeGen: Stop using TargetLowering&#x27;s libcall info in PreISelIntrinsicLowering</a></li><li><a href="#llvm-llvm-amdgpu">Remove clearKillFlags calls · AMDGPU</a></li></ul><h3>MLIR</h3><ul class='theme-index'><li><a href="#mlir-mlir-cir-add">Add support for direct with align in calling convention lowering</a></li></ul></section>
 <section id="worth-reading" class="issue-section"><h2>Research and reading</h2><h3>Paper — An Agentic Python Framework for LLM-Driven UVM Testbench Synthesis with Closed-Loop Compiler Feedback</h3>
 <p>

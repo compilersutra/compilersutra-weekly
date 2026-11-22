@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>#001 — CompilerSutra Weekly</title>
-  <meta name="description" content="A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, with context on what changed and why it matters."/>
+  <meta name="description" content="Understand what changed in LLVM, GCC, MLIR and GPU compilers, why it matters, and how it works under the hood."/>
   <meta name="color-scheme" content="dark light"/>
   <script>
   (function(){try{var t=localStorage.getItem('csw-theme');
@@ -23,7 +23,7 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href="../../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">LLVM · GCC · MLIR · GPU — curated weekly</span></a>
+      <a class="brand" href="../../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">LLVM · GCC · MLIR · GPU — weekly engineering intelligence</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="../../index.html" aria-current="page">Latest</a>
         <a href="../../explore/index.html">Explore</a>
@@ -74,17 +74,50 @@
 
   <article class="article issue-article" id="main">
     <div class="issue-nav"><a class="back" href="../../archive.html">← Archive</a> · <a class="back" href="../2026/2026-11-14.html">Next →</a></div>
-    <p class="hero-kicker">CompilerSutra Weekly · Edition #001</p>
-    <h1 class="page-title">The week in compiler engineering</h1>
-    <p class="muted issue-meta-line">7 Nov 2026 · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive) · GCC · LLVM · MLIR</p>
-    <p class="lede">Understand what changed, why it matters, and how it works under the hood.</p>
-    <nav class="toc" aria-label="On this page"><a href="#briefing">Briefing</a><a href="#featured">Featured</a><a href="#deep-dive">Deep dive</a><a href="#worth-knowing">Signals</a><a href="#themes">Themes</a><a href="#worth-reading">Research</a><a href="#topic-index">Index</a></nav>
+    <header class="issue-hero">
+      <p class="hero-kicker">CompilerSutra Weekly · Edition #001</p>
+      <h1 class="page-title">The week in compiler engineering</h1>
+      <p class="hero-date muted">7 Nov 2026 · 2026-10-30 → 2026-11-06 (UTC, Fri→Fri, end exclusive)</p>
+      <div class="hero-chips" aria-label="Projects covered"><span class="hero-chip">GCC</span><span class="hero-chip">LLVM</span><span class="hero-chip">MLIR</span></div>
+      <p class="lede">Understand what changed in LLVM, GCC, MLIR and GPU compilers,
+        why it matters, and how it works under the hood.</p>
+    </header>
+    <nav class="toc" aria-label="On this page"><a href="#top-three">Top 3</a><a href="#briefing">Briefing</a><a href="#featured">Featured</a><a href="#deep-dive">Under the hood</a><a href="#lessons">Lessons</a><a href="#worth-knowing">Watchlist</a><a href="#themes">Themes</a><a href="#worth-reading">Research</a><a href="#topic-index">Index</a></nav>
     <div class="issue-body">
-    <section id="briefing" class="issue-section section-briefing"><div class="section-head"><h2>This week’s five-minute briefing</h2><p class="section-count muted">5 stories</p></div><div class="brief-list"><article class="brief-row" data-evidence="verified">
+    <section id="top-three" class="issue-section section-top3"><h2>The 3 changes worth knowing</h2><p class="section-lede muted">Start here — three developments with the highest editorial priority this week.</p><div class="top3-grid"><article class="top3-card">
+  <span class="brief-num">01</span>
+  <div>
+    <h3><a href="#gcc-gcc-risc-v">Extract subvectors via vec_perm_const</a></h3>
+    <p class="brief-line">This patch adds a const-perm recoginzer for subvector extractions. Engineering focus: Backend (RISC-V) — CPU teams should confirm behavior in the linked source.</p>
+    <p class="brief-meta-line">
+      <a class="brief-jump" href="#gcc-gcc-risc-v">Read more →</a>
+    </p>
+  </div>
+</article><article class="top3-card">
+  <span class="brief-num">02</span>
+  <div>
+    <h3><a href="#llvm-clang-cir-implement">Implement support for matrix splat cast</a></h3>
+    <p class="brief-line">Implement support for the matrix splat cast. Engineering focus: Frontend — Languages teams should confirm behavior in the linked source.</p>
+    <p class="brief-meta-line">
+      <a class="brief-jump" href="#llvm-clang-cir-implement">Read more →</a>
+    </p>
+  </div>
+</article><article class="top3-card">
+  <span class="brief-num">03</span>
+  <div>
+    <h3><a href="#llvm-llvm-riscv-add">Add RISCVABI helper functions for single/doubleFP and purecap</a></h3>
+    <p class="brief-line">Use them to simplify code that checks for individual enum values. Engineering focus: Backend (RISC-V) — CPU teams should confirm behavior in the linked source.</p>
+    <p class="brief-meta-line">
+      <a class="brief-jump" href="#llvm-llvm-riscv-add">Read more →</a>
+    </p>
+  </div>
+</article></div></section>
+<section id="briefing" class="issue-section section-briefing"><div class="section-head"><h2>Five-minute briefing</h2><p class="section-count muted">5 stories</p></div><p class="section-lede muted">Five stories across LLVM, GCC, MLIR and GPU — explained simply, with primary sources.</p><div class="brief-cards"><article class="brief-card" data-evidence="verified">
   <span class="brief-num" aria-hidden="true">01</span>
   <div class="brief-body">
     <h3><a href="#gcc-gcc-risc-v">Extract subvectors via vec_perm_const</a></h3>
-    <p class="brief-line">This patch adds a const-perm recoginzer for subvector extractions. Engineering focus: Backend (RISC-V) — CPU teams should confirm behavior…</p>
+    <p class="brief-line">This patch adds a const-perm recoginzer for subvector extractions.</p>
+    <p class="brief-line brief-why">This patch adds a const-perm recoginzer for subvector extractions. Engineering focus: Backend (RISC-V) — CPU teams should confirm behavior in the linked source.</p>
     <p class="brief-meta-line">
       <span>GCC · Backend · RISC-V</span>
       <span class="evidence-dot evidence-verified">Verified</span>
@@ -92,11 +125,12 @@
       <a class="brief-jump" href="#gcc-gcc-risc-v">Story →</a>
     </p>
   </div>
-</article><article class="brief-row" data-evidence="verified">
+</article><article class="brief-card" data-evidence="verified">
   <span class="brief-num" aria-hidden="true">02</span>
   <div class="brief-body">
     <h3><a href="#llvm-clang-cir-implement">Implement support for matrix splat cast</a></h3>
-    <p class="brief-line">Implement support for the matrix splat cast. Engineering focus: Frontend — Languages teams should confirm behavior in the linked source.</p>
+    <p class="brief-line">Implement support for the matrix splat cast.</p>
+    <p class="brief-line brief-why">Implement support for the matrix splat cast. Engineering focus: Frontend — Languages teams should confirm behavior in the linked source.</p>
     <p class="brief-meta-line">
       <span>Clang · Frontend</span>
       <span class="evidence-dot evidence-verified">Verified</span>
@@ -104,11 +138,12 @@
       <a class="brief-jump" href="#llvm-clang-cir-implement">Story →</a>
     </p>
   </div>
-</article><article class="brief-row" data-evidence="source-backed">
+</article><article class="brief-card" data-evidence="source-backed">
   <span class="brief-num" aria-hidden="true">03</span>
   <div class="brief-body">
     <h3><a href="#llvm-llvm-riscv-add">Add RISCVABI helper functions for single/doubleFP and purecap</a></h3>
-    <p class="brief-line">Use them to simplify code that checks for individual enum values. Engineering focus: Backend (RISC-V) — CPU teams should confirm behavior in…</p>
+    <p class="brief-line">Use them to simplify code that checks for individual enum values.</p>
+    <p class="brief-line brief-why">Use them to simplify code that checks for individual enum values. Engineering focus: Backend (RISC-V) — CPU teams should confirm behavior in the linked source.</p>
     <p class="brief-meta-line">
       <span>LLVM · Backend · RISC-V</span>
       <span class="evidence-dot evidence-source-backed">Source-backed</span>
@@ -116,11 +151,12 @@
       <a class="brief-jump" href="#llvm-llvm-riscv-add">Story →</a>
     </p>
   </div>
-</article><article class="brief-row" data-evidence="verified">
+</article><article class="brief-card" data-evidence="verified">
   <span class="brief-num" aria-hidden="true">04</span>
   <div class="brief-body">
     <h3><a href="#mlir-mlir-nvvm-add">Add nvvm.mulf Op</a></h3>
-    <p class="brief-line">Adds `nvvm.mulf` Op to the NVVM dialect. Engineering focus: Middle-end (NVPTX) — GPU teams should confirm behavior in the linked source.</p>
+    <p class="brief-line">Adds `nvvm.mulf` Op to the NVVM dialect.</p>
+    <p class="brief-line brief-why">Adds `nvvm.mulf` Op to the NVVM dialect. Engineering focus: Middle-end (NVPTX) — GPU teams should confirm behavior in the linked source.</p>
     <p class="brief-meta-line">
       <span>MLIR · Middle-end · NVPTX</span>
       <span class="evidence-dot evidence-verified">Verified</span>
@@ -128,11 +164,12 @@
       <a class="brief-jump" href="#mlir-mlir-nvvm-add">Story →</a>
     </p>
   </div>
-</article><article class="brief-row" data-evidence="verified">
+</article><article class="brief-card" data-evidence="verified">
   <span class="brief-num" aria-hidden="true">05</span>
   <div class="brief-body">
     <h3><a href="#llvm-llvm-spir-v-newpm">Use runCodeGenPipeline in SPIRVTranslate</a></h3>
-    <p class="brief-line">SPIRVTranslate will be able to pick NewPM once SPIR-V defaults to it. Engineering focus: Runtime &amp; Toolchain (SPIR-V) — GPU teams should…</p>
+    <p class="brief-line">SPIRVTranslate will be able to pick NewPM once SPIR-V defaults to it.</p>
+    <p class="brief-line brief-why">SPIRVTranslate will be able to pick NewPM once SPIR-V defaults to it. Engineering focus: Runtime &amp; Toolchain (SPIR-V) — GPU teams should confirm behavior in the linked source.</p>
     <p class="brief-meta-line">
       <span>LLVM · Runtime · SPIR-V</span>
       <span class="evidence-dot evidence-verified">Verified</span>
@@ -141,7 +178,7 @@
     </p>
   </div>
 </article></div></section>
-<section id="featured" class="issue-section section-featured"><h2>Featured developments</h2><p class="section-lede muted">What changed, why it matters, and where to read the source.</p><div class="story-grid"><article class="story-card issue-story" id="llvm-clang-cir-implement" data-project="clang" data-evidence="verified">
+<section id="featured" class="issue-section section-featured"><h2>Featured engineering changes</h2><p class="section-lede muted">LLVM · GCC · MLIR · GPU — what changed and why engineers should care.</p><div class="story-grid"><article class="story-card issue-story" id="llvm-clang-cir-implement" data-project="clang" data-evidence="verified">
     <p class="card-kicker-row">
     <span class="badge tax-evidence evidence-verified">Verified</span>
     <span class="editor-pick">Editor&#x27;s pick · 7.2/10</span>
@@ -195,9 +232,9 @@
   <details class="related-commits"><summary>Related commits (2)</summary><p><a href="https://github.com/llvm/llvm-project/commit/930f2d2cfa1e33b6786e351f32833968295e373a" rel="noopener noreferrer"><code>930f2d2c</code></a> · <a href="https://github.com/llvm/llvm-project/commit/30a475d9ca714102d31ed7ab5217ab5233ecb720" rel="noopener noreferrer"><code>30a475d9</code></a></p></details>
 </article></div><p class="muted score-legend">Editorial ranking (not an objective importance score): technical significance 30% · engineering impact 25% · novelty 20% · breadth 15% · evidence quality 10%. Separate from evidence confidence.</p></section>
 <section id="deep-dive" class="issue-section deep-dive section-dive">
-  <h2>Engineering deep dive</h2>
-  <p class="section-lede muted">One implementation, explained properly — problem → implementation →
-    validation → implications. Unanswered questions stay marked as unknown.</p>
+  <h2>Under the hood</h2>
+  <p class="section-lede muted">One implementation explained with technical evidence —
+    problem → implementation → validation → implications. Unanswered questions stay marked as unknown.</p>
   <article class="dive-panel" id="gcc-gcc-risc-v" data-project="gcc">
     <p class="card-kicker-row">
       <span class="badge tax-evidence evidence-verified">Verified</span>
@@ -217,91 +254,116 @@ generic handling.  Every possible extract should be just a slidedown.</p></div><
     </details>
   </article>
 </section>
-<section id="worth-knowing" class="issue-section section-signals"><h2>Worth knowing</h2><h3 class='signal-tier'>Watchlist</h3><p class="muted">Interesting, but source evidence is incomplete — treat claims cautiously.</p><div class="story-stack watchlist"><article class="story-row watchlist-item" id="gcc-gcc-i386" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Backend</p>
-  <p class="secondary">Source subject: “Add AVX512BMM bitreverse lowering”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/6783b7375fff65e917637e86688918e808682f14" rel="noopener noreferrer"><code>6783b737</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-llvm-tablegen" data-project="llvm" data-evidence="unverified">
-    <p class="card-labels">LLVM · Middle-end</p>
-  <p class="secondary">Source subject: “Matt Arsenault: TableGen: Fix advancing past the end of an empty macro fusion list”. Apparent component: llvm. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/5bbc49f5d844871eadce3e06926dbd4cf538e180" rel="noopener noreferrer"><code>5bbc49f5</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-llvm-runtimelibcalls" data-project="llvm" data-evidence="unverified">
-    <p class="card-labels">LLVM · Runtime · X86</p>
-  <p class="secondary">RuntimeLibcalls interface change — how the compiler declares or emits library calls.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/2853de0422d2fd02dca9c4cc89a6def2a3794198" rel="noopener noreferrer"><code>2853de04</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="gcc-gcc-aarch64" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Backend · AArch64</p>
-  <p class="secondary">Source subject: “Port vabd and vaba intrinscs to pragma-based framework”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/a364d69a3241c689dfc6b1c68269223986916831" rel="noopener noreferrer"><code>a364d69a</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-llvm-mips-port" data-project="llvm" data-evidence="unverified">
-    <p class="card-labels">LLVM · Backend</p>
-  <p class="secondary">Source subject: “Port MulMulBugFixPass to NewPM”. Apparent component: llvm. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/76ded34e479dbe2f022ec1e021ee36a6f4f4331f" rel="noopener noreferrer"><code>76ded34e</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-llvm-codegen" data-project="llvm" data-evidence="unverified">
-    <p class="card-labels">LLVM · Backend · LoongArch</p>
-  <p class="secondary">Source subject: “Matt Arsenault: CodeGen: Remove kill flags on virtual registers from MIR tests”. Apparent component: llvm. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/df3e0f8afb48090bf6441c4031ab0c366972424d" rel="noopener noreferrer"><code>df3e0f8a</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-clang-clang-codegen" data-project="clang" data-evidence="unverified">
-    <p class="card-labels">Clang · Frontend · X86</p>
-  <p class="secondary">Source subject: “Attach a single callgraph type identifier to function definitions”. Apparent component: Clang frontend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/c1498de98d839e25c4c020a5bdc4f390464c2930" rel="noopener noreferrer"><code>c1498de9</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="gcc-gcc-i386" data-project="gcc" data-evidence="unverified">
-    <p class="card-labels">GCC · Backend · X86</p>
-  <p class="secondary">Source subject: “Check CF_RETURN bit in ix86_expand_epilogue”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/gcc-mirror/gcc/commit/ea93a47f579607698186dbced583ad1729f4ccb8" rel="noopener noreferrer"><code>ea93a47f</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-lldb-lldb-test" data-project="lldb" data-evidence="unverified">
-    <p class="card-labels">LLDB · Runtime</p>
-  <p class="secondary">Debug-info or debugger tooling change. Relevant to Runtime &amp; Toolchain workflows.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/a48ee445b24b544bb13ca0f57041f76d2e0bb4ac" rel="noopener noreferrer"><code>a48ee445</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-clang-clang-sycl" data-project="clang" data-evidence="unverified">
-    <p class="card-labels">Clang · Frontend · SPIR-V</p>
-  <p class="secondary">SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU backends.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/9e0f0ee64b41e1c74871b9685fdb25f16b800866" rel="noopener noreferrer"><code>9e0f0ee6</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-llvm-gn-build" data-project="llvm" data-evidence="unverified">
-    <p class="card-labels">LLVM · Backend · AMDGPU</p>
-  <p class="secondary">Touches AMDGPU paths while landing “Port cfc479d87d4ec”.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/335885a5efe003e2f098d1588da34650bf38e3d3" rel="noopener noreferrer"><code>335885a5</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
-</article><article class="story-row watchlist-item" id="llvm-clang-hlsl-add" data-project="clang" data-evidence="unverified">
-    <p class="card-labels">Clang · Frontend · SPIR-V</p>
-  <p class="secondary">Source subject: “Add WaveMultiPrefixBitOr”. Apparent component: Clang frontend. Broader impact is not established from the commit message alone.</p>
-  <p class="muted watchlist-note">Source not fully inspected — confirm in the linked commit.</p>
-  <p class="meta"><a href="https://github.com/llvm/llvm-project/commit/625076dcb75c435a6ac4ef8ce432ed2d219be4ba" rel="noopener noreferrer"><code>625076dc</code></a>
-    · <span class="evidence-dot evidence-unverified">Unverified</span></p>
-  
+<section id="lessons" class="issue-section section-lessons"><h2>Engineering lessons</h2><p class="section-lede muted">What developers can take from this week’s changes — grounded in the primary commits.</p><div class="lesson-list"><article class="lesson-card">
+  <span class="brief-num">01</span>
+  <div>
+    <h3><a href="#gcc-gcc-risc-v">Extract subvectors via vec_perm_const</a></h3>
+    <p class="brief-line">This patch adds a const-perm recoginzer for subvector extractions. For backend work, treat the linked commit as the authority — do not generalize beyond what the diff establishes.</p>
+  </div>
+</article><article class="lesson-card">
+  <span class="brief-num">02</span>
+  <div>
+    <h3><a href="#llvm-clang-cir-implement">Implement support for matrix splat cast</a></h3>
+    <p class="brief-line">Implement support for the matrix splat cast. For frontend work, treat the linked commit as the authority — do not generalize beyond what the diff establishes.</p>
+  </div>
+</article><article class="lesson-card">
+  <span class="brief-num">03</span>
+  <div>
+    <h3><a href="#llvm-llvm-riscv-add">Add RISCVABI helper functions for single/doubleFP and purecap</a></h3>
+    <p class="brief-line">Use them to simplify code that checks for individual enum values. For backend work, treat the linked commit as the authority — do not generalize beyond what the diff establishes.</p>
+  </div>
+</article><article class="lesson-card">
+  <span class="brief-num">04</span>
+  <div>
+    <h3><a href="#mlir-mlir-nvvm-add">Add nvvm.mulf Op</a></h3>
+    <p class="brief-line">Adds `nvvm.mulf` Op to the NVVM dialect. For middle-end work, treat the linked commit as the authority — do not generalize beyond what the diff establishes.</p>
+  </div>
 </article></div></section>
+<section id="worth-knowing" class="issue-section section-signals"><h2>What engineers should watch</h2><p class="section-lede muted">Unresolved or lightly inspected signals — expand a row for source and context.</p><h3 class='signal-tier'>Needs technical inspection</h3><div class="watch-rows"><details class="watch-row" id="gcc-gcc-i386" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Add AVX512BMM bitreverse lowering</span>
+    <span class="watch-meta">GCC · Backend · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Add AVX512BMM bitreverse lowering”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/6783b7375fff65e917637e86688918e808682f14" rel="noopener noreferrer"><code>6783b737</code></a></p>
+</details><details class="watch-row" id="llvm-llvm-tablegen" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Fix advancing past the end of an empty macro fusion list</span>
+    <span class="watch-meta">LLVM · Middle-end · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Matt Arsenault: TableGen: Fix advancing past the end of an empty macro fusion list”. Apparent component: llvm. Broader impact is not…</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/5bbc49f5d844871eadce3e06926dbd4cf538e180" rel="noopener noreferrer"><code>5bbc49f5</code></a></p>
+</details><details class="watch-row" id="llvm-llvm-runtimelibcalls" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Add signatures for the divrem libcalls</span>
+    <span class="watch-meta">LLVM · Runtime · X86 · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">RuntimeLibcalls interface change — how the compiler declares or emits library calls.</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/2853de0422d2fd02dca9c4cc89a6def2a3794198" rel="noopener noreferrer"><code>2853de04</code></a></p>
+</details><details class="watch-row" id="gcc-gcc-aarch64" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Port vabd and vaba intrinscs to pragma-based framework</span>
+    <span class="watch-meta">GCC · Backend · AArch64 · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Port vabd and vaba intrinscs to pragma-based framework”. Apparent component: GCC target backend. Broader impact is not established from the…</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/a364d69a3241c689dfc6b1c68269223986916831" rel="noopener noreferrer"><code>a364d69a</code></a></p>
+</details><details class="watch-row" id="llvm-llvm-mips-port" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Port MulMulBugFixPass to NewPM</span>
+    <span class="watch-meta">LLVM · Backend · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Port MulMulBugFixPass to NewPM”. Apparent component: llvm. Broader impact is not established from the commit message alone.</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/76ded34e479dbe2f022ec1e021ee36a6f4f4331f" rel="noopener noreferrer"><code>76ded34e</code></a></p>
+</details><details class="watch-row" id="llvm-llvm-codegen" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Remove kill flags on virtual registers from MIR tests</span>
+    <span class="watch-meta">LLVM · Backend · LoongArch · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Matt Arsenault: CodeGen: Remove kill flags on virtual registers from MIR tests”. Apparent component: llvm. Broader impact is not established…</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/df3e0f8afb48090bf6441c4031ab0c366972424d" rel="noopener noreferrer"><code>df3e0f8a</code></a></p>
+</details><details class="watch-row" id="llvm-clang-clang-codegen" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Attach a single callgraph type identifier to function definitions</span>
+    <span class="watch-meta">Clang · Frontend · X86 · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Attach a single callgraph type identifier to function definitions”. Apparent component: Clang frontend. Broader impact is not established from…</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/c1498de98d839e25c4c020a5bdc4f390464c2930" rel="noopener noreferrer"><code>c1498de9</code></a></p>
+</details><details class="watch-row" id="gcc-gcc-i386" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Check CF_RETURN bit in ix86_expand_epilogue</span>
+    <span class="watch-meta">GCC · Backend · X86 · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Check CF_RETURN bit in ix86_expand_epilogue”. Apparent component: GCC target backend. Broader impact is not established from the commit message…</p>
+  <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/ea93a47f579607698186dbced583ad1729f4ccb8" rel="noopener noreferrer"><code>ea93a47f</code></a></p>
+</details><details class="watch-row" id="llvm-lldb-lldb-test" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Delete &#x27;types&#x27; test</span>
+    <span class="watch-meta">LLDB · Runtime · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Debug-info or debugger tooling change. Relevant to Runtime &amp; Toolchain workflows.</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/a48ee445b24b544bb13ca0f57041f76d2e0bb4ac" rel="noopener noreferrer"><code>a48ee445</code></a></p>
+</details><details class="watch-row" id="llvm-clang-clang-sycl" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Disable sycl-system-arch.cpp on macOS</span>
+    <span class="watch-meta">Clang · Frontend · SPIR-V · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">SPIR-V translation / tooling change. Affects portable GPU and offload stacks that consume SPIR-V, not CPU backends.</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/9e0f0ee64b41e1c74871b9685fdb25f16b800866" rel="noopener noreferrer"><code>9e0f0ee6</code></a></p>
+</details><details class="watch-row" id="llvm-clang-hlsl-add" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Add WaveMultiPrefixBitOr</span>
+    <span class="watch-meta">Clang · Frontend · SPIR-V · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Source subject: “Add WaveMultiPrefixBitOr”. Apparent component: Clang frontend. Broader impact is not established from the commit message alone.</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/625076dcb75c435a6ac4ef8ce432ed2d219be4ba" rel="noopener noreferrer"><code>625076dc</code></a></p>
+</details></div><h3 class='signal-tier'>Low-priority / maintenance</h3><div class="watch-rows"><details class="watch-row" id="llvm-llvm-gn-build" data-evidence="unverified">
+  <summary>
+    <span class="watch-title">Port commits</span>
+    <span class="watch-meta">LLVM · Backend · AMDGPU · <span class="evidence-dot evidence-unverified">Unverified</span></span>
+  </summary>
+  <p class="brief-line">Touches AMDGPU paths while landing “Port cfc479d87d4ec”.</p>
+  <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/335885a5efe003e2f098d1588da34650bf38e3d3" rel="noopener noreferrer"><code>335885a5</code></a></p>
+</details></div></section>
 <section id="themes" class="issue-section"><h2>Themes this week</h2><p class="muted">Project index only — details are in the sections above.</p><h3>Clang</h3><ul class='theme-index'><li><a href="#llvm-clang-cir-implement">Implement support for matrix splat cast</a></li><li><a href="#llvm-clang-clang-codegen">Attach a single callgraph type identifier to function definitions · X86</a></li><li><a href="#llvm-clang-clang-sycl">Disable sycl-system-arch.cpp on macOS · SPIR-V</a></li><li><a href="#llvm-clang-hlsl-add">Add WaveMultiPrefixBitOr · SPIR-V</a></li></ul><h3>GCC</h3><ul class='theme-index'><li><a href="#gcc-gcc-risc-v">Extract subvectors via vec_perm_const · RISC-V</a></li><li><a href="#gcc-gcc-i386">Add AVX512BMM bitreverse lowering</a></li><li><a href="#gcc-gcc-aarch64">Port vabd and vaba intrinscs to pragma-based framework · AArch64</a></li><li><a href="#gcc-gcc-i386">Check CF_RETURN bit in ix86_expand_epilogue · X86</a></li></ul><h3>LLVM</h3><ul class='theme-index'><li><a href="#llvm-llvm-riscv-add">Add RISCVABI helper functions for single/doubleFP and purecap · RISC-V</a></li><li><a href="#llvm-llvm-spir-v-newpm">Use runCodeGenPipeline in SPIRVTranslate · SPIR-V</a></li><li><a href="#llvm-llvm-amdgpu-clear">Clear NoPHIs after SIFixSGPRCopies under the new pass manager · AMDGPU</a></li><li><a href="#llvm-llvm-amdgpu-globalisel">Fold unmasked signed byte loads into D16 high loads · AMDGPU</a></li><li><a href="#llvm-llvm-rfc-amdgpu">Add documentation about ABI occupancy · AMDGPU</a></li><li><a href="#llvm-llvm-tablegen">Fix advancing past the end of an empty macro fusion list</a></li></ul><h3>LLVM tooling/runtime</h3><ul class='theme-index'><li><a href="#llvm-lldb-lldb-fortran">Added support for functions to DWARFASTParserFortran</a></li><li><a href="#llvm-lldb-lldb-test">Delete &#x27;types&#x27; test · AArch64, X86</a></li></ul><h3>MLIR</h3><ul class='theme-index'><li><a href="#mlir-mlir-nvvm-add">Add nvvm.mulf Op · NVPTX</a></li></ul></section>
 <section id="worth-reading" class="issue-section"><h2>Research and reading</h2><h3>Release — Release LLVM 23.1.5</h3>
 <p>

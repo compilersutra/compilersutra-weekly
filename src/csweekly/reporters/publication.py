@@ -269,6 +269,88 @@ def coverage_tier(g: dict[str, Any] | None) -> str:
     return "quick_signal"
 
 
+def watchlist_bucket(g: dict[str, Any] | None) -> str:
+    """needs_inspection | potentially_important | low_priority"""
+    g = g or {}
+    title = (g.get("title") or "").lower()
+    n_related = max(0, len(g.get("stories") or []) - 1)
+    score = g.get("impact_score")
+    score_f = float(score) if isinstance(score, (int, float)) else 0.0
+    stages = " ".join(g.get("stages") or []).lower()
+    domains = " ".join(g.get("domains") or []).lower()
+    low = (
+        "comment",
+        "nfc",
+        "typo",
+        "whitespace",
+        "clang-format",
+        "deprecated attribute",
+        "incorrect comments",
+        "port commits",
+    )
+    if any(k in title for k in low):
+        return "low_priority"
+    hot = (
+        "abi",
+        "crash",
+        "miscompile",
+        "vectoriz",
+        "barrier",
+        "isel",
+        "codegen",
+        "register",
+        "legaliz",
+        "wasm",
+        "amdgpu",
+        "nvptx",
+    )
+    if n_related >= 8 or score_f >= 5.5 or any(k in title for k in hot):
+        return "needs_inspection"
+    if "backend" in stages or "gpu" in domains or "middle-end" in stages:
+        return "potentially_important"
+    if n_related >= 3:
+        return "potentially_important"
+    return "low_priority"
+
+
+WATCHLIST_LABELS = {
+    "needs_inspection": "Needs technical inspection",
+    "potentially_important": "Potentially important",
+    "low_priority": "Low-priority / maintenance",
+}
+
+
+def engineering_lessons(groups: list[dict[str, Any]], *, limit: int = 4) -> list[dict[str, str]]:
+    """Short lessons grounded in what_changed — no invented benchmarks."""
+    lessons: list[dict[str, str]] = []
+    for g in groups:
+        g = sanitize_group_for_display(g)
+        what = re.sub(r"\s+", " ", (g.get("what_changed") or "").strip())
+        if not what or len(what) < 40:
+            continue
+        headline = editorial_headline(g)
+        stage = ((g.get("stages") or ["compiler"])[0]).replace(
+            "Runtime & Toolchain", "Runtime"
+        )
+        # Lesson = mechanism sentence + audience caution (evidence-bound).
+        mechanism = _first_sentence(what, limit=180)
+        lesson = (
+            f"{mechanism} "
+            f"For {stage.lower()} work, treat the linked commit as the authority — "
+            "do not generalize beyond what the diff establishes."
+        )
+        lessons.append(
+            {
+                "headline": headline,
+                "lesson": lesson,
+                "anchor": _anchor(g),
+            }
+        )
+        if len(lessons) >= limit:
+            break
+    return lessons
+
+
 def note_is_unknown(text: str | None) -> bool:
     t = (text or "").strip()
     if not t:

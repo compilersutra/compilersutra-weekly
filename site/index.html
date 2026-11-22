@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>CompilerSutra Weekly</title>
-  <meta name="description" content="A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, with context on what changed and why it matters."/>
+  <meta name="description" content="Understand what changed in LLVM, GCC, MLIR and GPU compilers, why it matters, and how it works under the hood."/>
   <meta name="color-scheme" content="dark light"/>
   <script>
   (function(){try{var t=localStorage.getItem('csw-theme');
@@ -23,7 +23,7 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href="index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">LLVM · GCC · MLIR · GPU — curated weekly</span></a>
+      <a class="brand" href="index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">LLVM · GCC · MLIR · GPU — weekly engineering intelligence</span></a>
       <nav class="nav-desktop" aria-label="Primary">
         <a href="index.html" aria-current="page">Latest</a>
         <a href="explore/index.html">Explore</a>
@@ -61,8 +61,8 @@
     <section class="hero">
       <div class="wrap">
         <p class="hero-kicker">CompilerSutra Weekly</p>
-        <h1>The compiler changes worth understanding</h1>
-        <p class="lede">LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
+        <h1>The week in compiler engineering</h1>
+        <p class="lede">Understand what changed in LLVM, GCC, MLIR and GPU compilers, why it matters, and how it works under the hood.</p>
         <div class="eco-row" aria-label="Compiler ecosystems">
           <span class="eco-pill eco-llvm">LLVM</span>
           <span class="eco-pill eco-gcc">GCC</span>
@@ -140,7 +140,7 @@
             <div class="stat"><strong>16</strong><span>Worth knowing</span></div>
           </div>
           <p class="latest-cover">8 listed high-signal · 1 deep dive · 16 worth knowing</p>
-          <p class="muted">LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, and connected to the compiler pipeline.</p>
+          <p class="muted">Understand what changed in LLVM, GCC, MLIR and GPU compilers, why it matters, and how it works under the hood.</p>
           <div class='briefing-grid home-briefing'><article class='briefing-card compact'><p class='brief-kicker'>01 · FEATURED</p><h3>Skip more tests that don&#x27;t work with WebAssembly</h3><p class='brief-takeaway'>These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. Engineering focus: Runtime &amp; Toolchain (WebAssembly) — Languages teams should confirm behavior in the linked source.</p></article><article class='briefing-card compact'><p class='brief-kicker'>02 · BACKEND</p><h3>Avoid false dependency for BSF</h3><p class='brief-takeaway'>BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. Engineering focus: Backend (X86) — CPU teams should confirm behavior in the linked source.</p></article><article class='briefing-card compact'><p class='brief-kicker'>03 · GPU SIGNAL</p><h3>Add an async barrier arrival workaround</h3><p class='brief-takeaway'>Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. Engineering focus: Backend (AMDGPU) — GPU teams should confirm behavior in the linked source.</p></article><article class='briefing-card compact'><p class='brief-kicker'>04 · SIGNAL</p><h3>Fix moveInstrNotifier on empty DAG</h3><p class='brief-takeaway'>This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. Engineering focus: Middle-end — CPU teams should confirm behavior in the linked source.</p></article><article class='briefing-card compact'><p class='brief-kicker'>05 · FRONTEND</p><h3>Implement relative-vtable-lookups</h3><p class='brief-takeaway'>This patch handles lookups from a relative-vtable. Engineering focus: Frontend — Languages teams should confirm behavior in the linked source.</p></article></div>
           <div class="cta-row">
             <a class="btn btn-primary" href="issues/2026/2026-11-21.html">Read this week&rsquo;s edition →</a>

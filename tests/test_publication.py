@@ -148,6 +148,57 @@ def test_implementation_explanation_is_prose_not_file_dump():
     assert "github.com" in meta["url"]
 
 
+def test_watchlist_bucket_ranks_maintenance_low():
+    from csweekly.reporters.publication import watchlist_bucket
+
+    assert (
+        watchlist_bucket(
+            {
+                "title": "Fix incorrect comments about sinking ExtractElement",
+                "stories": [{}],
+                "stages": ["Backend"],
+            }
+        )
+        == "low_priority"
+    )
+    assert (
+        watchlist_bucket(
+            {
+                "title": "Reuse legal VTYPE for whole-register moves",
+                "stories": [{}] * 24,
+                "stages": ["Backend"],
+                "domains": ["CPU"],
+                "impact_score": 4.0,
+            }
+        )
+        == "needs_inspection"
+    )
+
+
+def test_engineering_lessons_are_evidence_bound():
+    from csweekly.reporters.publication import engineering_lessons
+
+    lessons = engineering_lessons(
+        [
+            {
+                "title": "[AMDGPU] Add async barrier workaround",
+                "what_changed": (
+                    "Async barrier arrivals on gfx1250 need a replay workaround "
+                    "when XNACK is enabled."
+                ),
+                "stages": ["Backend"],
+                "stories": [
+                    {"paths": ["llvm/lib/Target/AMDGPU/SIInsert.cpp"], "related_ref": "abc"}
+                ],
+            }
+        ],
+        limit=2,
+    )
+    assert lessons
+    assert "do not generalize" in lessons[0]["lesson"]
+    assert "barrier" in lessons[0]["headline"].lower() or "async" in lessons[0]["headline"].lower()
+
+
 def test_deterministic_why_avoids_matters_for_boilerplate():
     primary = CommitEvidence(
         sha="abcdef1234567890",

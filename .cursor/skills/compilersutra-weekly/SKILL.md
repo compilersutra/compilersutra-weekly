@@ -11,42 +11,50 @@ description: >-
 
 ## Promise (verbatim)
 
-> **CompilerSutra Weekly — Understand what changed in compiler engineering, why it matters, and how it works under the hood.**
+> **CompilerSutra Weekly — Understand what changed in LLVM, GCC, MLIR and GPU compilers, why it matters, and how it works under the hood.**
 
 ## Editorial invariant (verbatim)
 
-> **Never let AI-generated explanations claim more than the underlying source evidence establishes.**
+> **Never let generated explanations claim more than the underlying source evidence establishes.**
+
+**Product rule:** Technical understanding is the product — not the number of commits collected.
 
 ## Source of truth
 
 | Doc / code | Role |
 | --- | --- |
 | `docs/PUBLICATION_DESIGN.md` | Publication architecture + tiers |
-| `src/csweekly/reporters/publication.py` | Briefing cards, headlines, takeaways, path-grounded targets, implementation prose |
+| `src/csweekly/brand.py` | Positioning / meta copy |
+| `src/csweekly/reporters/publication.py` | Briefing, takeaways, watchlist tiers, lessons |
 | `src/csweekly/reporters/index.py` | Issue HTML |
 | `src/csweekly/reporters/static/site.css` | Styles (copied to `site/assets` by `csweekly index`) |
 | `src/csweekly/ai/writer.py` | Evidence-grounded drafts (no taxonomy filler) |
-| Edition **#003** | Reference design for presentation |
 
-Repo root: `/home/aitr/projects/compilersutra-weekly` (sibling of CompilerSutraPerfTool).
+Repo root: `/home/aitr/projects/compilersutra-weekly`.
 
 Public URL: https://www.compilersutra.com/weekly/
 
 ## Page architecture (required order)
 
-1. Hero — “The week in compiler engineering” + short lede  
-2. **Five-minute briefing** — compact numbered list (headline + one-line takeaway + muted meta/source). Screenshot-friendly top.  
-3. **Featured** — responsive **2-column** card grid; consistent borders; evidence badge + muted labels; details expandable  
-4. **Engineering deep dive** — dedicated panel; 8-section template; sources collapsed  
-5. **Worth knowing** — Quick signals vs Watchlist  
-6. Themes / Research / Topic index — navigation only  
+1. Hero — title, date window, project chips, positioning lede  
+2. **The 3 changes worth knowing** — prioritization for busy readers  
+3. **Five-minute briefing** — editorial story cards (headline + explanation + source)  
+4. **Featured** — 2-column cards; expandable details  
+5. **Under the hood** — one deep dive (article panel)  
+6. **Engineering lessons** — evidence-bound takeaways  
+7. **What engineers should watch** — quick signals + tiered expandable watchlist  
+8. Themes / Research / Index  
 
-## Layout / visual rules (do not shrink fonts)
+## Watchlist tiers
 
-- Preserve current typography sizes (`body` 1.0625rem). Optimize width/spacing/hierarchy instead.  
-- Issue column uses `--issue-read: 62rem` (wider than blog `--read`).  
-- Prefer fewer colored badges; muted mono labels for project · stage · target.  
-- Compact TOC sidebar; sticky; main content stays the focus.  
+`needs_inspection` · `potentially_important` · `low_priority` — via `watchlist_bucket()`.
+
+## Layout / visual rules
+
+- Preserve body typography; optimize width/spacing/hierarchy.  
+- Prefer fewer colored badges; muted mono labels.  
+- Sticky section TOC; deep dive is the visual centerpiece.  
+- Do not invent deep-dive answers unsupported by the commit.  
 
 ## Hard “do not” rules
 

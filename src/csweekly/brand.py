@@ -17,16 +17,24 @@ CLOUDFLARE_WEB_ANALYTICS_TOKEN = (
 )
 PROJECT_NAME = "CompilerSutra Weekly"
 # Short nav chip — specific, not a slogan about "the ecosystem"
-BRAND_TAG = "LLVM · GCC · MLIR · GPU — curated weekly"
+BRAND_TAG = "LLVM · GCC · MLIR · GPU — weekly engineering intelligence"
 META_DESCRIPTION = (
-    "A weekly brief of selected LLVM, GCC, MLIR and GPU compiler changes, "
-    "with context on what changed and why it matters."
+    "Understand what changed in LLVM, GCC, MLIR and GPU compilers, "
+    "why it matters, and how it works under the hood."
 )
 HERO_KICKER = "Weekly compiler intelligence"
-HERO_TITLE = "The compiler changes worth understanding"
+HERO_TITLE = "The week in compiler engineering"
 HERO_LEDE = (
-    "LLVM, GCC, MLIR and GPU compiler developments — filtered, explained, "
-    "and connected to the compiler pipeline."
+    "Understand what changed in LLVM, GCC, MLIR and GPU compilers, "
+    "why it matters, and how it works under the hood."
+)
+POSITIONING = (
+    "CompilerSutra Weekly — Understand what changed in LLVM, GCC, MLIR and GPU "
+    "compilers, why it matters, and how it works under the hood."
+)
+EDITORIAL_INVARIANT = (
+    "Never let generated explanations claim more than the underlying source "
+    "evidence establishes."
 )
 # Editorial week: Saturday→Friday (Asia/Kolkata); public site shows published editions only
 CADENCE = (
