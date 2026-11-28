@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>#004 — CompilerSutra Weekly</title>
+  <meta name="description" content="Understand what changed in LLVM, GCC, MLIR and GPU compilers, why it matters, and how it works under the hood."/>
+  <meta name="color-scheme" content="dark light"/>
+  <script>
+  (function(){try{var t=localStorage.getItem('csw-theme');
+  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+  </script>
+  <script src="../../assets/theme.js" defer></script>
+  <script src="../../assets/ui.js" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../assets/site.css"/>
+</head>
+<body>
+  <div class="read-progress" id="read-progress" hidden aria-hidden="true"></div>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="../../index.html">CompilerSutra <span>Weekly</span><span class="brand-tag">LLVM · GCC · MLIR · GPU — weekly engineering intelligence</span></a>
+      <nav class="nav-desktop" aria-label="Primary">
+        <a href="../../index.html" aria-current="page">Latest</a>
+        <a href="../../explore/index.html">Explore</a>
+        <a href="../../topics/index.html">Topics</a>
+        <a href="../../topics/research.html">Papers</a>
+        <a href="../../archive.html">Archive</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe</a>
+        <a href="../../about.html">About</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="icon-btn search-trigger" id="search-open" aria-label="Open search (Control K)">Search <span class="kbd">Ctrl K</span></button>
+        <a class="icon-btn" href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer" title="GitHub">GitHub</a>
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Switch to light theme">Theme</button>
+        <button type="button" class="icon-btn nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">Menu</button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav" hidden>
+      <div class="wrap" aria-label="Mobile">
+        <a href="../../index.html">Latest</a>
+        <a href="../../explore/index.html">Explore</a>
+        <a href="../../topics/index.html">Topics</a>
+        <a href="../../topics/research.html">Papers</a>
+        <a href="../../archive.html">Archive</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe</a>
+        <a href="../../about.html">About</a>
+        <a href="../../changelog.html">Change log</a>
+        <a href="https://github.com/compilersutra/compilersutra-weekly" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.compilersutra.com/" rel="noopener noreferrer">CompilerSutra</a>
+      </div>
+    </div>
+  </header>
+  <div id="main">
+  
+  
+  <div class="subnav" aria-label="Secondary">
+    <div class="wrap">
+      <a href="../../explore/stage-frontend.html">Frontend</a>
+      <a href="../../explore/stage-middle-end.html">Middle-end</a>
+      <a href="../../explore/stage-backend.html">Backend</a>
+      <a href="../../explore/stage-runtime-toolchain.html">Runtime</a>
+      <a href="../../explore/domain-cpu.html">CPU</a>
+      <a href="../../explore/domain-gpu.html">GPU</a>
+      <a href="../../explore/domain-ai-ml.html">AI / ML</a>
+      <a href="../../topics/index.html">Projects</a>
+      <a href="../../topics/llvm.html">LLVM</a><a href="../../topics/gcc.html">GCC</a><a href="../../topics/mlir.html">MLIR</a><a href="../../topics/ai.html">AI Compilers</a><a href="../../topics/gpu.html">GPU</a><a href="../../topics/research.html">Research</a>
+    </div>
+  </div>
+
+  <article class="article issue-article" id="main">
+    <div class="issue-nav"><a class="back" href="../../archive.html">← Archive</a> · <a class="back" href="../2026/2026-11-21.html">← Prev</a></div>
+    <header class="issue-hero">
+      <p class="hero-kicker">CompilerSutra Weekly · Edition #004</p>
+      <h1 class="page-title">The week in compiler engineering</h1>
+      <p class="hero-date muted">28 Nov 2026 · 2026-11-21 → 2026-11-28 (Asia/Kolkata, Saturday→Friday, end exclusive)</p>
+      <div class="hero-chips" aria-label="Projects covered"><span class="hero-chip">GCC</span><span class="hero-chip">IREE</span><span class="hero-chip">LLVM</span><span class="hero-chip">MLIR</span><span class="hero-chip">Circt</span></div>
+      <p class="lede">Understand what changed in LLVM, GCC, MLIR and GPU compilers,
+        why it matters, and how it works under the hood.</p>
+    </header>
+    <nav class="toc" aria-label="On this page"><a href="#top-three">Top 3</a><a href="#briefing">Briefing</a><a href="#featured">Featured</a><a href="#deep-dive">Under the hood</a><a href="#lessons">Lessons</a><a href="#worth-knowing">Watchlist</a><a href="#themes">Themes</a><a href="#topic-index">Index</a></nav>
+    <div class="issue-body">
+    <section id="top-three" class="issue-section section-top3"><h2>The 3 changes worth knowing</h2><p class="section-lede muted">Editorial selection — why these three deserve attention. Technical detail follows in the briefing.</p><div class="top3-grid"><article class="top3-card">
+  <span class="brief-num">01</span>
+  <div>
+    <p class="info-kind">Why it matters</p>
+    <h3><a href="#llvm-llvm-mips-use">Use libcalls for constrained f16 conversions</a></h3>
+    <p class="top3-reason">STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default. This is backend work with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU developers, Backend engineers.</p>
+    <p class="brief-meta-line"><span>LLVM · Backend</span>
+      <a class="brief-jump" href="#briefing">In briefing ↓</a></p>
+  </div>
+</article><article class="top3-card">
+  <span class="brief-num">02</span>
+  <div>
+    <p class="info-kind">Why it matters</p>
+    <h3><a href="#gcc-gcc-i386">Add test for flexible array member psABI note</a></h3>
+    <p class="top3-reason">Add a test for a struct that is passed in memory with or without its. This is middle-end work with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU developers, Middle-end engineers.</p>
+    <p class="brief-meta-line"><span>GCC · Middle-end</span>
+      <a class="brief-jump" href="#briefing">In briefing ↓</a></p>
+  </div>
+</article><article class="top3-card">
+  <span class="brief-num">03</span>
+  <div>
+    <p class="info-kind">Why it matters</p>
+    <h3><a href="#llvm-lldb-lldb-clike">Don&#x27;t require TypeSystemClang for TLS lookup</a></h3>
+    <p class="top3-reason">DynamicLoaderDarwin::GetThreadLocalData doesn&#x27;t need to direclty. This is runtime &amp; toolchain work with relevance to Languages engineers. Primary audience: Languages developers, Runtime &amp; Toolchain engineers.</p>
+    <p class="brief-meta-line"><span>LLVM · Runtime</span>
+      <a class="brief-jump" href="#briefing">In briefing ↓</a></p>
+  </div>
+</article></div></section>
+<section id="briefing" class="issue-section section-briefing"><div class="section-head"><h2>Five-minute briefing</h2><p class="section-count muted">5 stories</p></div><p class="section-lede muted">Technical explanation — what the patches change, with primary sources.</p><div class="brief-cards"><article class="brief-card" data-evidence="verified">
+  <span class="brief-num" aria-hidden="true">01</span>
+  <div class="brief-body">
+    <p class="info-kind info-kind-tech">What changed</p>
+    <h3><a href="#llvm-llvm-mips-use">Use libcalls for constrained f16 conversions</a></h3>
+    <p class="brief-line">STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default Expand action for constrained operations, so they were Legal and any constrained conversion to or from half failed instruction…</p>
+    
+    <p class="brief-meta-line">
+      <span>LLVM · Backend</span>
+      <span class="evidence-dot evidence-verified">Verified</span>
+      <a href="https://github.com/llvm/llvm-project/commit/e43d6cde946fd784b685c6496871e932bf20858d" rel="noopener noreferrer"><code>e43d6cde</code></a>
+      <a class="brief-jump" href="#llvm-llvm-mips-use">Story →</a>
+    </p>
+  </div>
+</article><article class="brief-card" data-evidence="verified">
+  <span class="brief-num" aria-hidden="true">02</span>
+  <div class="brief-body">
+    <p class="info-kind info-kind-tech">What changed</p>
+    <h3><a href="#gcc-gcc-i386">Add test for flexible array member psABI note</a></h3>
+    <p class="brief-line">Add a test for a struct that is passed in memory with or without its flexible array member. Before the psABI note was moved to psabi_new_behavior_p, GCC emitted the &quot;has changed in GCC 4.</p>
+    
+    <p class="brief-meta-line">
+      <span>GCC · Middle-end</span>
+      <span class="evidence-dot evidence-verified">Verified</span>
+      <a href="https://github.com/gcc-mirror/gcc/commit/dd685502d63e77205c7737215b1ddccbd5d451ab" rel="noopener noreferrer"><code>dd685502</code></a>
+      <a class="brief-jump" href="#gcc-gcc-i386">Story →</a>
+    </p>
+  </div>
+</article><article class="brief-card" data-evidence="source-backed">
+  <span class="brief-num" aria-hidden="true">03</span>
+  <div class="brief-body">
+    <p class="info-kind info-kind-tech">What changed</p>
+    <h3><a href="#llvm-lldb-lldb-clike">Don&#x27;t require TypeSystemClang for TLS lookup</a></h3>
+    <p class="brief-line">DynamicLoaderDarwin::GetThreadLocalData doesn&#x27;t need to direclty reference TypeSystemClang. Instead, we can get away by using generic TypeSystem API calls that also work with TypeSystemClike.</p>
+    
+    <p class="brief-meta-line">
+      <span>LLVM · Runtime</span>
+      <span class="evidence-dot evidence-source-backed">Source-backed</span>
+      <a href="https://github.com/llvm/llvm-project/commit/cdf7026ea5e25bf7087516f6d48cef0f150557c0" rel="noopener noreferrer"><code>cdf7026e</code></a>
+      <a class="brief-jump" href="#llvm-lldb-lldb-clike">Story →</a>
+    </p>
+  </div>
+</article><article class="brief-card" data-evidence="verified">
+  <span class="brief-num" aria-hidden="true">04</span>
+  <div class="brief-body">
+    <p class="info-kind info-kind-tech">What changed</p>
+    <h3><a href="#llvm-clang-cir-amdgpu">Add support for __builtin_amdgcn_log_clampf</a></h3>
+    <p class="brief-line">Adds CIRGen support for `__builtin_amdgcn_log_clampf`, also adds CIR and LLVM IR test coverage in `clang/test/CIR/CodeGenHIP/builtins-amdgcn. hip`.</p>
+    
+    <p class="brief-meta-line">
+      <span>LLVM · Frontend · AMDGPU</span>
+      <span class="evidence-dot evidence-verified">Verified</span>
+      <a href="https://github.com/llvm/llvm-project/commit/9fd613e3e725f7fde3f0556b292a81e8c42390c8" rel="noopener noreferrer"><code>9fd613e3</code></a>
+      <a class="brief-jump" href="#llvm-clang-cir-amdgpu">Story →</a>
+    </p>
+  </div>
+</article><article class="brief-card" data-evidence="source-backed">
+  <span class="brief-num" aria-hidden="true">05</span>
+  <div class="brief-body">
+    <p class="info-kind info-kind-tech">What changed</p>
+    <h3><a href="#mlir-mlir-mlir-spir-v">Support untyped pointers in Load and Store</a></h3>
+    <p class="brief-line">[mlir][SPIR-V] Support untyped pointers in Load and Store (#245255). Touches mlir/include/mlir/Dialect/SPIRV/IR/SPIRVBase.</p>
+    <p class="brief-line brief-why">This is middle-end work for SPIR-V with relevance to GPU engineers. Changed tests are the reproduce entry point. Primary audience: GPU…</p>
+    <p class="brief-meta-line">
+      <span>MLIR · Middle-end · SPIR-V</span>
+      <span class="evidence-dot evidence-source-backed">Source-backed</span>
+      <a href="https://github.com/llvm/llvm-project/commit/13c4e8b3a41b887f72b44fda8b854eb5d8758922" rel="noopener noreferrer"><code>13c4e8b3</code></a>
+      <a class="brief-jump" href="#mlir-mlir-mlir-spir-v">Story →</a>
+    </p>
+  </div>
+</article></div></section>
+<section id="featured" class="issue-section section-featured"><h2>Featured engineering changes</h2><p class="section-lede muted">Technical details and primary commits.</p><div class="story-grid"><article class="story-card issue-story" id="gcc-gcc-i386" data-project="gcc" data-evidence="verified">
+    <header class="featured-head">
+    <span class="badge tax-evidence evidence-verified">Verified</span>
+    <p class="card-labels">GCC · Middle-end</p>
+  </header>
+  <p class="info-kind info-kind-tech">Technical explanation</p>
+  <h3>Add test for flexible array member psABI note</h3>
+  <p class="what-changed">Add a test for a struct that is passed in memory with or without its flexible array member. Before the psABI note was moved to psabi_new_behavior_p, GCC emitted the &quot;has changed in GCC 4.</p>
+  <p class="meta card-source">
+    <a href="https://github.com/gcc-mirror/gcc/commit/dd685502d63e77205c7737215b1ddccbd5d451ab" rel="noopener noreferrer"><code>dd685502</code></a> · +16/−0
+  </p>
+  <details class="story-details"><summary>Technical details</summary><p class="muted featured-rank">Editor&#x27;s pick · 6.9/10</p><p><strong>Implementation.</strong> Before the psABI note was moved to psabi_new_behavior_p, GCC emitted the &quot;has changed in GCC 4. 4&quot; note for such a struct, even though ignoring the flexible array member does not change its classification. The change touches 1 test files (+16/−0). Open the primary commit for the exact hunks — this section explains the mechanism, not the file list.</p><p class="dive-commit">Primary commit: <a href="https://github.com/gcc-mirror/gcc/commit/dd685502d63e77205c7737215b1ddccbd5d451ab" rel="noopener noreferrer"><code>dd685502</code></a> · +16/−0</p><p class="muted"><strong>Surface.</strong> 8 listed paths (expand source for full tree).</p><p><strong>Who should care.</strong> CPU developers, Middle-end engineers</p><div class="callout callout-warning"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</div></details>
+  <details class="related-commits"><summary>Related commits (7)</summary><p><a href="https://github.com/gcc-mirror/gcc/commit/5918e4302cf273d3c533ce6d848456dcefaf6591" rel="noopener noreferrer"><code>5918e430</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/48688cfeadf6ec3b2dd22783f5048db6fc444d04" rel="noopener noreferrer"><code>48688cfe</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/993c1e1d001556a6f831cad97ac629b748a27984" rel="noopener noreferrer"><code>993c1e1d</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/79cc525f7f64ca2e1de25c6a9d225c4c6950fef8" rel="noopener noreferrer"><code>79cc525f</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/b8643036af048b8985dd69d294538e496d975af7" rel="noopener noreferrer"><code>b8643036</code></a></p></details>
+</article><article class="story-card issue-story" id="gcc-gcc-i386" data-project="gcc" data-evidence="source-backed">
+    <header class="featured-head">
+    <span class="badge tax-evidence evidence-source-backed">Source-backed</span>
+    <p class="card-labels">GCC · Backend</p>
+  </header>
+  <p class="info-kind info-kind-tech">Technical explanation</p>
+  <h3>Clean up classify_argument</h3>
+  <p class="what-changed">Simplify the position arithmetic in classify_argument. Replace &quot;/ 8 / 8&quot; with &quot;/ 64&quot; and use CEIL for the round-up division.</p>
+  <p class="meta card-source">
+    <a href="https://github.com/gcc-mirror/gcc/commit/0352739550487de51223643c1f5b2c56e4ae19d5" rel="noopener noreferrer"><code>03527395</code></a> · +96/−58
+  </p>
+  <details class="story-details"><summary>Technical details</summary><p class="muted featured-rank">Editor&#x27;s pick · 6.5/10</p><p><strong>Implementation.</strong> Simplify the position arithmetic in classify_argument. Replace &quot;/ 8 / 8&quot; with &quot;/ 64&quot; and use CEIL for the round-up division. The change touches 1 files under gcc/ (+96/−58). Open the primary commit for the exact hunks — this section explains the mechanism, not the file list.</p><p class="dive-commit">Primary commit: <a href="https://github.com/gcc-mirror/gcc/commit/0352739550487de51223643c1f5b2c56e4ae19d5" rel="noopener noreferrer"><code>03527395</code></a> · +96/−58</p><p class="muted"><strong>Surface.</strong> 5 listed paths (expand source for full tree).</p><p><strong>Who should care.</strong> CPU developers, Backend engineers</p><div class="callout callout-warning"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</div></details>
+  <details class="related-commits"><summary>Related commits (4)</summary><p><a href="https://github.com/gcc-mirror/gcc/commit/6d1931dd9212ae9a3b5618e40c59bafd20b4370c" rel="noopener noreferrer"><code>6d1931dd</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/b399967afe8eca0690fd073b1d4d2cd684f417c2" rel="noopener noreferrer"><code>b399967a</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/a3cfc9ff862f7fe7889ff07697f7d59dc5311801" rel="noopener noreferrer"><code>a3cfc9ff</code></a> · <a href="https://github.com/gcc-mirror/gcc/commit/b2e128f2d58ad1db099f0eb42ca74cfe5b262350" rel="noopener noreferrer"><code>b2e128f2</code></a></p></details>
+</article><article class="story-card issue-story" id="llvm-lldb-lldb-clike" data-project="llvm" data-evidence="source-backed">
+    <header class="featured-head">
+    <span class="badge tax-evidence evidence-source-backed">Source-backed</span>
+    <p class="card-labels">LLVM · Runtime</p>
+  </header>
+  <p class="info-kind info-kind-tech">Technical explanation</p>
+  <h3>Don&#x27;t require TypeSystemClang for TLS lookup</h3>
+  <p class="what-changed">DynamicLoaderDarwin::GetThreadLocalData doesn&#x27;t need to direclty reference TypeSystemClang. Instead, we can get away by using generic TypeSystem API calls that also work with TypeSystemClike.</p>
+  <p class="meta card-source">
+    <a href="https://github.com/llvm/llvm-project/commit/cdf7026ea5e25bf7087516f6d48cef0f150557c0" rel="noopener noreferrer"><code>cdf7026e</code></a> · +10/−4
+  </p>
+  <details class="story-details"><summary>Technical details</summary><p class="muted featured-rank">Editor&#x27;s pick · 6.7/10</p><p><strong>Implementation.</strong> Instead, we can get away by using generic TypeSystem API calls that also work with TypeSystemClike. The change touches 1 test files (+10/−4). Open the primary commit for the exact hunks — this section explains the mechanism, not the file list.</p><p class="dive-commit">Primary commit: <a href="https://github.com/llvm/llvm-project/commit/cdf7026ea5e25bf7087516f6d48cef0f150557c0" rel="noopener noreferrer"><code>cdf7026e</code></a> · +10/−4</p><p class="muted"><strong>Surface.</strong> 3 listed paths.</p><p><strong>Who should care.</strong> Languages developers, Runtime &amp; Toolchain engineers</p><div class="callout callout-warning"><strong>Limitations.</strong> Explanation grounded in the commit subject; open the source for details.</div></details>
+  <details class="related-commits"><summary>Related commits (4)</summary><p><a href="https://github.com/llvm/llvm-project/commit/9865352d07e5cee6d2529f481b7bda07fa388732" rel="noopener noreferrer"><code>9865352d</code></a> · <a href="https://github.com/llvm/llvm-project/commit/ba88526d33f41bd9fb835c7463a2fc621eaed7cb" rel="noopener noreferrer"><code>ba88526d</code></a> · <a href="https://github.com/llvm/llvm-project/commit/6fe233ddea6b4205dcd02bd7aeb9bcbaf8086055" rel="noopener noreferrer"><code>6fe233dd</code></a> · <a href="https://github.com/llvm/llvm-project/commit/fa34debcf3973412588a800f6edf1e5da499f21a" rel="noopener noreferrer"><code>fa34debc</code></a></p></details>
+</article><article class="story-card issue-story" id="llvm-clang-cir-amdgpu" data-project="llvm" data-evidence="verified">
+    <header class="featured-head">
+    <span class="badge tax-evidence evidence-verified">Verified</span>
+    <p class="card-labels">LLVM · Frontend · AMDGPU</p>
+  </header>
+  <p class="info-kind info-kind-tech">Technical explanation</p>
+  <h3>Add support for __builtin_amdgcn_log_clampf</h3>
+  <p class="what-changed">Adds CIRGen support for `__builtin_amdgcn_log_clampf`, also adds CIR and LLVM IR test coverage in `clang/test/CIR/CodeGenHIP/builtins-amdgcn. hip`.</p>
+  <p class="meta card-source">
+    <a href="https://github.com/llvm/llvm-project/commit/9fd613e3e725f7fde3f0556b292a81e8c42390c8" rel="noopener noreferrer"><code>9fd613e3</code></a> · +10/−4
+  </p>
+  <details class="story-details"><summary>Technical details</summary><p class="muted featured-rank">Editor&#x27;s pick · 6.3/10</p><p><strong>Implementation.</strong> hip`. The change touches 2 test files (+10/−4). Open the primary commit for the exact hunks — this section explains the mechanism, not the file list.</p><p class="dive-commit">Primary commit: <a href="https://github.com/llvm/llvm-project/commit/9fd613e3e725f7fde3f0556b292a81e8c42390c8" rel="noopener noreferrer"><code>9fd613e3</code></a> · +10/−4</p><p class="muted"><strong>Surface.</strong> 2 listed paths.</p><p><strong>Who should care.</strong> GPU developers, Languages developers, AMDGPU backend engineers, Frontend engineers</p><div class="callout callout-warning"><strong>Limitations.</strong> Explanation grounded in the commit subject; open the source for details.</div></details>
+  <details class="related-commits"><summary>Related commits (1)</summary><p><a href="https://github.com/llvm/llvm-project/commit/1ed208182fbfda6ab072abf4518c84639f07dfd9" rel="noopener noreferrer"><code>1ed20818</code></a></p></details>
+</article></div></section>
+<section id="deep-dive" class="issue-section deep-dive section-dive">
+  <h2>Under the hood</h2>
+  <p class="section-lede muted">Technical explanation with evidence —
+    problem → implementation → validation. Unanswered questions stay marked unknown.</p>
+  <article class="dive-panel" id="llvm-llvm-mips-use" data-project="llvm">
+    <p class="info-kind info-kind-evidence">Evidence-bound deep dive</p>
+    <p class="card-kicker-row">
+      <span class="badge tax-evidence evidence-verified">Verified</span>
+      <span class="card-labels">LLVM · Backend</span>
+    </p>
+    <h3>Use libcalls for constrained f16 conversions</h3>
+    <p class="muted dive-confidence">Confidence Verified
+      (high;
+      fact-check pass)</p>
+    <div class="dive-sections">
+      <div class="dive-section" id="dive-problem"><h4>01. Problem</h4><p>STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default Expand action for constrained operations, so they were Legal and any constrained conversion to or from half failed instruction selection.</p></div><div class="dive-section" id="dive-implementation"><h4>02. Implementation</h4><p>The inspected commit applies the change across 3 test files (+177/−2).</p><p class="dive-commit">Primary commit: <a href="https://github.com/llvm/llvm-project/commit/e43d6cde946fd784b685c6496871e932bf20858d" rel="noopener noreferrer"><code>e43d6cde</code></a> · +177/−2</p></div><div class="dive-section" id="dive-reproduce"><h4>03. How to reproduce</h4><p>Inspect primary commit <a href="https://github.com/llvm/llvm-project/commit/e43d6cde946fd784b685c6496871e932bf20858d" rel="noopener noreferrer"><code>e43d6cde</code></a> and run the touched 3 test files with the project’s standard test runner.</p></div><div class="dive-section" id="dive-validation"><h4>04. Validation</h4><p>Validation is carried by 1 test files. Run the project’s usual LLDB API / lit invocation for the paths in the primary commit — that is the reproduce entry point.</p></div><div class="dive-section" id="dive-implications"><h4>05. Engineering implications</h4><p>STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default. This is backend work with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU developers, Backend engineers. Who should care: CPU developers, Backend engineers.</p></div><div class="dive-section" id="dive-evidence"><h4>06. Evidence and limitations</h4><p>Interpretation is limited to the commit message and inspected diff. No performance numbers or invented IR/assembly are claimed without evidence in the pack.</p></div>
+    </div>
+    <details class="story-details dive-sources">
+      <summary>Primary sources (7)</summary>
+      <ul class="source-list"><li><a href="https://github.com/llvm/llvm-project/commit/e43d6cde946fd784b685c6496871e932bf20858d" rel="noopener noreferrer"><code>e43d6cde</code></a> — [Mips] Use libcalls for constrained f16 conversions (#246063)</li><li><a href="https://github.com/llvm/llvm-project/commit/a96563c43dd0661be684c9648038dc00cce27f61" rel="noopener noreferrer"><code>a96563c4</code></a> — [Mips] Use libcalls for constrained FP arithmetic on R5900 (#246083)</li><li><a href="https://github.com/llvm/llvm-project/commit/34c2a6d168e07f82041cc96b9df996ca8a12aec3" rel="noopener noreferrer"><code>34c2a6d1</code></a> — [Mips] Use libcalls for atomic operations on MIPS I (#124218)</li><li><a href="https://github.com/llvm/llvm-project/commit/dba9696403023e4712a4339d2975a144250c28ab" rel="noopener noreferrer"><code>dba96964</code></a> — [Mips] Use a 0/1 result for constrained FP compares on R6 (#245918)</li><li><a href="https://github.com/llvm/llvm-project/commit/b1def03e61a3627ce72d23a48b3d7330d2b971e1" rel="noopener noreferrer"><code>b1def03e</code></a> — [Mips] Use 0/1 booleans for R6 FP compares (#245469)</li><li><a href="https://github.com/llvm/llvm-project/commit/1ac7500eb49fb408b6f47e3d97d5042756b8d4cd" rel="noopener noreferrer"><code>1ac7500e</code></a> — [Mips] Use $31 for the FCSR in the MIPS I trunc.w macro (#244950)</li><li><a href="https://github.com/llvm/llvm-project/commit/676e970950814f096d841d2a26b43da0d0816902" rel="noopener noreferrer"><code>676e9709</code></a> — [Mips] Use libcalls for sqrt on MIPS I (#244947)</li></ul>
+    </details>
+  </article>
+</section>
+<section id="lessons" class="issue-section section-lessons"><h2>Engineering lessons</h2><p class="section-lede muted">What developers can take from this week’s changes — grounded in the primary commits.</p><div class="lesson-list"><article class="lesson-card">
+  <span class="brief-num">01</span>
+  <div>
+    <h3><a href="#llvm-llvm-mips-use">Use libcalls for constrained f16 conversions</a></h3>
+    <p class="brief-line">STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default Expand action for constrained operations, so they were Legal and any constrained…. That is the concrete backend behavior change in this patch.</p>
+  </div>
+</article><article class="lesson-card">
+  <span class="brief-num">02</span>
+  <div>
+    <h3><a href="#gcc-gcc-i386">Add test for flexible array member psABI note</a></h3>
+    <p class="brief-line">Add a test for a struct that is passed in memory with or without its flexible array member. That is the concrete middle-end behavior change in this patch.</p>
+  </div>
+</article><article class="lesson-card">
+  <span class="brief-num">03</span>
+  <div>
+    <h3><a href="#gcc-gcc-i386">Clean up classify_argument</a></h3>
+    <p class="brief-line">Simplify the position arithmetic in classify_argument. That is the concrete backend behavior change in this patch.</p>
+  </div>
+</article><article class="lesson-card">
+  <span class="brief-num">04</span>
+  <div>
+    <h3><a href="#llvm-lldb-lldb-clike">Don&#x27;t require TypeSystemClang for TLS lookup</a></h3>
+    <p class="brief-line">DynamicLoaderDarwin::GetThreadLocalData doesn&#x27;t need to direclty reference TypeSystemClang. That is the concrete runtime behavior change in this patch.</p>
+  </div>
+</article></div></section>
+<section id="worth-knowing" class="issue-section section-signals"><h2>What engineers should watch</h2><p class="section-lede muted">Unresolved or lightly inspected signals — expand a row for source and context.</p><h3 class='signal-tier'>Needs technical inspection</h3><div class="watch-rows"><details class="watch-row" id="gcc-gcc-aarch64" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Fix ICE in gimple_load_store::fold</span>
+      <span class="watch-meta">GCC · Backend · AArch64</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “Fix ICE in gimple_load_store::fold”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/83982d99ce24136fe3528f26375e80f73084af8f" rel="noopener noreferrer"><code>83982d99</code></a></p>
+  </div>
+</details></div><h3 class='signal-tier'>Potentially important</h3><div class="watch-rows"><details class="watch-row" id="llvm-llvm-gn-port" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">port b81d386eb2f0</span>
+      <span class="watch-meta">LLVM · Runtime · AArch64</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “port b81d386eb2f0”. Apparent component: LLVM. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/68df0fda0297a8c2b2433cb4f2c7de997268ea93" rel="noopener noreferrer"><code>68df0fda</code></a></p>
+  </div>
+</details><details class="watch-row" id="gcc-gcc-risc-v" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Fix bootstrap failure in shuffle_bswap_pattern</span>
+      <span class="watch-meta">GCC · Backend · RISC-V</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “Fix bootstrap failure in shuffle_bswap_pattern”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/36229846457de153a9f6230132bc65ef55686270" rel="noopener noreferrer"><code>36229846</code></a></p>
+  </div>
+</details><details class="watch-row" id="gcc-gcc-risc-v" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Use gather_load_cost and scatter_store_cost</span>
+      <span class="watch-meta">GCC · Backend · RISC-V</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “Use gather_load_cost and scatter_store_cost”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/19d5f1f6e4a7303e215fa34ce3e7d1b43f908593" rel="noopener noreferrer"><code>19d5f1f6</code></a></p>
+  </div>
+</details><details class="watch-row" id="llvm-llvm-mips-fix" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Fix the MIPS I %lo offset fold for loads and stores</span>
+      <span class="watch-meta">LLVM · Backend</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “Fix the MIPS I %lo offset fold for loads and stores”. Apparent component: LLVM. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/3f679c2a42e1a018b4539bb81e31529deb4ce647" rel="noopener noreferrer"><code>3f679c2a</code></a></p>
+  </div>
+</details><details class="watch-row" id="gcc-gcc-alpha" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">add -mlra and enable LRA by default on BWX targets</span>
+      <span class="watch-meta">GCC · Backend</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “add -mlra and enable LRA by default on BWX targets”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/ac7a23c351e056596ff3e58ae9d78913476c3bf1" rel="noopener noreferrer"><code>ac7a23c3</code></a></p>
+  </div>
+</details><details class="watch-row" id="gcc-gcc-loongarch" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Add RTX costs for `if_then_else&#x27; expressions</span>
+      <span class="watch-meta">GCC · Backend · LoongArch</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “Add RTX costs for `if_then_else&#x27; expressions”. Apparent component: GCC target backend. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/2da8c9ec0b06bf17fc5513ae22abafd0e1bdec18" rel="noopener noreferrer"><code>2da8c9ec</code></a></p>
+  </div>
+</details><details class="watch-row" id="gcc-gcc-fortran" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">ICE for a labeled END statement after CONTAINS</span>
+      <span class="watch-meta">GCC · Frontend</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “ICE for a labeled END statement after CONTAINS”. Apparent component: GCC. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/7bbecd581aa6f87c68d9d1088ee97b1d7f96005a" rel="noopener noreferrer"><code>7bbecd58</code></a></p>
+  </div>
+</details><details class="watch-row" id="llvm-llvm-amdgpu-fold" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Fold out of range async LDS copy offsets into the addresses</span>
+      <span class="watch-meta">LLVM · Backend · AMDGPU</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
+    <p class="muted"><strong>Limitations.</strong> Explanation grounded in the commit subject; open the source for details.</p>
+    <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/aa6b0692eeb2de09ee098a6c6a506ac26d9496ef" rel="noopener noreferrer"><code>aa6b0692</code></a></p>
+  </div>
+</details><details class="watch-row" id="llvm-llvm-x86-fix" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Fix mask indexing in the extractelement(bitcast(&lt;X x i1&gt;)) fold</span>
+      <span class="watch-meta">LLVM · Backend · X86</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “Fix mask indexing in the extractelement(bitcast(&lt;X x i1&gt;)) fold”. Apparent component: X86 backend. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/59b4b6219a9f2aa6dd64affb7aef27bacb03ff39" rel="noopener noreferrer"><code>59b4b621</code></a></p>
+  </div>
+</details><details class="watch-row" id="iree-hal-handle-empty" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Handle empty tensors and empty buffer ranges in the runtime drivers</span>
+      <span class="watch-meta">IREE · Backend · AMDGPU</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Touches AMDGPU paths while landing “Handle empty tensors and empty buffer ranges in the runtime drivers”.</p>
+    <p class="muted"><strong>Limitations.</strong> Path-based AMDGPU hint; verify in the linked source.</p>
+    <p class="meta">Source: <a href="https://github.com/iree-org/iree/commit/99962e6fba057266b77cfe4d93d592c3ef85716d" rel="noopener noreferrer"><code>99962e6f</code></a></p>
+  </div>
+</details><details class="watch-row" id="iree-runtime-add-neon" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Add NEON conv_nchwc ukernel tile for arm_64</span>
+      <span class="watch-meta">IREE · Runtime</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “Add NEON conv_nchwc ukernel tile for arm_64”. Apparent component: IREE. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/iree-org/iree/commit/a2cbd8f0c7456a7a5a8121da8ed6f958dda4f267" rel="noopener noreferrer"><code>a2cbd8f0</code></a></p>
+  </div>
+</details></div><h3 class='signal-tier'>Low-priority / maintenance</h3><div class="watch-rows"><details class="watch-row" id="llvm-clang-cir-fix" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Fix -Wunused-variable in 8927ff7</span>
+      <span class="watch-meta">LLVM · Frontend</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “Fix -Wunused-variable in 8927ff7”. Apparent component: Clang CIR. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/llvm/llvm-project/commit/a9bca96c8574f3cfac179c8361a363c7839070cd" rel="noopener noreferrer"><code>a9bca96c</code></a></p>
+  </div>
+</details><details class="watch-row" id="gcc-gcc-ada" data-evidence="unverified">
+  <summary>
+    <span class="watch-summary-main">
+      <span class="watch-title">Fix wrong resolution for iterated expression of aggregate in instance</span>
+      <span class="watch-meta">GCC · Frontend</span>
+    </span>
+    <span class="watch-status evidence-dot evidence-unverified">Unverified</span>
+    <span class="watch-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="watch-expand">
+    <p class="brief-line">Source subject: “Fix wrong resolution for iterated expression of aggregate in instance”. Apparent component: GCC. Broader impact is not established from the commit message alone.</p>
+    <p class="muted"><strong>Limitations.</strong> Broader impact is not established from the commit message alone.</p>
+    <p class="meta">Source: <a href="https://github.com/gcc-mirror/gcc/commit/3b57dbcdeff0ec2366267377fb49438ba7e909c5" rel="noopener noreferrer"><code>3b57dbcd</code></a></p>
+  </div>
+</details></div></section>
+<section id="themes" class="issue-section"><h2>Themes this week</h2><p class="muted">Project index only — details are in the sections above.</p><h3>AI Compilers</h3><ul class='theme-index'><li><a href="#iree-hal-handle-empty">Handle empty tensors and empty buffer ranges in the runtime drivers · AMDGPU</a></li><li><a href="#iree-runtime-add-neon">Add NEON conv_nchwc ukernel tile for arm_64</a></li></ul><h3>Clang</h3><ul class='theme-index'><li><a href="#llvm-clang-cir-amdgpu">Add support for __builtin_amdgcn_log_clampf · AMDGPU</a></li><li><a href="#llvm-clang-cir-add">Add support for __SVCount · AArch64</a></li><li><a href="#llvm-clang-cir-fix">Fix -Wunused-variable in 8927ff7</a></li></ul><h3>GCC</h3><ul class='theme-index'><li><a href="#gcc-gcc-i386">Add test for flexible array member psABI note</a></li><li><a href="#gcc-gcc-i386">Clean up classify_argument</a></li><li><a href="#gcc-gcc-aarch64">Fix ICE in gimple_load_store::fold · AArch64</a></li><li><a href="#gcc-gcc-risc-v">Fix bootstrap failure in shuffle_bswap_pattern · RISC-V</a></li><li><a href="#gcc-gcc-risc-v">Use gather_load_cost and scatter_store_cost · RISC-V</a></li><li><a href="#gcc-gcc-alpha">add -mlra and enable LRA by default on BWX targets</a></li></ul><h3>LLVM</h3><ul class='theme-index'><li><a href="#llvm-llvm-mips-use">Use libcalls for constrained f16 conversions</a></li><li><a href="#llvm-llvm-x86-globalisel">Use a class with sub_8bit for G_ZEXT from s1 · X86</a></li><li><a href="#llvm-llvm-gn-port">port b81d386eb2f0 · AArch64</a></li><li><a href="#llvm-llvm-mips-fix">Fix the MIPS I %lo offset fold for loads and stores</a></li><li><a href="#llvm-llvm-amdgpu-fold">Fold out of range async LDS copy offsets into the addresses · AMDGPU</a></li><li><a href="#llvm-llvm-x86-fix">Fix mask indexing in the extractelement(bitcast(&lt;X x i1&gt;)) fold · X86</a></li></ul><h3>LLVM tooling/runtime</h3><ul class='theme-index'><li><a href="#llvm-lldb-lldb-clike">Don&#x27;t require TypeSystemClang for TLS lookup</a></li><li><a href="#llvm-libc-pstl-add-a-serial-implementation-of-std">Add a serial implementation of std::unique_copy</a></li></ul><h3>MLIR</h3><ul class='theme-index'><li><a href="#mlir-mlir-mlir-spir-v">Support untyped pointers in Load and Store · SPIR-V</a></li></ul></section>
+<section id="topic-index" class="issue-section"><h2>Topic index</h2><p class="muted">Jump links only — details are in the sections above.</p><h3>LLVM</h3><ul class='theme-index'><li><a href="#llvm-llvm-mips-use">[Mips] Use libcalls for constrained f16 conversions (#246063)</a> <span class="meta">Backend · CPU</span></li><li><a href="#llvm-lldb-lldb-clike">[lldb][Clike] Don&#x27;t require TypeSystemClang for TLS lookup (#238953)</a> <span class="meta">Runtime &amp; Toolchain · Languages</span></li><li><a href="#llvm-llvm-x86-globalisel">[X86][GlobalISel] Use a class with sub_8bit for G_ZEXT from s1 (#245181)</a> <span class="meta">Backend · CPU</span></li><li><a href="#llvm-libc-pstl-add-a-serial-implementation-of-std">[libc++][pstl] Add a serial implementation of std::unique_copy (#245603)</a> <span class="meta">Runtime &amp; Toolchain · CPU</span></li><li><a href="#llvm-llvm-gn-port">port b81d386eb2f0</a> <span class="meta">Runtime &amp; Toolchain, Middle-end · CPU</span></li><li><a href="#llvm-llvm-mips-fix">Fix the MIPS I %lo offset fold for loads and stores</a> <span class="meta">Backend · CPU</span></li><li><a href="#llvm-llvm-amdgpu-fold">Fold out of range async LDS copy offsets into the addresses</a> <span class="meta">Backend · GPU</span></li><li><a href="#llvm-llvm-x86-fix">Fix mask indexing in the extractelement(bitcast(&lt;X x i1&gt;)) fold</a> <span class="meta">Backend · CPU</span></li></ul><h3>Clang</h3><ul class='theme-index'><li><a href="#llvm-clang-cir-amdgpu">[CIR][AMDGPU] Add support for __builtin_amdgcn_log_clampf (#244000)</a> <span class="meta">Frontend, Backend · GPU, Languages</span></li><li><a href="#llvm-clang-cir-add">[CIR] Add support for __SVCount (#245456)</a> <span class="meta">Frontend · Languages, CPU</span></li><li><a href="#llvm-clang-cir-fix">Fix -Wunused-variable in 8927ff7</a> <span class="meta">Frontend · Languages</span></li></ul><h3>GCC</h3><ul class='theme-index'><li><a href="#gcc-gcc-i386">Add test for flexible array member psABI note [PR39545]</a> <span class="meta">Middle-end, Backend · CPU</span></li><li><a href="#gcc-gcc-i386">i386: Clean up classify_argument</a> <span class="meta">Backend, Middle-end · CPU</span></li><li><a href="#gcc-gcc-aarch64">Fix ICE in gimple_load_store::fold</a> <span class="meta">Backend · CPU, GPU</span></li><li><a href="#gcc-gcc-risc-v">Fix bootstrap failure in shuffle_bswap_pattern</a> <span class="meta">Backend, Middle-end · CPU</span></li><li><a href="#gcc-gcc-risc-v">Use gather_load_cost and scatter_store_cost</a> <span class="meta">Backend · CPU, GPU</span></li><li><a href="#gcc-gcc-alpha">add -mlra and enable LRA by default on BWX targets</a> <span class="meta">Backend · CPU</span></li><li><a href="#gcc-gcc-loongarch">Add RTX costs for `if_then_else&#x27; expressions</a> <span class="meta">Backend · CPU</span></li><li><a href="#gcc-gcc-fortran">ICE for a labeled END statement after CONTAINS</a> <span class="meta">Frontend · Languages</span></li></ul><h3>MLIR</h3><ul class='theme-index'><li><a href="#mlir-mlir-mlir-spir-v">[mlir][SPIR-V] Support untyped pointers in Load and Store (#245255)</a> <span class="meta">Middle-end, Backend · GPU</span></li></ul><h3>AI Compilers</h3><ul class='theme-index'><li><a href="#iree-hal-handle-empty">Handle empty tensors and empty buffer ranges in the runtime drivers</a> <span class="meta">Backend · GPU, AI / ML</span></li><li><a href="#iree-runtime-add-neon">Add NEON conv_nchwc ukernel tile for arm_64</a> <span class="meta">Runtime &amp; Toolchain, Backend · AI / ML, CPU</span></li></ul></section>
+<section id="further" class="issue-section"><h2>Further reading</h2><ul class="overview-list"><li><a href="../../changelog.html">Complete collected dataset</a></li><li><a href="../../explore/index.html">Explore by stage / domain / area</a></li><li><a href="../../topics/index.html">Topic pages</a></li><li><a href="../../topics/research.html">Research papers</a></li><li><a href="../../archive.html">Archive</a></li></ul><p class="muted" style="margin-top:1.5rem"><strong>Editorial invariant.</strong> Never let generated explanations claim more than the underlying source evidence establishes. We do not invent benchmarks or completion status.</p></section>
+    </div>
+  </article>
+
+  </div>
+  <div class="search-backdrop" id="site-search" hidden>
+    <div class="search-panel" role="dialog" aria-modal="true" aria-label="Site search">
+      <input id="site-search-input" type="search" placeholder="Jump to a page or section…" autocomplete="off" aria-autocomplete="list" aria-controls="site-search-results"/>
+      <ul class="search-results" id="site-search-results" role="listbox"></ul>
+    </div>
+  </div>
+  <script type="application/json" id="site-search-index">[{"label": "Latest edition", "href": "../../index.html", "hint": "Home"}, {"label": "Explore", "href": "../../explore/index.html", "hint": "Filters"}, {"label": "Topics", "href": "../../topics/index.html", "hint": "Ecosystems"}, {"label": "Research papers", "href": "../../topics/research.html", "hint": "Papers"}, {"label": "Archive", "href": "../../archive.html", "hint": "Editions"}, {"label": "Change log", "href": "../../changelog.html", "hint": "Full dataset"}, {"label": "About", "href": "../../about.html", "hint": "How it works"}, {"label": "Subscribe", "href": "https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform", "hint": "Email"}, {"label": "GitHub repository", "href": "https://github.com/compilersutra/compilersutra-weekly", "hint": "Source"}]</script>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>© CompilerSutra · Apache-2.0 · Published every Saturday. Each edition covers Saturday→Friday (Asia/Kolkata), frozen at end of Friday. Raw collection stays private; only the curated edition is published.</div>
+      <div>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe</a> ·
+        <a href="../../changelog.html">Change log</a> ·
+        <a href="https://github.com/compilersutra/compilersutra-weekly">Source</a> ·
+        <a href="https://github.com/compilersutra/compilersutra-weekly/issues">Corrections</a>
+      </div>
+    </div>
+  </footer>
+  
+</body>
+</html>

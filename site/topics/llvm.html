@@ -87,6 +87,83 @@
 
     <h2 class="section-label">Latest developments</h2>
     <section class="topic-issue-block">
+  <h3><a href="../issues/2026/2026-11-28.html">#004 · full edition</a></h3>
+  <p class="muted">Latest developments · 2026-11-21 → 2026-11-28 (Asia/Kolkata, Saturday→Friday, end exclusive)</p>
+  <div class="story-grid"><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Deep dive</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/e43d6cde946fd784b685c6496871e932bf20858d" rel="noopener noreferrer">[Mips] Use libcalls for constrained f16 conversions (#246063)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default
+Expand action for constrained operations, so they were Legal and any
+constrained conversi</p>
+  <p class="card-summary"><strong>Why it matters.</strong> STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default. This is backend work with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU develop</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/e43d6cde946fd784b685c6496871e932bf20858d" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-runtime-toolchain" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/cdf7026ea5e25bf7087516f6d48cef0f150557c0" rel="noopener noreferrer">[lldb][Clike] Don&#x27;t require TypeSystemClang for TLS lookup (#238953)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> DynamicLoaderDarwin::GetThreadLocalData doesn&#x27;t need to direclty
+reference TypeSystemClang. Instead, we can get away by using generic
+TypeSystem API calls that </p>
+  <p class="card-summary"><strong>Why it matters.</strong> DynamicLoaderDarwin::GetThreadLocalData doesn&#x27;t need to direclty. This is runtime &amp; toolchain work with relevance to Languages engineers. Primary audience: Languages developers, Runtime &amp; Toolchain en</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/cdf7026ea5e25bf7087516f6d48cef0f150557c0" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AMDGPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/9fd613e3e725f7fde3f0556b292a81e8c42390c8" rel="noopener noreferrer">[CIR][AMDGPU] Add support for __builtin_amdgcn_log_clampf (#244000)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> Adds CIRGen support for `__builtin_amdgcn_log_clampf`, also adds CIR and
+LLVM IR test coverage in
+`clang/test/CIR/CodeGenHIP/builtins-amdgcn.hip`.</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Adds CIRGen support for `__builtin_amdgcn_log_clampf`, also adds CIR and. This is frontend work for AMDGPU with relevance to GPU engineers. Changed tests are the reproduce entry point. Primary audienc</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/9fd613e3e725f7fde3f0556b292a81e8c42390c8" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>X86</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/1f103466fae672e594b32e659099239b4c5e4392" rel="noopener noreferrer">[X86][GlobalISel] Use a class with sub_8bit for G_ZEXT from s1 (#245181)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> selectZext lowers G_ZEXT from s1 to an INSERT_SUBREG of IMPLICIT_DEF
+followed by an AND. The INSERT_SUBREG result used the full destination
+class, but in 32-bit</p>
+  <p class="card-summary"><strong>Why it matters.</strong> selectZext lowers G_ZEXT from s1 to an INSERT_SUBREG of IMPLICIT_DEF. This is backend work for X86 with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU d</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/1f103466fae672e594b32e659099239b4c5e4392" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-runtime-toolchain" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/b929ed2b80f8a4416fad483b50539a49458cd594" rel="noopener noreferrer">[libc++][pstl] Add a serial implementation of std::unique_copy (#245603)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> This PR adds a serial implementation of `std::unique_copy` to PSTL.
+A real parallel implementation is intended to land within the `statpart`
+backend later, whic</p>
+  <p class="card-summary"><strong>Why it matters.</strong> This PR adds a serial implementation of `std::unique_copy` to PSTL. This is runtime &amp; toolchain work with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/b929ed2b80f8a4416fad483b50539a49458cd594" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/4112cb51d217d67d47e5a9cfaf458d4080b77289" rel="noopener noreferrer">[CIR] Add support for __SVCount (#245456)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> This adds CIR codegen support for __SVCount, introducing a new type to
+represent it. Calling convention for this type is not yet implemented.
+That will be handl</p>
+  <p class="card-summary"><strong>Why it matters.</strong> This adds CIR codegen support for __SVCount, introducing a new type to. This is frontend work with relevance to Languages engineers. Changed tests are the reproduce entry point. Primary audience: Lang</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/4112cb51d217d67d47e5a9cfaf458d4080b77289" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-runtime-toolchain" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AArch64</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Unverified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/68df0fda0297a8c2b2433cb4f2c7de997268ea93" rel="noopener noreferrer">port b81d386eb2f0</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> Port b81d386eb2f0. (7 related commits) Cluster of 7 related commits treated as one development.</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Source subject: “port b81d386eb2f0”. Apparent component: LLVM. Broader impact is not established from the commit message alone.</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/68df0fda0297a8c2b2433cb4f2c7de997268ea93" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Unverified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/3f679c2a42e1a018b4539bb81e31529deb4ce647" rel="noopener noreferrer">Fix the MIPS I %lo offset fold for loads and stores</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> The MIPS I %lo offset fold for loads and stores was fixed. (5 related commits) Cluster of 5 related commits treated as one development.</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Source subject: “Fix the MIPS I %lo offset fold for loads and stores”. Apparent component: LLVM. Broader impact is not established from the commit message alone.</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/3f679c2a42e1a018b4539bb81e31529deb4ce647" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AMDGPU</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Unverified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/aa6b0692eeb2de09ee098a6c6a506ac26d9496ef" rel="noopener noreferrer">Fold out of range async LDS copy offsets into the addresses</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> Fold out of range async LDS copy offsets into the addresses. (3 related commits) Cluster of 3 related commits treated as one development.</p>
+  <p class="card-summary"><strong>Why it matters.</strong> AMDGPU backend change covering instruction selection, SGPR handling, or ABI occupancy. Verify the exact mechanism in the linked diffs.</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/aa6b0692eeb2de09ee098a6c6a506ac26d9496ef" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="llvm">
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-evidence evidence-unverified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Unverified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/a9bca96c8574f3cfac179c8361a363c7839070cd" rel="noopener noreferrer">Fix -Wunused-variable in 8927ff7</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> -Wunused-variable in 8927ff7 was fixed. (3 related commits) Cluster of 3 related commits treated as one development.</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Source subject: “Fix -Wunused-variable in 8927ff7”. Apparent component: Clang CIR. Broader impact is not established from the commit message alone.</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/a9bca96c8574f3cfac179c8361a363c7839070cd" rel="noopener noreferrer">Primary source →</a></div>
+</article></div>
+</section>
+<section class="topic-issue-block">
   <h3><a href="../issues/2026/2026-11-21.html">#003 · full edition</a></h3>
   <p class="muted">Latest developments · 2026-11-14 → 2026-11-21 (Asia/Kolkata, Saturday→Friday, end exclusive)</p>
   <div class="story-grid"><article class="story-card" data-project="lldb">

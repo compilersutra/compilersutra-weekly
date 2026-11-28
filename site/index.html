@@ -77,6 +77,13 @@
       <section class="panel" aria-labelledby="archive-heading">
         <h2 id="archive-heading">Archive</h2>
         <ul class="issue-list"><li>
+  <a class="issue-row" href="issues/2026/2026-11-28.html">
+    <span class="issue-date">28 Nov 2026</span>
+    <span class="title">#004 · 9 high-signal · 14 worth knowing</span>
+    <span class="issue-window">2026-11-21 → 2026-11-28 (Asia/Kolkata, Saturday→Friday, end exclusive)</span>
+  </a>
+</li>
+<li>
   <a class="issue-row" href="issues/2026/2026-11-21.html">
     <span class="issue-date">21 Nov 2026</span>
     <span class="title">#003 · 9 high-signal · 16 worth knowing</span>
@@ -132,18 +139,18 @@
       <h2 id="this-week-heading" class="section-label">This week&rsquo;s edition</h2>
       
         <div class="latest-card">
-          <p class="hero-kicker">Latest edition · #003 · 21 Nov 2026</p>
-          <h2>Edition #003</h2>
+          <p class="hero-kicker">Latest edition · #004 · 28 Nov 2026</p>
+          <h2>Edition #004</h2>
           <div class="stat-row" aria-label="Edition counts">
             <div class="stat"><strong>8</strong><span>High signal</span></div>
             <div class="stat"><strong>1</strong><span>Deep dive</span></div>
-            <div class="stat"><strong>16</strong><span>Worth knowing</span></div>
+            <div class="stat"><strong>14</strong><span>Worth knowing</span></div>
           </div>
-          <p class="latest-cover">8 listed high-signal · 1 deep dive · 16 worth knowing</p>
+          <p class="latest-cover">8 listed high-signal · 1 deep dive · 14 worth knowing</p>
           <p class="muted">Understand what changed in LLVM, GCC, MLIR and GPU compilers, why it matters, and how it works under the hood.</p>
-          <div class='briefing-grid home-briefing'><article class='briefing-card compact'><p class='brief-kicker'>01 · FEATURED</p><h3>Skip more tests that don&#x27;t work with WebAssembly</h3><p class='brief-takeaway'>These are breaking the new Green Dragon matrix bot that now also tests WebAssembly. Engineering focus: Runtime &amp; Toolchain (WebAssembly) — Languages teams should confirm behavior in the linked source.</p></article><article class='briefing-card compact'><p class='brief-kicker'>02 · BACKEND</p><h3>Avoid false dependency for BSF</h3><p class='brief-takeaway'>BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. Engineering focus: Backend (X86) — CPU teams should confirm behavior in the linked source.</p></article><article class='briefing-card compact'><p class='brief-kicker'>03 · GPU SIGNAL</p><h3>Add an async barrier arrival workaround</h3><p class='brief-takeaway'>Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. Engineering focus: Backend (AMDGPU) — GPU teams should confirm behavior in the linked source.</p></article><article class='briefing-card compact'><p class='brief-kicker'>04 · SIGNAL</p><h3>Fix moveInstrNotifier on empty DAG</h3><p class='brief-takeaway'>This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. Engineering focus: Middle-end — CPU teams should confirm behavior in the linked source.</p></article><article class='briefing-card compact'><p class='brief-kicker'>05 · FRONTEND</p><h3>Implement relative-vtable-lookups</h3><p class='brief-takeaway'>This patch handles lookups from a relative-vtable. Engineering focus: Frontend — Languages teams should confirm behavior in the linked source.</p></article></div>
+          <div class='briefing-grid home-briefing'><article class='briefing-card compact'><p class='brief-kicker'>01 · FEATURED</p><h3>Use libcalls for constrained f16 conversions</h3><p class='brief-takeaway'>STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default. This is backend work with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU developers, Backend…</p></article><article class='briefing-card compact'><p class='brief-kicker'>02 · BACKEND</p><h3>Add test for flexible array member psABI note</h3><p class='brief-takeaway'>Add a test for a struct that is passed in memory with or without its. This is middle-end work with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU developers, Middle-end…</p></article><article class='briefing-card compact'><p class='brief-kicker'>03 · FRONTEND</p><h3>Don&#x27;t require TypeSystemClang for TLS lookup</h3><p class='brief-takeaway'>DynamicLoaderDarwin::GetThreadLocalData doesn&#x27;t need to direclty. This is runtime &amp; toolchain work with relevance to Languages engineers. Primary audience: Languages developers, Runtime &amp; Toolchain engineers.</p></article><article class='briefing-card compact'><p class='brief-kicker'>04 · GPU SIGNAL</p><h3>Add support for __builtin_amdgcn_log_clampf</h3><p class='brief-takeaway'>Adds CIRGen support for `__builtin_amdgcn_log_clampf`, also adds CIR and. This is frontend work for AMDGPU with relevance to GPU engineers. Changed tests are the reproduce entry point. Primary audience: GPU developers…</p></article><article class='briefing-card compact'><p class='brief-kicker'>05 · SIGNAL</p><h3>Support untyped pointers in Load and Store</h3><p class='brief-takeaway'>This is middle-end work for SPIR-V with relevance to GPU engineers. Changed tests are the reproduce entry point. Primary audience: GPU developers, SPIR-V backend engineers, Middle-end engineers.</p></article></div>
           <div class="cta-row">
-            <a class="btn btn-primary" href="issues/2026/2026-11-21.html">Read this week&rsquo;s edition →</a>
+            <a class="btn btn-primary" href="issues/2026/2026-11-28.html">Read this week&rsquo;s edition →</a>
             <a class="btn btn-ghost" href="https://docs.google.com/forms/d/e/1FAIpQLSebP1JfLFDp0ckTxOhODKPNVeI1e21rUqMJ0fbBwJoaa-i4Yw/viewform" rel="noopener noreferrer" target="_blank">Subscribe by email</a>
           </div>
         </div>
@@ -152,17 +159,17 @@
     
       <section class="wrap" style="padding:2rem 0 0.5rem" aria-labelledby="featured-heading">
         <h2 id="featured-heading" class="section-label">Deep dive</h2>
-        <article class="feature-card" data-project="lldb">
+        <article class="feature-card" data-project="llvm">
           <p class="card-kicker">Featured technical analysis</p>
-          <h2>[lldb][test] Skip more tests that don&#x27;t work with WebAssembly (#244248)</h2>
-          <div class="badge-row"><span class="badge tax-project project-lldb" data-dim="project" title="project"><span class="tax-dim">project</span>LLDB</span><span class="badge tax-stage stage-runtime-toolchain" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>WebAssembly</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Deep dive</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-          <div class="callout callout-insight"><strong>What changed.</strong> These are breaking the new Green Dragon matrix bot that now also tests
-WebAssembly. This patch just adds skipIfWasm to all broken tests I could
-see in the log to unbreak the bot.</div>
-          <div class="callout callout-verified"><strong>Why engineers should care.</strong> Affects WebAssembly, AArch64 lowering / target code generation. Matters for Languages compiler engineering. Lives in the Runtime &amp; Toolchain of the pipeline. The same commit touches tests — use those as the reproduce entry point. Primary audience: Languages developers, CPU develo</div>
+          <h2>[Mips] Use libcalls for constrained f16 conversions (#246063)</h2>
+          <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Deep dive</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+          <div class="callout callout-insight"><strong>What changed.</strong> STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default
+Expand action for constrained operations, so they were Legal and any
+constrained conversion to or from half failed instruction selection.</div>
+          <div class="callout callout-verified"><strong>Why engineers should care.</strong> STRICT_FP16_TO_FP and STRICT_FP_TO_FP16 are not covered by the default. This is backend work with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU developers, Backend engineers.</div>
           <div class="cta-row" style="margin-top:0.85rem">
-            <a class="btn btn-primary" href="issues/2026/2026-11-21.html#deep-dive">Full technical analysis →</a>
-            <a class="btn btn-ghost" href="https://github.com/llvm/llvm-project/commit/8e1359f419e7c7b6bf5c3ac9ff34f7c459f43eeb" rel="noopener noreferrer">Primary source</a>
+            <a class="btn btn-primary" href="issues/2026/2026-11-28.html#deep-dive">Full technical analysis →</a>
+            <a class="btn btn-ghost" href="https://github.com/llvm/llvm-project/commit/e43d6cde946fd784b685c6496871e932bf20858d" rel="noopener noreferrer">Primary source</a>
           </div>
         </article>
       </section>
@@ -172,55 +179,54 @@ see in the log to unbreak the bot.</div>
         <h2 id="latest-dev" class="section-label">This week&rsquo;s engineering highlights</h2>
         <p class="muted">Showing 6 of 8 listed high-signal developments · 2 more in the full edition · deep dive featured above</p>
         <div class="story-grid"><article class="story-card" data-project="gcc">
-  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>X86</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/gcc-mirror/gcc/commit/01f482bf9819d591c6d1cdbecef2fa30512b8ab4" rel="noopener noreferrer">Avoid false dependency for BSF [PR128662]</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> BSF, like BSR, leaves its destination unmodified when the source is
-zero, so the hardware treats the destination as an input.  The new
-X86_TUNE_AVOID_FALSE_DEP_</p>
-  <p class="card-summary"><strong>Why it matters.</strong> BSF, like BSR, leaves its destination unmodified when the source is zero, so the hardware treats the destination as an input. Engineering focus: Backend (X86) — CPU teams should confirm behavior in th</p>
-  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/01f482bf9819d591c6d1cdbecef2fa30512b8ab4" rel="noopener noreferrer">Primary source →</a></div>
+  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/dd685502d63e77205c7737215b1ddccbd5d451ab" rel="noopener noreferrer">Add test for flexible array member psABI note [PR39545]</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> Add a test for a struct that is passed in memory with or without its
+flexible array member.  Before the psABI note was moved to
+psabi_new_behavior_p, GCC emitte</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Add a test for a struct that is passed in memory with or without its. This is middle-end work with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU develo</p>
+  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/dd685502d63e77205c7737215b1ddccbd5d451ab" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="gcc">
+  <div class="badge-row"><span class="badge tax-project project-gcc" data-dim="project" title="project"><span class="tax-dim">project</span>GCC</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
+  <h4><a href="https://github.com/gcc-mirror/gcc/commit/0352739550487de51223643c1f5b2c56e4ae19d5" rel="noopener noreferrer">i386: Clean up classify_argument</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> Simplify the position arithmetic in classify_argument.  Replace
+&quot;/ 8 / 8&quot; with &quot;/ 64&quot; and use CEIL for the round-up division.  Compute
+the position relative to </p>
+  <p class="card-summary"><strong>Why it matters.</strong> Simplify the position arithmetic in classify_argument.  Replace. This is backend work with relevance to CPU engineers. Primary audience: CPU developers, Backend engineers.</p>
+  <div class="card-meta-row"><a href="https://github.com/gcc-mirror/gcc/commit/0352739550487de51223643c1f5b2c56e4ae19d5" rel="noopener noreferrer">Primary source →</a></div>
 </article><article class="story-card" data-project="llvm">
-  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AMDGPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/llvm/llvm-project/commit/63b8d2fd94ba3b1a80023dae7139949dd5be6b78" rel="noopener noreferrer">[AMDGPU] Add an async barrier arrival workaround (#238539)</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround
-when XNACK is enabled or unspecified.</p>
-  <p class="card-summary"><strong>Why it matters.</strong> Async barrier arrivals on gfx1250 and gfx1251 need a replay workaround when XNACK is enabled or unspecified. Engineering focus: Backend (AMDGPU) — GPU teams should confirm behavior in the linked sourc</p>
-  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/63b8d2fd94ba3b1a80023dae7139949dd5be6b78" rel="noopener noreferrer">Primary source →</a></div>
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-runtime-toolchain" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Runtime &amp; Toolchain</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/cdf7026ea5e25bf7087516f6d48cef0f150557c0" rel="noopener noreferrer">[lldb][Clike] Don&#x27;t require TypeSystemClang for TLS lookup (#238953)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> DynamicLoaderDarwin::GetThreadLocalData doesn&#x27;t need to direclty
+reference TypeSystemClang. Instead, we can get away by using generic
+TypeSystem API calls that </p>
+  <p class="card-summary"><strong>Why it matters.</strong> DynamicLoaderDarwin::GetThreadLocalData doesn&#x27;t need to direclty. This is runtime &amp; toolchain work with relevance to Languages engineers. Primary audience: Languages developers, Runtime &amp; Toolchain en</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/cdf7026ea5e25bf7087516f6d48cef0f150557c0" rel="noopener noreferrer">Primary source →</a></div>
 </article><article class="story-card" data-project="llvm">
-  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/llvm/llvm-project/commit/68d7a32f97c0a2b921d18d8a4d58c6fa2f00bc79" rel="noopener noreferrer">[SandboxVec][DAG] Fix moveInstrNotifier on empty DAG (#243747)</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> This patch fixes a crash inside an assertion in the DAG move instruction
-notifier, when the DAG was empty.
-The fix is trivial: if the DAG is empty there is noth</p>
-  <p class="card-summary"><strong>Why it matters.</strong> This patch fixes a crash inside an assertion in the DAG move instruction notifier, when the DAG was empty. Engineering focus: Middle-end — CPU teams should confirm behavior in the linked source.</p>
-  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/68d7a32f97c0a2b921d18d8a4d58c6fa2f00bc79" rel="noopener noreferrer">Primary source →</a></div>
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>AMDGPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/9fd613e3e725f7fde3f0556b292a81e8c42390c8" rel="noopener noreferrer">[CIR][AMDGPU] Add support for __builtin_amdgcn_log_clampf (#244000)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> Adds CIRGen support for `__builtin_amdgcn_log_clampf`, also adds CIR and
+LLVM IR test coverage in
+`clang/test/CIR/CodeGenHIP/builtins-amdgcn.hip`.</p>
+  <p class="card-summary"><strong>Why it matters.</strong> Adds CIRGen support for `__builtin_amdgcn_log_clampf`, also adds CIR and. This is frontend work for AMDGPU with relevance to GPU engineers. Changed tests are the reproduce entry point. Primary audienc</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/9fd613e3e725f7fde3f0556b292a81e8c42390c8" rel="noopener noreferrer">Primary source →</a></div>
+</article><article class="story-card" data-project="mlir">
+  <div class="badge-row"><span class="badge tax-project project-mlir" data-dim="project" title="project"><span class="tax-dim">project</span>MLIR</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>GPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>SPIR-V</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-source-backed" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Source-backed</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/13c4e8b3a41b887f72b44fda8b854eb5d8758922" rel="noopener noreferrer">[mlir][SPIR-V] Support untyped pointers in Load and Store (#245255)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> [mlir][SPIR-V] Support untyped pointers in Load and Store (#245255). Touches mlir/include/mlir/Dialect/SPIRV/IR/SPIRVBase.td, mlir/include/mlir/Dialect/SPIRV/IR</p>
+  <p class="card-summary"><strong>Why it matters.</strong> This is middle-end work for SPIR-V with relevance to GPU engineers. Changed tests are the reproduce entry point. Primary audience: GPU developers, SPIR-V backend engineers, Middle-end engineers.</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/13c4e8b3a41b887f72b44fda8b854eb5d8758922" rel="noopener noreferrer">Primary source →</a></div>
 </article><article class="story-card" data-project="llvm">
-  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/llvm/llvm-project/commit/6516d75ae90d2e2a682d974ea8ec7e483609c1d8" rel="noopener noreferrer">[CIR] Implement relative-vtable-lookups (#243798)</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> This patch handles lookups from a relative-vtable. While the rest of the
-relative V-table work is quite large, this ends up being pretty easy to
-split up. Effec</p>
-  <p class="card-summary"><strong>Why it matters.</strong> This patch handles lookups from a relative-vtable. Engineering focus: Frontend — Languages teams should confirm behavior in the linked source.</p>
-  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/6516d75ae90d2e2a682d974ea8ec7e483609c1d8" rel="noopener noreferrer">Primary source →</a></div>
-</article><article class="story-card" data-project="llvm">
-  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-frontend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Frontend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>Languages</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/llvm/llvm-project/commit/1d73203488050b947d7fab760f76de8990a4d937" rel="noopener noreferrer">[CIR][OpenMP] Specify target triple in OpenMP loop codegen tests (#244278)</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> Add `-triple x86_64-unknown-linux-gnu` to tests added in 
-61067a5096e (#229256) to avoid defaulting to the host target triple
-and failing on non-x86 builders li</p>
-  <p class="card-summary"><strong>Why it matters.</strong> Add `-triple x86_64-unknown-linux-gnu` to tests added in 61067a5096e (#229256) to avoid defaulting to the host target triple and failing on non-x86 builders like https://lab.llvm.org/buildbot/#/builde</p>
-  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/1d73203488050b947d7fab760f76de8990a4d937" rel="noopener noreferrer">Primary source →</a></div>
-</article><article class="story-card" data-project="llvm">
-  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-middle-end" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Middle-end</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
-  <h4><a href="https://github.com/llvm/llvm-project/commit/a2f1d1aeb6f5c700ac9a15592b6f81c3ec41e6c6" rel="noopener noreferrer">[LoopVectorize] Add llvm.loop.vectorize.fp_unsafe.{enable,disable} metadata (#219167)</a></h4>
-  <p class="card-summary"><strong>What changed.</strong> Add a new per-loop metadata key llvm.loop.vectorize.fp_unsafe to
-explicitly control whether the Loop Vectorizer may apply floating-point
-transforms that change </p>
-  <p class="card-summary"><strong>Why it matters.</strong> Add a new per-loop metadata key llvm.loop.vectorize.fp_unsafe to explicitly control whether the Loop Vectorizer may apply floating-point transforms that change the computed result:. Engineering focus:</p>
-  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/a2f1d1aeb6f5c700ac9a15592b6f81c3ec41e6c6" rel="noopener noreferrer">Primary source →</a></div>
+  <div class="badge-row"><span class="badge tax-project project-llvm" data-dim="project" title="project"><span class="tax-dim">project</span>LLVM</span><span class="badge tax-stage stage-backend" data-dim="stage" title="stage"><span class="tax-dim">stage</span>Backend</span><span class="badge tax-domain" data-dim="domain" title="domain"><span class="tax-dim">domain</span>CPU</span><span class="badge tax-target" data-dim="target" title="target"><span class="tax-dim">target</span>X86</span><span class="badge tax-level" data-dim="level" title="level"><span class="tax-dim">level</span>Engineering analysis</span><span class="badge tax-evidence evidence-verified" data-dim="evidence" title="Evidence confidence"><span class="tax-dim">evidence</span>Verified</span></div>
+  <h4><a href="https://github.com/llvm/llvm-project/commit/1f103466fae672e594b32e659099239b4c5e4392" rel="noopener noreferrer">[X86][GlobalISel] Use a class with sub_8bit for G_ZEXT from s1 (#245181)</a></h4>
+  <p class="card-summary"><strong>What changed.</strong> selectZext lowers G_ZEXT from s1 to an INSERT_SUBREG of IMPLICIT_DEF
+followed by an AND. The INSERT_SUBREG result used the full destination
+class, but in 32-bit</p>
+  <p class="card-summary"><strong>Why it matters.</strong> selectZext lowers G_ZEXT from s1 to an INSERT_SUBREG of IMPLICIT_DEF. This is backend work for X86 with relevance to CPU engineers. Changed tests are the reproduce entry point. Primary audience: CPU d</p>
+  <div class="card-meta-row"><a href="https://github.com/llvm/llvm-project/commit/1f103466fae672e594b32e659099239b4c5e4392" rel="noopener noreferrer">Primary source →</a></div>
 </article></div>
         <p class="muted" style="margin-top:0.85rem">
-          <a href="issues/2026/2026-11-21.html">Open the full edition for every selected story →</a>
+          <a href="issues/2026/2026-11-28.html">Open the full edition for every selected story →</a>
         </p>
       </section>
 
